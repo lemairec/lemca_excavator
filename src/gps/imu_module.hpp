@@ -1,0 +1,41 @@
+#ifndef IMU_MODULE_H
+#define IMU_MODULE_H
+#include <string>
+#include <memory>
+#include <deque>
+
+#include <list>
+
+class ImuModule {
+public:
+    ImuModule();
+
+    std::deque<int> m_list;
+    
+    double m_roll_x_deg = 0;
+    double m_pitch_y_deg = 0;
+    double m_yaw_z_deg = 0;
+    
+    double m_ax = 0;
+    double m_ay = 0;
+    double m_az = 0;
+    
+    double m_w_x = 0;
+    double m_w_y = 0;
+    double m_w_z = 0;
+    
+    double m_mag_x = 0;
+    double m_mag_y = 0;
+    double m_mag_z = 0;
+    double m_cap_mag_deg = 0;
+    double m_cap_mag_rad = 0;
+    
+    std::list<int> m_values;
+    
+    void print(int i);
+    void remove(int i);
+    void parseImu();
+    void addIChar(int c);
+};
+
+#endif //GPS_H
