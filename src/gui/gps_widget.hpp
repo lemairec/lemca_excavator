@@ -9,7 +9,6 @@
 #include "rapide_option_widget.hpp"
 #include "param_translateur_widget.hpp"
 #include "first_widget.hpp"
-#include "translator/translator_widget.hpp"
 #include "base/keyboard_widget.hpp"
 
 enum EtatDraw {
@@ -28,7 +27,6 @@ public:
     DiagnosticWidget m_diagnostic_widget;
     DebugWidget m_debug_widget;
     
-    TranslatorWidget m_translator_widget;
     OptionWidget m_option_widget;
     ParamTranslateurWidget m_param_translateur_widget;
     std::vector<BaseWidget *> m_widgets;
@@ -66,8 +64,7 @@ public:
     QPixmap * m_img_3_point_up;
     QPixmap * m_img_3_point_down;
     
-    QPixmap * m_tracteur_2d;
-    QPixmap * m_tracteur_3d;
+    QPixmap * m_excavator_2d;
     
     QPixmap * m_img_right;
     QPixmap * m_img_left;
@@ -102,7 +99,7 @@ public:
     void setPainter(QPainter * s);
     
     void drawButtons();
-    void drawTranslateur();
+    void drawExcavator();
     void drawInfos();
     void drawInfosBasLeft();
     void drawRightLeft();
@@ -142,8 +139,6 @@ public:
     void drawSurfaceToDraw();
     
     void drawRect3D(double x, double y, double l, double lg);
-    void drawTracteur3D();
-    void drawTracteur();
     void drawBalises();
     
     void drawDebugEkf();

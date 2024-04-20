@@ -15,8 +15,7 @@ GpsWidget::GpsWidget(){
     m_zoom = 50;
     
     //m_widgets.push_back(&m_satWidget);
-    m_widgets.push_back(&m_translator_widget);
-    m_widgets.push_back(&m_option_widget);
+     m_widgets.push_back(&m_option_widget);
     m_widgets.push_back(&m_param_translateur_widget);
     m_widgets.push_back(&m_key_pad_widget);
     
@@ -53,8 +52,7 @@ void GpsWidget::loadImages(){
 #endif
     
     m_imgFleche = loadImage("/gui/fleche.png");
-    m_tracteur_2d = loadImage("/gui/tracteur_2d.png");
-    m_tracteur_3d = loadImage("/gui/tracteur_3d.png");
+    m_excavator_2d = loadImage("/gui/excavator.png");
     
     m_img_right = loadImageInv("/gui/right.png");
     m_img_middle = loadImageInv("/gui/middle.png");
@@ -537,12 +535,6 @@ int GpsWidget::onMouse(int x, int y){
     if(!m_first_widget.m_close){
         m_first_widget.onMouse(x, y);
     }
-    if(!m_translator_widget.m_close && m_option_widget.m_close){
-        if(m_button_option.isActive(x, y)){
-            m_option_widget.open();
-            return 0;
-        }
-    }
     
     
     size_t n = m_widgets.size();
@@ -944,7 +936,7 @@ void GpsWidget::drawGpsWidget(){
         
         drawSurfaceToDraw();
         
-        drawTranslateur();
+        drawExcavator();
         
         drawDebugEkf();
         
@@ -1087,91 +1079,6 @@ void GpsWidget::drawRect3D(double x, double y, double l, double lg){
 }
 
 
-void GpsWidget::drawTracteur3D(){
-    Framework & f = Framework::instance();
-    
-    double x_tracteur = m_width/2, y_tracteur = m_height/2;
-    double x_tracteur2 = m_width/2, y_tracteur2 = m_height/2;
-    double angle = 0;
-    if(f.m_tracteur.m_pt_antenne_corrige){
-        myProjete2(f.m_tracteur.m_pt_antenne_corrige->m_x, f.m_tracteur.m_pt_antenne_corrige->m_y, x_tracteur2, y_tracteur2);
-        x_tracteur = f.m_tracteur.m_pt_antenne_corrige->m_x;
-        y_tracteur = f.m_tracteur.m_pt_antenne_corrige->m_y;
-        angle = f.m_cap_rad;
-    }
-    cosa = cos(angle);
-    sina = sin(angle);
-    
-    
-    //double l2 = f.m_tracteur.m_antenne_essieu_arriere*m_zoom;
-    
-    
-    //outil
-    m_painter->setBrush(m_brush_outil);
-    double l_outil2 = f.m_tracteur.m_outil_distance+f.m_tracteur.m_antenne_essieu_arriere;
-    double lg_outil = f.m_tracteur.m_outil_largeur;
-    double x_outil = x_tracteur - cosa*l_outil2;
-    double y_outil = y_tracteur - sina*l_outil2;
-    
-    drawRect3D(x_outil, y_outil, 0.5, lg_outil);
-    drawRect3D(x_outil, y_outil, f.m_tracteur.m_outil_distance, 0.3);
-    
-    if(!m_debug){
-        int h = 8*m_zoom;
-        int w = 8*m_zoom;
-        m_painter->drawPixmap(x_tracteur2-w/2, y_tracteur2-h/2, w, h, *m_tracteur_3d);
-        return;
-    }
-    
-    //roue arriere
-    double x_arriere = x_tracteur - cosa*f.m_tracteur.m_antenne_essieu_arriere;
-    double y_arriere = y_tracteur - sina*f.m_tracteur.m_antenne_essieu_arriere;
-    
-    m_painter->setBrush(m_brush_tracteur);
-    double voie = 1.8;
-    double l_roue = 1.7;
-    double lg_pneu = 0.45;
-    
-    drawRect3D(x_arriere - cosa*0.1, y_arriere - sina*0.1, 0.2, voie);
-    
-    double x_arriere_l = x_arriere - cosa*l_roue/2 - sina*voie/2;
-    double y_arriere_l = y_arriere - sina*l_roue/2 + cosa*voie/2;
-    double x_arriere_r = x_arriere - cosa*l_roue/2 + sina*voie/2;
-    double y_arriere_r = y_arriere - sina*l_roue/2 - cosa*voie/2;
-    
-    drawRect3D(x_arriere_l, y_arriere_l, l_roue, lg_pneu);
-    drawRect3D(x_arriere_r, y_arriere_r, l_roue, lg_pneu);
-    
-    //roue avant
-    l_roue = 1.1;
-    lg_pneu = 0.33;
-    
-    double x_avant = x_tracteur + cosa*f.m_tracteur.m_antenne_essieu_avant;
-    double y_avant = y_tracteur + sina*f.m_tracteur.m_antenne_essieu_avant;
-    
-    m_painter->setBrush(m_brush_tracteur);
-    drawRect3D(x_avant - cosa*0.1, y_avant - sina*0.1, 0.2, voie);
-    
-    double x_avant_l = x_avant - cosa*l_roue/2 - sina*voie/2;
-    double y_avant_l = y_avant - sina*l_roue/2 + cosa*voie/2;
-    double x_avant_r = x_avant - cosa*l_roue/2 + sina*voie/2;
-    double y_avant_r = y_avant - sina*l_roue/2 - cosa*voie/2;
-    
-    drawRect3D(x_avant_l, y_avant_l, l_roue, lg_pneu);
-    drawRect3D(x_avant_r, y_avant_r, l_roue, lg_pneu);
-    
-    //capot
-    double lg_capot = 1;
-    double l_capot = f.m_tracteur.m_empatement+0.3;
-    drawRect3D(x_arriere, y_arriere, l_capot, lg_capot);
-    
-    //cabine
-    double l_cabine = 1.6;
-    double x_cabine = x_arriere - cosa*0.3;
-    double y_cabine  = y_arriere - sina*0.3;
-    drawRect3D(x_cabine, y_cabine, l_cabine, l_cabine);
-}
-
 
 void GpsWidget::drawCercles(){
     m_painter->setBrush(m_brush_no);
@@ -1204,7 +1111,7 @@ void GpsWidget::drawCercles(){
     }
 }
 
-void GpsWidget::drawTranslateur(){
+void GpsWidget::drawExcavator(){
     Framework & f = Framework::instance();
     
     double x_tracteur = m_width/2, y_tracteur = m_height/2;
@@ -1212,18 +1119,10 @@ void GpsWidget::drawTranslateur(){
         myProjete2(f.m_tracteur.m_pt_antenne_corrige->m_x, f.m_tracteur.m_pt_antenne_corrige->m_y, x_tracteur, y_tracteur);
     }
     
-    //outil
-    double l2 = f.m_tracteur.m_antenne_essieu_arriere*m_zoom;
-    double y_arriere = y_tracteur+l2;
-    m_painter->setBrush(m_brush_outil);
-    double l_outil = f.m_tracteur.m_outil_distance;
-    double lg_outil = f.m_tracteur.m_outil_largeur;
-    m_painter->drawRect(x_tracteur - lg_outil*0.5*m_zoom, y_arriere + (l_outil-0.2)*m_zoom, lg_outil*m_zoom, 0.4*m_zoom);
-    m_painter->drawRect(x_tracteur - 0.1*m_zoom, y_arriere, 0.2*m_zoom, (l_outil)*m_zoom);
+    int h = 4*m_zoom;
+    int w = 2*m_zoom;
     
-    m_painter->setBrush(m_brush_white);
-    m_painter->setPen(m_pen_black);
-    m_painter->drawEllipse(x_tracteur - 0.10*m_zoom, y_tracteur - 0.10*m_zoom, 0.20*m_zoom, 0.20*m_zoom);
+    m_painter->drawPixmap(x_tracteur-w/2, y_tracteur-h*0.55, w, h, *m_excavator_2d);
 }
 
 void GpsWidget::drawBalises(){
@@ -1242,80 +1141,3 @@ void GpsWidget::drawBalises(){
     }
 }
 
-void GpsWidget::drawTracteur(){
-    if(m_vue_3D){
-        drawTracteur3D();
-        return;
-    }
-    
-    int h = 6*m_zoom;
-    int w = 6*m_zoom;
-    //drawTracteur3D();
-    //return;
-    Framework & f = Framework::instance();
-    
-    double x_tracteur = m_width/2, y_tracteur = m_height/2;
-    if(f.m_tracteur.m_pt_antenne_corrige){
-        myProjete2(f.m_tracteur.m_pt_antenne_corrige->m_x, f.m_tracteur.m_pt_antenne_corrige->m_y, x_tracteur, y_tracteur);
-    }
-    
-    
-    double l2 = f.m_tracteur.m_antenne_essieu_arriere*m_zoom;
-    
-    double y_arriere = y_tracteur+l2;
-    
-    
-    //outil
-    m_painter->setBrush(m_brush_outil);
-    double l_outil = f.m_tracteur.m_outil_distance;
-    double lg_outil = f.m_tracteur.m_outil_largeur;
-    m_painter->drawRect(x_tracteur - lg_outil*0.5*m_zoom, y_arriere + (l_outil-0.5)*m_zoom, lg_outil*m_zoom, 0.5*m_zoom);
-    m_painter->drawRect(x_tracteur - 0.1*m_zoom, y_arriere, 0.2*m_zoom, (l_outil)*m_zoom);
-    
-    if(!m_debug){
-        m_painter->drawPixmap(x_tracteur-w/2, y_tracteur-h*0.55, w, h, *m_tracteur_2d);
-        //m_painter->drawEllipse( x_tracteur-5, y_tracteur-5, 10, 10);
-        return;
-    }
-    
-    //tracteur
-    m_painter->setBrush(m_brush_tracteur);
-    m_painter->setPen(m_pen_no);
-    
-    //roue arriere
-    double voie = 1.8*m_zoom;
-    double l_roue = 1.7*m_zoom;
-    double lg_pneu = 0.45*m_zoom;
-    m_painter->drawRect(x_tracteur - voie/2, y_arriere-0.1*m_zoom, voie, 0.2*m_zoom);
-    m_painter->drawRect(x_tracteur - voie/2 - lg_pneu/2, y_arriere - l_roue/2, lg_pneu, l_roue);
-    m_painter->drawRect(x_tracteur + voie/2 - lg_pneu/2, y_arriere - l_roue/2, lg_pneu, l_roue);
-    
-    //cabine
-    double l_cabine = 1.6*m_zoom;
-    m_painter->drawRect(x_tracteur - l_cabine/2, y_arriere-1.2*m_zoom, l_cabine, l_cabine);
-    
-    //capot
-    double lg_capot = 1*m_zoom;
-    double l_capot = (f.m_tracteur.m_antenne_essieu_avant+0.2)*m_zoom;
-    m_painter->drawRect(x_tracteur - lg_capot/2, y_tracteur-l_capot, lg_capot, f.m_tracteur.m_empatement*m_zoom);
-    
-    
-    double y_direction = y_tracteur-f.m_tracteur.m_antenne_essieu_avant*m_zoom;
-    m_painter->drawRect(x_tracteur - voie/2, y_direction-0.1*m_zoom, voie, 0.2*m_zoom);
-    
-    
-    
-    m_painter->setBrush(m_brush_white);
-    m_painter->setPen(m_pen_black);
-    m_painter->drawEllipse(x_tracteur - 0.10*m_zoom, y_tracteur - 0.10*m_zoom, 0.20*m_zoom, 0.20*m_zoom);
-    
-    
-    if(m_debug){
-        //scene->addEllipse(w/2 - 0.05*m_zoom, h/2 - 0.05*m_zoom, 0.10*m_zoom, 0.10*m_zoom, m_penBlack, m_brushRed);
-        /*myProjete2_pt(f.m_tracteur.m_pt_outil_arriere, x, y);
-         scene->addEllipse(x-3, y-3, 6, 6, m_penRed, m_brushGreen);
-         myProjete2_pt(f.m_tracteur.m_pt_outil_arriere_droite, x, y);
-         scene->addEllipse(x-2, y-2, 4, 4, m_penRed, m_brushGreen);*/
-    }
-    
-}

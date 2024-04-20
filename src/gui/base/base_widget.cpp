@@ -315,6 +315,7 @@ void BaseWidget::drawQTexts(const QString & s, int x, int y, SizeText size, bool
 QPixmap * BaseWidget::loadImage(const std::string & s, bool inv){
     std::string s2 = DirectoryManager::instance().getSourceDirectory()+s;
     QImage image2(QString::fromStdString(s2));
+    INFO(s2);
     if(inv){
         image2.invertPixels();
     }
