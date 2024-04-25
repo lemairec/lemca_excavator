@@ -80,12 +80,8 @@ public:
     void onMousePage3(int x, int y);
     
     //page4
-    ButtonGui m_auto_offset;
-    ValueGui m_valuegui_offset;
-    ValueGui m_valuegui_offset2;
-    ButtonGui m_offset_change;
-    ButtonGui m_tilt;
-    ValueGui m_tilt_l;
+    ButtonGui m_save_point;
+    ValueGui m_valuegui_profondeur;
     void setSizePage4(int width, int height);
     void drawPage4();
     void onMousePage4(int x, int y);

@@ -319,10 +319,10 @@ void GpsWidget::drawInfosBasLeft(){
     int x1 = 50;
     y+=inter;
     y+=inter;
-    std::string s = strprintf("distance AB : %+.1f cm", f.m_auto_path_module.m_distance*100);
+    std::string s = strprintf("altitude : %+.1f m", f.m_hauteur_current);
     drawText(s, x1, y, sizeText_little, false, true);
     y+=inter;
-    s = strprintf("distance h : %+.1f cm", f.m_auto_path_module.m_diff_h*100);
+    s = strprintf("h : %+.0f cm", f.m_hauteur_diff*100);
     drawText(s, x1, y, sizeText_little, false, true);
     y+=inter;
     y+=inter;

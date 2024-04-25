@@ -79,7 +79,13 @@ public:
     std::string m_debug_str_3 = "";
     std::string m_debug_str_4 = "";
     
-
+    double m_hauteur_current;
+    double m_hauteur_save;
+    double m_hauteur_diff;
+    double m_profondeur_mm;
+    
+    
+    
     std::string m_messages_errors;
     void addError(std::string s);
     

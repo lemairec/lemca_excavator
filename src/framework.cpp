@@ -90,6 +90,8 @@ void Framework::initOrLoadConfig(){
      
     m_auto_path_module.initOrLoadConfig(m_config);
     m_balises.load();
+    
+    m_profondeur_mm = m_config.m_profondeur_mm*0.001;
 }
 
 void Framework::addError(std::string s){
@@ -181,6 +183,13 @@ double moyDeplacement(double deplacement){
 
 void Framework::onNewPoint(GpsPointCap_ptr p){
     myTime begin = myTimeInit();
+    
+    m_hauteur_current = p->m_altitude;
+    
+    if(m_hauteur_save > 0){
+        m_hauteur_diff = m_hauteur_current-m_hauteur_save-m_config.m_profondeur_mm*0.001;
+        INFO(m_config.m_profondeur_mm);
+    }
     
     m_stat_cap_rmc_deg.addNewValueDeg(m_position_module.m_last_rmc->m_cap_deg);
     //m_stat_cap_rmc2_deg.addNewValueDeg(m_position_module.m_last_rmc->m_cap2_deg);

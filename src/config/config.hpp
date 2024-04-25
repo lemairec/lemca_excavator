@@ -18,6 +18,8 @@ public:
     int m_luminosite = 3;
     int m_user_mode = 0;
     
+    int m_profondeur_mm = 0;
+    
     std::string m_gps_serial;
     int m_gps_baudrate = 115200;
     std::string m_gps_file;

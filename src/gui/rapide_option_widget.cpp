@@ -242,13 +242,14 @@ page 4
 void RapideOptionWidget::setSizePage4(int width, int height){
     int inter = 0.1*m_height2;
     int y = 0.2*m_height2;
-    m_auto_offset.setResize(m_x1, y, m_petit_button);
     y = y+inter;
-    m_valuegui_offset.setResize(m_x_middle, y, m_petit_button);
+    m_save_point.setResizeStd(m_x_middle, y, "Point Reference", true);
     y = y+inter;
-    m_valuegui_offset2.setResize(m_x_middle, y, m_petit_button);
     y = y+inter;
-    m_offset_change.setResizeStd(m_x_middle, y, "CHANGE", true);
+    y = y+inter;
+    y = y+inter;
+    m_valuegui_profondeur.setResize(m_x_middle, y, m_petit_button);
+    y = y+inter;
     
 };
 
@@ -259,37 +260,13 @@ void RapideOptionWidget::drawPage4(){
     Config & config = f.m_config;
     
     m_painter->setPen(m_pen_black_inv);
-    drawText(Langage::getKey("RAPIDE_OFFSET"), m_x_middle, m_auto_offset.m_y-0.1*m_height, sizeText_medium, true);
-    if(config.m_offset_auto_enable){
-        drawButtonCheck(m_auto_offset, config.m_offset_auto, Langage::getKey("RAPIDE_OFFSET_AUTO"));
-    }
     
-    m_valuegui_offset.m_value = config.m_offset_mm/10.0;
-    if(config.m_offset_auto && config.m_offset_auto_enable){
-        /*if(f.m_pilot_module.m_offset_i == 0){
-            draw(m_valuegui_offset, Langage::getKey("RAPIDE_DISTANCE"));
-        } else {
-            drawFalse(m_valuegui_offset, Langage::getKey("RAPIDE_DISTANCE"));
-        }*/
-    } else {
-       draw(m_valuegui_offset, Langage::getKey("RAPIDE_DISTANCE"));
-    }
-    drawText(Langage::getKey("RIGHT"), m_contrast_4.m_x, m_valuegui_offset.m_y+30, sizeText_little, true);
-    drawText(Langage::getKey("LEFT"), m_contrast_0.m_x, m_valuegui_offset.m_y+30, sizeText_little, true);
-    
-    m_valuegui_offset2.m_value = config.m_offset2_mm/10.0;
-    if(config.m_offset_auto && config.m_offset_auto_enable){
-        /*if(f.m_pilot_module.m_offset_i == 1){
-            draw(m_valuegui_offset2, Langage::getKey("RAPIDE_OFFSET_2"));
-        } else {
-            drawFalse(m_valuegui_offset2, Langage::getKey("RAPIDE_OFFSET_2"));
-        }*/
-    }
-    if(config.m_offset_auto && config.m_offset_auto_enable){
-        drawButtonLabel2(m_offset_change);
-    }
+    drawButtonLabel2(m_save_point);
     
     m_painter->setPen(m_pen_black_inv);
+    m_valuegui_profondeur.m_value = config.m_profondeur_mm/10.0;
+    draw(m_valuegui_profondeur, "profondeur cm");
+    
     
     
     if(!m_keypad_widget.m_close){
@@ -301,29 +278,13 @@ void RapideOptionWidget::onMousePage4(int x, int y){
     Framework & f = Framework::instance();
     Config & config = f.m_config;
     
-    if(m_auto_offset.isActive(x, y) && config.m_offset_auto_enable){
-        config.m_offset_auto = !config.m_offset_auto;
+    onMouse(m_valuegui_profondeur, x, y, 5);
+    
+    config.m_profondeur_mm = m_valuegui_profondeur.m_value*10;
+    
+    if(m_save_point.isActive(x, y)){
+        f.m_hauteur_save =  f.m_hauteur_current;
     }
-    
-    if(config.m_offset_auto && config.m_offset_auto_enable){
-        
-    } else {
-        onMouse(m_valuegui_offset, x, y, 0.5);
-    }
-    
-    if(config.m_offset_auto && config.m_offset_auto_enable){
-        
-    }
-    
-    if(config.m_offset_auto && config.m_offset_auto_enable){
-       
-    }
-    
-    
-    m_keypad_widget.onMouse(x, y);
-    
-    config.m_offset_mm = m_valuegui_offset.m_value*10;
-    config.m_offset2_mm = m_valuegui_offset2.m_value*10;
     
     loadConfig();
 }
