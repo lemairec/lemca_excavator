@@ -79,9 +79,14 @@ public:
     std::string m_debug_str_3 = "";
     std::string m_debug_str_4 = "";
     
+    GpsPointCap_ptr m_point_current;
+    GpsPointCap_ptr m_point_save;
+    double m_point_dist;
+    
     double m_hauteur_current;
     double m_hauteur_save;
     double m_hauteur_diff;
+    
     double m_profondeur_mm;
     
     

@@ -326,9 +326,76 @@ void GpsWidget::drawInfosBasLeft(){
     drawText(s, x1, y, sizeText_little, false, true);
     y+=inter;
     y+=inter;
-    drawText(f.m_nmea_parser_pilot.m_cfg_terrain_str, x1, y, sizeText_little, false, true);
+    s = strprintf("dist : %+.0f m", f.m_distance_last_point);
+    drawText(s, x1, y, sizeText_little, false, true);
     y+=inter;
-    drawText(f.m_nmea_parser_pilot.m_cfg_height_str, x1, y, sizeText_little, false, true);
+}
+
+void GpsWidget::drawInfosExcavator(){
+    Framework & f = Framework::instance();
+    
+    m_painter->setBrush(m_brush_background_2);
+    m_painter->setPen(m_pen_no);
+    
+    int x = m_width*0.66+15;
+    int y = 10;
+    int h = 0.66*m_height-15;
+    int w = m_width*0.1;
+    
+    
+    
+    m_painter->drawRoundedRect(x, y, w, h, 10, 10);
+    
+    int y2 = y+h/2;
+    int x2 = x+10;
+    int w2 = w-20;
+    int h2 = 40;
+    int h3 = 20;
+    int inter = 30;
+    
+    
+    
+    
+    
+    m_painter->setPen(m_pen_black);
+    if(f.m_hauteur_save){
+        double diff = f.m_hauteur_diff*100;
+        if(diff > 10){
+            m_painter->setBrush(m_brush_green);
+        }
+        if(diff < -10){
+            m_painter->setBrush(m_brush_red);
+        }
+        m_painter->drawRoundedRect(x2, y2, w2, h2, 10, 10);
+        
+        std::string s = strprintf("%+.0f cm", f.m_hauteur_diff*100);
+        drawText(s, x2+w2/2, y2+25, sizeText_little, true, true);
+        
+        y2 -=inter;
+        if(diff > 10) m_painter->drawRoundedRect(x2, y2, w2, h3, 10, 10);
+        y2 -=inter;
+        if(diff > 20) m_painter->drawRoundedRect(x2, y2, w2, h3, 10, 10);
+        y2 -=inter;
+        if(diff > 30) m_painter->drawRoundedRect(x2, y2, w2, h3, 10, 10);
+        y2 -=inter;
+        if(diff > 40) m_painter->drawRoundedRect(x2, y2, w2, h3, 10, 10);
+        
+        y2 = y+h/2+20;
+        
+        y2 +=inter;
+        if(diff < -10) m_painter->drawRoundedRect(x2, y2, w2, h3, 10, 10);
+        y2 +=inter;
+        if(diff < -20) m_painter->drawRoundedRect(x2, y2, w2, h3, 10, 10);
+        y2 +=inter;
+        if(diff < -30) m_painter->drawRoundedRect(x2, y2, w2, h3, 10, 10);
+        y2 +=inter;
+        if(diff < -40) m_painter->drawRoundedRect(x2, y2, w2, h3, 10, 10);
+    } else {
+        std::string s = strprintf("---", f.m_hauteur_diff*100);
+        drawText(s, x2+w2/2, y2+25, sizeText_little, true, true);
+        
+        m_painter->drawRoundedRect(x2, y2, w2, h2, 10, 10);
+    }
 }
 
 void GpsWidget::drawRightLeft(){
@@ -469,6 +536,7 @@ void GpsWidget::draw(){
     drawButtons();
     drawInfos();
     drawInfosBasLeft();
+    drawInfosExcavator();
     
     drawRightLeft();
     drawAlertes();

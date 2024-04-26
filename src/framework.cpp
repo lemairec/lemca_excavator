@@ -184,11 +184,16 @@ double moyDeplacement(double deplacement){
 void Framework::onNewPoint(GpsPointCap_ptr p){
     myTime begin = myTimeInit();
     
+    m_point_current = p;
     m_hauteur_current = p->m_altitude;
     
     if(m_hauteur_save > 0){
         m_hauteur_diff = m_hauteur_current-m_hauteur_save-m_config.m_profondeur_mm*0.001;
         INFO(m_config.m_profondeur_mm);
+    }
+    
+    if(m_point_save){
+        m_distance_last_point = std::sqrt(m_point_save->distanceCarre(*p));
     }
     
     m_stat_cap_rmc_deg.addNewValueDeg(m_position_module.m_last_rmc->m_cap_deg);
@@ -613,9 +618,6 @@ bool Framework::getVolantEngaged(){
 void Framework::setErrorWarning(){
     m_errors.clear();
     
-    if(!m_pilot_translator_module.m_capteur_timer.isConnected()){
-        m_errors.push_front(Error_TranslatorNotConnected);
-    }
     if(!m_gpgn_time.isConnected()){
         m_errors.push_front(Error_GPSNotConnected);
     } else {

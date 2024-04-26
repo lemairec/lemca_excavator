@@ -284,6 +284,7 @@ void RapideOptionWidget::onMousePage4(int x, int y){
     
     if(m_save_point.isActive(x, y)){
         f.m_hauteur_save =  f.m_hauteur_current;
+        f.m_point_save =  f.m_point_current;
     }
     
     loadConfig();

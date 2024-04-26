@@ -102,6 +102,7 @@ public:
     void drawExcavator();
     void drawInfos();
     void drawInfosBasLeft();
+    void drawInfosExcavator();
     void drawRightLeft();
     void drawAlertes();
     void drawLicence();
