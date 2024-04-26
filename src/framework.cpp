@@ -187,6 +187,8 @@ void Framework::onNewPoint(GpsPointCap_ptr p){
     m_point_current = p;
     m_hauteur_current = p->m_altitude;
     
+    
+    
     if(m_hauteur_save > 0){
         m_hauteur_diff = m_hauteur_current-m_hauteur_save-m_config.m_profondeur_mm*0.001;
         INFO(m_config.m_profondeur_mm);
@@ -195,6 +197,8 @@ void Framework::onNewPoint(GpsPointCap_ptr p){
     if(m_point_save){
         m_distance_last_point = std::sqrt(m_point_save->distanceCarre(*p));
     }
+    
+    m_qt_media_player.work();
     
     m_stat_cap_rmc_deg.addNewValueDeg(m_position_module.m_last_rmc->m_cap_deg);
     //m_stat_cap_rmc2_deg.addNewValueDeg(m_position_module.m_last_rmc->m_cap2_deg);

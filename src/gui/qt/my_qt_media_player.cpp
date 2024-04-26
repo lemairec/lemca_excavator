@@ -68,42 +68,10 @@ void MyQtMediaPlayer::work(){
     if(m_son == 0){
         return;
     }
-    /*FrameworkVision & f = FrameworkVision::instance();
+    Framework & f = Framework::instance();
     
-    bool point_3em = f.m_pilot_module.go3emPoint();
-    if(f.m_playRobot){
-        if(!point_3em){
-            if(m_old_3eme_point){
-                m_old_3eme_point = point_3em;
-                play(2);
-            }
-        } else {
-            if(!m_old_3eme_point){
-                m_old_3eme_point = point_3em;
-                play(1);
-            }
-            return;
-        }
-        
-        for(auto e : f.getEtats()){
-            if(e == Etat_score_low){
-                if(m_son_image){
-                    play(0);
-                }
-                return;
-            }
-            if(e == Etat_Butee_Droite){
-                if(m_son_image){
-                    play(0);
-                }
-                return;
-            }
-            if(e == Etat_Butee_Gauche){
-                if(m_son_image){
-                    play(0);
-                }
-                return;
-            }
-        }
-    }*/
+    int dist_cm = f.m_hauteur_diff*100;
+    if(dist_cm < -5){
+        play(0);
+    }
 }
