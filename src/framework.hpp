@@ -62,14 +62,15 @@ class Framework {
     
     double m_resolution_draw;
     
-    GpsPoint_ptr m_lastPoint;
-    GpsPoint_ptr m_lastImportantPoint;
     
     JobModule m_job_module;
 public:
     static Framework & instance();
     ~Framework();
     void initOrLoadConfig();
+    
+    GpsPoint_ptr m_lastPoint;
+    GpsPoint_ptr m_lastImportantPoint;
     
     Synchro m_synchro;
     Balises m_balises;

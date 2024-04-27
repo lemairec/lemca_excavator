@@ -9,6 +9,7 @@ struct Balise : public GpsPoint {
     std::string m_color = "";
     std::string m_name = "";
     std::string m_datetime = "";
+    bool m_is_synchro = false;
     
     double m_distance;
     
@@ -21,11 +22,15 @@ public:
     std::vector<Balise *> m_balises;
     std::vector<Balise *> m_balises_sort;
     
+    std::vector<Balise *> m_balises_new;
+    
     void clear();
     
     void save();
     void load();
     void addBalise(Balise * b);
+    
+    void newBalise();
     
     void sort(GpsPoint_ptr p);
 };

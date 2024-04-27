@@ -83,11 +83,11 @@ public:
     int m_offset2_mm = 0;
     
     bool isDeveloppeur(){
-        return m_user_mode > 1;
+        return true;//m_user_mode > 1;
     }
     
     bool isTechnicien(){
-        return m_user_mode > 0;
+        return true;//m_user_mode > 0;
     }
     
     Config();

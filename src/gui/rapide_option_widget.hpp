@@ -47,22 +47,10 @@ public:
     bool m_avance_black_white = false;
     
     //page1
-    double m_value;
-    ValueGui m_valuegui_red;
-    ButtonGui m_coeff_0;
-    ButtonGui m_coeff_1;
-    ButtonGui m_coeff_2;
-    ButtonGui m_coeff_3;
-    ButtonGui m_coeff_4;
-    
-    ButtonGui m_contrast_0;
-    ButtonGui m_contrast_1;
-    ButtonGui m_contrast_2;
-    ButtonGui m_contrast_3;
-    ButtonGui m_contrast_4;
+    ButtonGui m_new_point;
     
     
-    ValueGui m_valuegui_contraste;
+    
     void setSizePage1(int width, int height);
     void drawPage1();
     void onMousePage1(int x, int y);

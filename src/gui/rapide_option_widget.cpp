@@ -122,46 +122,61 @@ void RapideOptionWidget::open(){
 }
 
 
+int m_y_begin = 0;
+int m_y_inter = 0;
+
+
 /**
     PAGE 1
  */
 
 void RapideOptionWidget::setSizePage1(int width, int height){
-    m_valuegui_red.setResize(m_x_middle, 0.4*m_height, m_petit_button, "");
-    m_valuegui_contraste.setResize(m_x_middle, 0.6*m_height, m_petit_button, "");
-    
-    int y =  0.4*m_height2;
-    int dx = 0.07*m_height;
-    m_coeff_0.setResize(m_x_middle-2*dx, y, m_petit_button);
-    m_coeff_1.setResize(m_x_middle-1*dx, y, m_petit_button);
-    m_coeff_2.setResize(m_x_middle, y, m_petit_button);
-    m_coeff_3.setResize(m_x_middle+1*dx, y, m_petit_button);
-    m_coeff_4.setResize(m_x_middle+2*dx, y, m_petit_button);
-    
-    y =  0.6*m_height2;
-    
-    m_contrast_0.setResize(m_x_middle-2*dx, y, m_petit_button);
-    m_contrast_1.setResize(m_x_middle-1*dx, y, m_petit_button);
-    m_contrast_2.setResize(m_x_middle, y, m_petit_button);
-    m_contrast_3.setResize(m_x_middle+1*dx, y, m_petit_button);
-    m_contrast_4.setResize(m_x_middle+2*dx, y, m_petit_button);
-    
-    m_avanced_bw.setResizeStd(m_x_middle, 0.2*m_height2, "", true);
-    m_avance_label_av = QString::fromStdString(Langage::getKey("RAPIDE_AVANCED"));
-    m_avance_label_re = QString::fromStdString(Langage::getKey("RETURN"));
+    m_y_begin = 0.25*m_height2;
+    m_y_inter = 0.1*m_height2;;
+    int y = m_y_begin;
+    m_new_point.setResizeStd(m_x+m_width2*0.5, y, "New Point", true);
 };
 
 void RapideOptionWidget::drawPage1(){
+    drawQText("Arpentage", m_x+m_width2/2, m_y_title, sizeText_big, true);
+    
+    
+    drawButtonLabel2(m_new_point);
+    
+    Framework & f = Framework::instance();
+    
+    m_painter->setPen(m_pen_black_inv);
+    int y = m_y_begin;
+    y += m_y_inter;
+    y += m_y_inter;
+    QString s = "nbr new balises : "+QString::number(f.m_balises.m_balises_new.size());
+    drawQTexts(s, m_x+m_width2*0.2, y);
+    
+    y += m_y_inter;
+    size_t len = f.m_balises.m_balises_new.size();
+    if(len > 10){
+        len = 10;
+    }
+    for(size_t i = 0; i < len; ++i){
+        Balise * b = f.m_balises.m_balises_new[i];
+        std::string s1 = strprintf("- %.7f,%.7f,%.1f m", b->m_latitude, b->m_longitude, b->m_altitude);
+        drawText(s1, m_x+m_width2*0.2, y);
+        y += m_y_inter/4;
+        
+    }
 }
 
 void RapideOptionWidget::onMousePage1(int x, int y){
+    Framework & f = Framework::instance();
+    
+    if(m_new_point.isActive(x, y)){
+        f.m_balises.newBalise();
+    }
 }
 
 /**
     PAGE 2
  */
-int m_y_begin = 0;
-int m_y_inter = 0;
 
 void RapideOptionWidget::setSizePage2(int width, int height){
     m_y_begin = 0.25*m_height2;

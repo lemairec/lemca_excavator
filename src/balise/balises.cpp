@@ -42,6 +42,11 @@ void Balises::load(){
             JSONObject root = parcelle->AsObject();
             b->m_latitude = root[L"lat"]->AsNumber();
             b->m_longitude = root[L"lon"]->AsNumber();
+            auto it = root.find(L"alt");
+            if(it != root.end()){
+                b->m_altitude = root[L"alt"]->AsNumber();
+            }
+            
             b->m_datetime = w_to_string(root[L"my_datetime"]->AsString());
             b->m_name = w_to_string(root[L"name"]->AsString());
             b->m_color = w_to_string(root[L"color"]->AsString());
@@ -64,6 +69,7 @@ void Balises::save(){
         JSONObject value;
         value[L"lat"] = new JSONValue(b->m_latitude);
         value[L"lon"] = new JSONValue(b->m_longitude);
+        value[L"alt"] = new JSONValue(b->m_altitude);
         value[L"my_datetime"] = new JSONValue(string_to_w(b->m_datetime));
         value[L"name"] = new JSONValue(string_to_w(b->m_name));
         value[L"color"] = new JSONValue(string_to_w(b->m_color));
@@ -88,4 +94,25 @@ void Balises::sort(GpsPoint_ptr p){
         m_balises_sort.push_back(b);
     }
     std::sort (m_balises_sort.begin(), m_balises_sort.end(), myfunction);
+}
+
+void Balises::newBalise(){
+    Framework & f = Framework::instance();
+    GpsPoint_ptr p = f.m_lastPoint;
+    
+    if(p){
+        Balise * b = new Balise();
+        b->m_latitude = p->m_latitude;
+        b->m_longitude = p->m_longitude;
+        b->m_altitude = p->m_altitude;
+        b->m_datetime = p->m_time;
+        b->m_name =  strprintf("b_%i", p->m_time);
+        b->m_color = "red";
+        b->m_is_synchro = false;
+        m_balises_new.push_back(b);
+        m_balises.push_back(b);
+        f.m_position_module.setXY(*b);
+        save();
+    }
+    
 }
