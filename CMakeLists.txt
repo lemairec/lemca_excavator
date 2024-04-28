@@ -4,7 +4,7 @@ project(lemca_excavator)
 # The version number.
 set (PROJECT_VERSION_MAJOR 24)
 set (PROJECT_VERSION_MINOR 3)
-set (PROJECT_VERSION_PATCH 2)
+set (PROJECT_VERSION_PATCH 3)
 set (PROJECT_VERSION_DESC prod)
 
 configure_file (
