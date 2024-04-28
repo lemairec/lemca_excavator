@@ -326,7 +326,7 @@ void GpsWidget::drawInfosBasLeft(){
     drawText(s, x1, y, sizeText_little, false, true);
     y+=inter;
     y+=inter;
-    s = strprintf("dist : %+.0f m", f.m_distance_last_point);
+    s = strprintf("dist : %+.1f m", f.m_distance_last_point);
     drawText(s, x1, y, sizeText_little, false, true);
     y+=inter;
 }
