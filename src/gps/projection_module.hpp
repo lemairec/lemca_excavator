@@ -57,8 +57,6 @@ public:
         lat_lon_to_utm(lat_d,lon_d, NULL, &easting, &northing);
         x = easting;
         y = northing;
-        
-        INFO(lat_d << " " << lon_d << " " << x << " " << y);
     }
 
     void setLatLon(double x, double y, double & lat_d, double & lon_d){
