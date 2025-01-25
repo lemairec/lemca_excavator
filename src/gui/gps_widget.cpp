@@ -121,25 +121,13 @@ void GpsWidget::setSize(int width, int height){
     m_button_volant.setResize(x_right, height-m_gros_button*1.2-10, m_gros_button);
     
     int x = x_right;
-    x -= 3*inter;
-    m_button_vitesse_plus.setResize(x, m_height-30, m_gros_button);
+    x -= inter;
+    m_button_vitesse_plus.setResize(x-30, m_height-30, m_gros_button);
     x -= inter;
     m_button_play.setResize(x, m_height-30, m_gros_button);
     x -= inter;
     m_button_vitesse_moins.setResize(x, m_height-30, m_gros_button);
     m_button3d.setResize(m_width/2, m_height/2, m_gros_button);
-    
-    int y_bas2 = height*0.92;
-    {
-        int x = 0.65*m_width+20;
-        int w = 0.24*m_width;
-        int x2 = x+w/2-0.08*m_width;
-        m_button_left.setResize(x2, y_bas2, m_gros_button);
-        x2 = x+w/2;
-        m_button_middle.setResize(x2, y_bas2, "", true, m_gros_button*2*1.4,m_gros_button*2);
-        x2 = x+w/2+0.08*m_width;
-        m_button_right.setResize(x2, y_bas2, m_gros_button);
-    }
     
     m_key_board_widget.setSize(width, height);
     m_first_widget.setSize(width, height);
@@ -193,7 +181,6 @@ void GpsWidget::drawButtons(){
     
     if(f.m_config.m_gps_serial == "file"){
         drawButtonImageCarre(m_button_vitesse_plus, m_img_plus, 0.4);
-        //TODO drawButtonCarre(m_button_play);
         drawButtonImageCarre(m_button_vitesse_moins, m_img_moins, 0.4);
         QString s = "v "+QString::number(f.m_fileModule.m_vitesse);
         drawQText(s, m_button_play.m_x, m_button_play.m_y, sizeText_medium, true);
@@ -213,10 +200,8 @@ void GpsWidget::drawInfos(){
     
     double inter = 0.075*m_width;
     int x = 0.5*m_width+10;
-    int x_d = -inter*1.5+x;
-    int x_q = -inter*0.5+x;
-    int x_v =  inter*0.5+x;
-    int x_3 =  inter*1.5+x;
+    int x_q = -inter*1+x;
+    int x_v =  inter*1+x;
     
     m_painter->setBrush(m_brush_background_2);
     m_painter->setPen(m_pen_no);
@@ -265,19 +250,8 @@ void GpsWidget::drawInfos(){
     
     if(img){
         //int y = m_height*0.95;
-        drawMyImage(*img, x_q, y_top-25, 2*0.4, true);
+        drawMyImage(*img, x_q, y_top-25, 2*0.3, true);
         drawText(s, x_q, y_top, sizeText_little, true, true);
-    }
-    
-    
-    if(f.m_auto_path_module.m_save){
-        QString s = "record";
-        drawQText(s, x_d, y_top-25, sizeText_little, true, true);
-        //m_painter->drawEl
-    } else {
-        QString s = QString::number(std::round(f.m_pilot_translator_module.m_pas_mesured_mm_liss)/10.0, 'f', 1) + " cm";
-        drawQText(s, x_d, y_top-25, sizeText_little, true, true);
-        drawMyImage(*m_img_metre, x_d, y_top, 0.2*0.4, true);
     }
     
     
@@ -286,21 +260,8 @@ void GpsWidget::drawInfos(){
         drawQText(s, x_v, y_top-20, sizeText_little, true, true);
         drawQText("km/h", x_v, y_top, sizeText_little, true, true);
         
-        drawMyImage(*m_img_compteur,x_v, y_top-21, 1.5*0.4, true);
+        drawMyImage(*m_img_compteur,x_v, y_top-21, 1.5*0.3, true);
     }
-    
-    if(f.m_pilot_translator_module.m_point_3){
-        drawMyImage(*m_img_3_point_up,x_3, y_top-10, 1.5*0.4, true);
-    } else {
-        drawMyImage(*m_img_3_point_down,x_3, y_top-20, 1.5*0.4, true);
-    }
-    
-    drawButtonImageCarre(m_button_right, m_img_right, 0.4);
-    drawText("RIGHT", m_button_right.m_x, m_button_right.m_y+20, sizeText_little, true, true);
-    drawButtonImageCarre(m_button_middle, m_img_middle, 0.4);
-    drawText("MIDDLE", m_button_middle.m_x, m_button_middle.m_y+20, sizeText_little, true, true);
-    drawButtonImageCarre(m_button_left, m_img_left, 0.4);
-    drawText("LEFT", m_button_left.m_x, m_button_left.m_y+20, sizeText_little, true, true);
     
 }
 
@@ -399,20 +360,6 @@ void GpsWidget::drawInfosExcavator(){
 }
 
 void GpsWidget::drawRightLeft(){
-    int h = 0.15*m_height;
-    int y = m_height - h - 10;
-    int x = 0.65*m_width+20;
-    int w = 0.24*m_width;
-    
-    m_painter->setBrush(m_brush_background_2);
-    m_painter->setPen(m_pen_no);
-    
-    m_painter->drawRoundedRect(x, y, w, h, 10, 10);
-    
-    drawButtonImageCarre(m_button_right, m_img_right, 0.3, false, Langage::getKey("RIGHT"));
-    
-    drawButtonImageCarre(m_button_middle, m_img_middle, 0.3, false, Langage::getKey("MIDDLE"));
-    drawButtonImageCarre(m_button_left, m_img_left, 0.3, false, Langage::getKey("LEFT"));
 }
 
 void GpsWidget::drawAlertes(){
@@ -660,18 +607,6 @@ int GpsWidget::onMouse(int x, int y){
     } else if(m_button_balise.isActive(x, y)){
         if(f.m_config.m_balise_enable){
             openRapideWidget(3);
-        }
-    }
-    
-    {
-        if(m_button_left.isActive(x, y) != 0){
-            f.m_pilot_translator_module.openRelayLeft(500);
-        }
-        if(m_button_right.isActive(x, y) != 0){
-            f.m_pilot_translator_module.openRelayRight(500);
-        }
-        if(m_button_middle.isActive(x, y) != 0){
-            f.m_pilot_translator_module.test_mm(0);
         }
     }
     

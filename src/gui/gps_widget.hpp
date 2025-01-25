@@ -87,10 +87,6 @@ public:
     
     ButtonGui m_button_volant;
     
-    ButtonGui m_button_left;
-    ButtonGui m_button_middle;
-    ButtonGui m_button_right;
-    
     bool m_debug = false;
     bool m_is_develop = true;
     

@@ -323,12 +323,12 @@ void RapideOptionWidget::onMousePage5(int x, int y){
 
 // Page 6
 void RapideOptionWidget::setSizePage6(int width, int height){
-    m_button_reset.setResizeStd(m_x_middle, 0.6*m_height2, Langage::getKey("RAPIDE_RESET"), true);
+    //m_button_reset.setResizeStd(m_x_middle, 0.6*m_height2, Langage::getKey("RAPIDE_RESET"), true);
     m_button_diag.setResizeStd(m_x_middle, 0.7*m_height2, Langage::getKey("DIAGNOSTIC"), true);
 }
 
 void RapideOptionWidget::drawPage6(){
-    drawText(Langage::getKey("RAPIDE_COUNTER"), m_x+m_width2/2, m_y_title, sizeText_big, true);
+    drawText(Langage::getKey("INFOS"), m_x+m_width2/2, m_y_title, sizeText_big, true);
     
     /*int y = 0.25*m_height2;
     int inter = 0.04*m_height2;;
@@ -377,7 +377,7 @@ void RapideOptionWidget::drawPage6(){
         drawQText(qs, m_x+m_width2/2, y, sizeText_medium, true);
     }*/
     
-    drawButtonLabel2(m_button_reset);
+    //drawButtonLabel2(m_button_reset);
     drawButtonLabel2(m_button_diag);
 }
 

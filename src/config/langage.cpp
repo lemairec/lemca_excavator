@@ -87,6 +87,10 @@ Langage::Langage(){
     add("FR", "MIDDLE", "Droite");
     add("FR", "QUIT", "Quitter");
    
+    add("FR", "INFOS", "Infos");
+    add("FR", "CLOSE", "Quitter");
+    add("FR", "DIAGNOSTIC", "Diagnostique");
+   
     
     add("FR", "OK", "OK");
     add("FR", "CANCEL", "Annuler");
