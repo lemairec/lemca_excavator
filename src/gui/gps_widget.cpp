@@ -937,7 +937,7 @@ void GpsWidget::drawGpsWidget(){
         }
         drawLineCurve();
         
-        drawSurfaceToDraw();
+        //drawSurfaceToDraw();
         
         drawExcavator();
         
