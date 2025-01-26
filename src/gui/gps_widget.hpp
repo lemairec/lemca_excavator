@@ -85,7 +85,7 @@ public:
     ButtonGui m_button_vitesse_plus;
     ButtonGui m_button_vitesse_moins;
     
-    ButtonGui m_button_volant;
+    //ButtonGui m_button_volant;
     
     bool m_debug = false;
     bool m_is_develop = true;

@@ -104,13 +104,13 @@ void GpsWidget::setSize(int width, int height){
     int inter = m_gros_button*2.1;
     int y = m_gros_button*1.2+10;
     m_button_option.setResize(x_right, y, m_gros_button);
-    y += inter*2;
+    y += inter*1.5;
     m_button_plus.setResize(x_right, y, m_gros_button);
     y += inter;
     m_button_moins.setResize(x_right, y, m_gros_button);
     //y += inter;
     
-    y += inter*2;
+    y += inter*1.5;
     m_button_offset.setResize(x_right, y, m_gros_button);
     y += inter;
     m_button_balise.setResize(x_right, y, m_gros_button);
@@ -118,7 +118,7 @@ void GpsWidget::setSize(int width, int height){
     m_button_diag.setResize(x_right, y, m_gros_button);
     
     y += inter;
-    m_button_volant.setResize(x_right, height-m_gros_button*1.2-10, m_gros_button);
+    //m_button_volant.setResize(x_right, height-m_gros_button*1.2-10, m_gros_button);
     
     int x = x_right;
     x -= inter;
@@ -167,17 +167,6 @@ void GpsWidget::drawButtons(){
     
     //TODO m_painter->setBrush(m_brushDarkGray);
     m_painter->setPen(m_pen_no);
-    if(f.isTranslateurConnected()){
-        if(f.getVolantEngaged()){
-            drawButtonImageCarre(m_button_volant, m_img_volant_green, 0.4, false, Langage::getKey("LOGO_ENGAGE"));
-        } else {
-            drawButtonImageCarre(m_button_volant, m_img_volant, 0.4, false, Langage::getKey("LOGO_ENGAGE"));
-        }
-        
-        
-    } else {
-        drawButtonImageCarre(m_button_volant, m_img_volant_red, 0.4, false, Langage::getKey("LOGO_ENGAGE"));
-    }
     
     if(f.m_config.m_gps_serial == "file"){
         drawButtonImageCarre(m_button_vitesse_plus, m_img_plus, 0.4);
@@ -598,8 +587,6 @@ int GpsWidget::onMouse(int x, int y){
         if(f.m_config.m_gps_serial == "file"){
             Framework::instance().m_fileModule.vitesseMoins();
         }
-    } else if(m_button_volant.isActive(x2, y2)){
-        Framework::instance().setVolantEngaged(!Framework::instance().getVolantEngaged());
     } else if(m_button3d.isActive(x2, y2)){
         Framework::instance().m_config.m_3d = !Framework::instance().m_config.m_3d;
     } else if(m_button_offset.isActive(x, y)){
