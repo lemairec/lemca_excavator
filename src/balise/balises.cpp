@@ -37,9 +37,9 @@ void Balises::load(){
     
     if(!str.empty()){
         JSONValue *json = JSON::Parse(str.c_str());
-        for(auto parcelle : json->AsArray()){
+        for(auto balise : json->AsArray()){
             Balise * b = new Balise();
-            JSONObject root = parcelle->AsObject();
+            JSONObject root = balise->AsObject();
             b->m_latitude = root[L"lat"]->AsNumber();
             b->m_longitude = root[L"lon"]->AsNumber();
             auto it = root.find(L"alt");
@@ -50,6 +50,10 @@ void Balises::load(){
             b->m_datetime = w_to_string(root[L"my_datetime"]->AsString());
             b->m_name = w_to_string(root[L"name"]->AsString());
             b->m_color = w_to_string(root[L"color"]->AsString());
+            if(b->m_name[0] == 'i' && b->m_name[1] == 'r'){
+                m_balises2.push_back(b);
+                INFO(b->m_name);
+            }
             m_balises.push_back(b);
         }
     }

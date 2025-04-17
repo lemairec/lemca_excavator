@@ -912,6 +912,7 @@ void GpsWidget::drawGpsWidget(){
     drawBackgroundGps();
     
     //scene->clear();
+
     
     if(f.getEtat() == Etat_Points){
         m_painter->setPen(m_pen_red); // personnaliser
@@ -926,6 +927,20 @@ void GpsWidget::drawGpsWidget(){
         
         drawBalises();
         drawCercles();
+        
+        m_painter->setPen(m_pen_red);
+        double x_last = 0, y_last = 0;
+        for(auto p: f.m_balises.m_balises2){
+            double x1, y1;
+            myProjete2(p->m_x, p->m_y, x1, y1);
+            if(x_last != 0){
+                m_painter->drawLine(x1, y1, x_last, y_last);
+            }
+            x_last = x1;
+            y_last = y1;
+            
+        }
+        x_last = 0;
     } else {
         drawParcelle();
         if(f.getEtat() == Etat_PointASaved){

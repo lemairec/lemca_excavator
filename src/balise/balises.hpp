@@ -20,6 +20,7 @@ class Balises {
     //int m_page = 0;
 public:
     std::vector<Balise *> m_balises;
+    std::vector<Balise *> m_balises2;
     std::vector<Balise *> m_balises_sort;
     
     std::vector<Balise *> m_balises_new;

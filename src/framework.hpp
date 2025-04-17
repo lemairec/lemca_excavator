@@ -134,8 +134,6 @@ public:
     CurveAB m_curveAB;
     LineCurves m_lines;
     
-    
-   
     int m_demitour_current_i = 0;
     int m_demitour_next_i = 8888;
     
