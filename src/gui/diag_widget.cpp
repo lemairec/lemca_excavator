@@ -220,6 +220,11 @@ void DiagnosticWidget::draw(){
         std::string s = f.m_nmea_parser_gps.m_last_gga_str;
         drawText(s, x2, y, sizeText_little);
     }
+    y+=1*inter;
+    {
+        std::string s = f.m_nmea_parser_pilot.m_last_gga_str;
+        drawText(s, x2, y, sizeText_little);
+    }
     
     y+=2*inter;
     
