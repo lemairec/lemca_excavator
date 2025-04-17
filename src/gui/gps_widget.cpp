@@ -279,6 +279,15 @@ void GpsWidget::drawInfosBasLeft(){
     s = strprintf("dist : %+.1f m", f.m_distance_last_point);
     drawText(s, x1, y, sizeText_little, false, true);
     y+=inter;
+    if(f.m_point_current){
+        y+=inter;
+        s = strprintf("lat : %+.8f", f.m_point_current->m_latitude);
+        drawText(s, x1, y, sizeText_little, false, true);
+        y+=inter;
+        s = strprintf("long : %+.8f", f.m_point_current->m_longitude);
+        drawText(s, x1, y, sizeText_little, false, true);
+    }
+    
 }
 
 void GpsWidget::drawInfosExcavator(){
