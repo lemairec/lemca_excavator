@@ -12,11 +12,9 @@ MyQTSerialPorts::MyQTSerialPorts(){
     QObject::connect(this, SIGNAL(initSignal()), this, SLOT(initSlot()));
     
     connect(&m_gps_port, SIGNAL(readyRead()), this, SLOT(handleGpsReadyRead()));
-    connect(&m_gps_port, static_cast<void (QSerialPort::*)(QSerialPort::SerialPortError)>(&QSerialPort::error),
-            this, &MyQTSerialPorts::handleGpsError);
+    connect(&m_gps_port, SIGNAL(error()), this, SLOT(handleGpsError()));
     connect(&m_pilot_port, SIGNAL(readyRead()), this, SLOT(handlePilotReadyRead()));
-    connect(&m_pilot_port, static_cast<void (QSerialPort::*)(QSerialPort::SerialPortError)>(&QSerialPort::error),
-            this, &MyQTSerialPorts::handlePilotError);
+    connect(&m_pilot_port, SIGNAL(error()), this, SLOT(handlePilotError()));
     connect(&m_timerPilot, SIGNAL(timeout()), this, SLOT(handleTimer()));
 }
 

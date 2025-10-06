@@ -1,10 +1,15 @@
-cmake_minimum_required(VERSION 2.8)
+cmake_minimum_required(VERSION 3.10)
+
+# Utilisation de C++17
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+
 project(lemca_excavator)
 
 # The version number.
-set (PROJECT_VERSION_MAJOR 25)
-set (PROJECT_VERSION_MINOR 1)
-set (PROJECT_VERSION_PATCH 1)
+set (PROJECT_VERSION_MAJOR 24)
+set (PROJECT_VERSION_MINOR 3)
+set (PROJECT_VERSION_PATCH 5)
 set (PROJECT_VERSION_DESC prod)
 
 configure_file (
@@ -13,26 +18,17 @@ configure_file (
 )
 include_directories("${PROJECT_BINARY_DIR}")
 
+
 if(APPLE)
     ADD_DEFINITIONS(-DAPPLE)
 endif()
 
-FIND_PACKAGE(Qt5Core)
-find_library(PTHREAD pthread)
+
+find_package(Qt6 REQUIRED COMPONENTS Core Gui Widgets Multimedia SerialPort Network)
+
+find_package(GDAL CONFIG REQUIRED)
 
 set(CMAKE_AUTOMOC ON)
-
-if(UNIX)
-    ADD_DEFINITIONS(-std=c++0x -Wall)
-    ADD_DEFINITIONS(-DUNIX)
-    ADD_DEFINITIONS(-O3)
-    #ADD_DEFINITIONS(-g -Wall)
-endif()
-
-find_package(Boost REQUIRED COMPONENTS system)
-include_directories( ${Boost_INCLUDE_DIR}   )
-
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++1y")
 
 FILE(GLOB_RECURSE src_hpp src/*.hpp)
 FILE(GLOB_RECURSE src_cpp src/*.cpp)
@@ -41,12 +37,9 @@ FILE(GLOB_RECURSE src_cc src/*.cc)
 
 set(sources ${src_hpp} ${src_cpp} ${src_h} ${src_cc} ${PROJECT_BINARY_DIR}/environnement.hpp src/environnement.hpp.in README.md)
 
-FIND_PACKAGE( OpenCV REQUIRED )
-FIND_PACKAGE(Qt5Core)
 add_executable(lemca_excavator ${sources})
-qt5_use_modules(lemca_excavator Widgets Multimedia SerialPort Network)
 
-target_link_libraries(lemca_excavator ${Boost_LIBRARIES} ${CMAKE_THREAD_LIBS_INIT} ${PTHREAD} ${OpenCV_LIBS})
+target_link_libraries(lemca_excavator Qt6::Core Qt6::Gui Qt6::Widgets Qt6::SerialPort Qt6::Multimedia Qt6::Network GDAL::GDAL)
 
 ###
 # grouping files for visual studio or xcode

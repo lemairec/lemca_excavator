@@ -7,7 +7,7 @@
 MyQtMediaPlayer::MyQtMediaPlayer(){
     //connect(m_media_player, SIGNAL(positionChanged(qint64)), this, SLOT(positionChanged(qint64)));
     
-    {
+    /*{
         QString s = QString::fromStdString(DirectoryManager::instance().getSourceDirectory());
         QString s2 = s+"/sound/beep-01a.wav";
         m_media_player_beep.setMedia(QUrl::fromLocalFile(s2));
@@ -21,7 +21,7 @@ MyQtMediaPlayer::MyQtMediaPlayer(){
         QString s = QString::fromStdString(DirectoryManager::instance().getSourceDirectory());
         QString s2 = s+"/sound/autoOff.wav";
         m_media_player_off.setMedia(QUrl::fromLocalFile(s2));
-    }
+    }*/
     
 }
 
@@ -29,13 +29,13 @@ MyQtMediaPlayer::~MyQtMediaPlayer(){
 }
 
 void MyQtMediaPlayer::setVolume(int i){
-    m_media_player_beep.setVolume(i);
+    /*m_media_player_beep.setVolume(i);
     m_media_player_on.setVolume(i);
-    m_media_player_off.setVolume(i);
+    m_media_player_off.setVolume(i);*/
 }
 
 void MyQtMediaPlayer::play(int i){
-    if(i == 0){
+    /*if(i == 0){
         if(m_media_player_beep.state() != QMediaPlayer::PlayingState && m_media_player_on.state() != QMediaPlayer::PlayingState && m_media_player_off.state() != QMediaPlayer::PlayingState){
             m_media_player_beep.play();
         }
@@ -45,7 +45,7 @@ void MyQtMediaPlayer::play(int i){
     } else if(i == 2){
         m_media_player_beep.stop();
         m_media_player_off.play();
-    }
+    }*/
 }
 
 void MyQtMediaPlayer::initOrLoad(const Config &config){
