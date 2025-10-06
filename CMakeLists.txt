@@ -1,9 +1,16 @@
+# ----------------------------------------------------------------------------
+#  Root CMake file for WeedVision
+#
+#    From the off-tree build directory, invoke:
+#      $ cmake <PATH_TO_OPENCV_ROOT>
+#
+#
+#   - Juillet -2011: Initial version <lemairec02@gmail.com>
+#
+# ----------------------------------------------------------------------------
+
 cmake_minimum_required(VERSION 3.5)
-project(lemca_excavator)
-
-set(CMAKE_CXX_STANDARD 17)
-set(CMAKE_CXX_STANDARD_REQUIRED ON)
-
+project(lemca_excavator2)
 
 # The version number.
 set (PROJECT_VERSION_MAJOR 26)
@@ -11,6 +18,9 @@ set (PROJECT_VERSION_MINOR 3)
 set (PROJECT_VERSION_PATCH 0)
 set (PROJECT_VERSION_DESC test)
 
+
+option (USE_CPACK "Use CPACK" OFF)
+option (USE_ROBOT "Use Robot" ON)
 
 # configure a header file to pass some of the CMake settings to the source code
 configure_file (
@@ -32,7 +42,6 @@ file(GLOB_RECURSE    source_files_hpp        src/*.hpp)
 
 set(CMAKE_AUTOMOC ON)
 FIND_PACKAGE(Qt5Core)
-FIND_PACKAGE(GDAL CONFIG REQUIRED)
 
 option (USE_ROBOT "Use Robot" ON)
 
@@ -61,22 +70,22 @@ SET(sources
 
 # Declaration de l'executable
 add_executable(
-    lemca_excavator
+    lemca_excavator2
     README.md
     src/environnement.hpp.in
     ${sources}
     ${source_files_moc}
     )
 
-qt5_use_modules(lemca_excavator Widgets Multimedia SerialPort )
+qt5_use_modules(lemca_excavator2 Widgets Multimedia SerialPort )
 
 
-TARGET_LINK_LIBRARIES( lemca_excavator
+TARGET_LINK_LIBRARIES( lemca_excavator2
     ${OpenCV_LIBS}
     ${QT_LIBRARIES}
     ${QT_QTNETWORK_LIBRARY}
     Threads::Threads
-    GDAL::GDAL
+
 )
 
 ###

@@ -14,7 +14,6 @@
 #include <iostream>
 #include <fstream>
 #include <sstream>
-#include <boost/algorithm/string.hpp>
 
 OptionWidget::OptionWidget(){
     

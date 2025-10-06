@@ -163,8 +163,6 @@ void MyQTSerialPorts::handleTimer(){
 /**
  * LIST PORT
  */
-
-#include <boost/algorithm/string.hpp>
 #include <iostream>
 #include <fstream>
 #include <sstream>
@@ -183,13 +181,7 @@ std::string execute3(std::string cmd){
 void MyQTSerialPorts::addSerialPorts(std::string s){
     std::string res = execute3(s);
     std::vector<std::string> strs;
-    boost::split(strs, res, boost::is_any_of("\n"));
-    for(auto s : strs){
-        if(!s.empty()){
-            INFO(s);
-            m_serials.push_back(s);
-        }
-    }
+   
 }
 
 std::vector<std::string> & MyQTSerialPorts::getAvailablePorts(){

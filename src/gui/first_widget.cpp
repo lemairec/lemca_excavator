@@ -11,7 +11,6 @@
 #include <iostream>
 #include <fstream>
 #include <sstream>
-#include <boost/algorithm/string.hpp>
 
 FirstWidget::FirstWidget(){
     //m_close = true;
