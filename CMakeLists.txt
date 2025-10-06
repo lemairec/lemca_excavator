@@ -1,17 +1,18 @@
-cmake_minimum_required(VERSION 3.10)
+cmake_minimum_required(VERSION 3.5)
+project(lemca_excavator)
 
-# Utilisation de C++17
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-project(lemca_excavator)
 
 # The version number.
-set (PROJECT_VERSION_MAJOR 24)
+set (PROJECT_VERSION_MAJOR 26)
 set (PROJECT_VERSION_MINOR 3)
-set (PROJECT_VERSION_PATCH 5)
-set (PROJECT_VERSION_DESC prod)
+set (PROJECT_VERSION_PATCH 0)
+set (PROJECT_VERSION_DESC test)
 
+
+# configure a header file to pass some of the CMake settings to the source code
 configure_file (
     "${PROJECT_SOURCE_DIR}/src/environnement.hpp.in"
     "${PROJECT_BINARY_DIR}/environnement.hpp"
@@ -19,27 +20,64 @@ configure_file (
 include_directories("${PROJECT_BINARY_DIR}")
 
 
+# add the binary tree to the search path for include files
+# so that we will find TutorialConfig.h
+
+FIND_PACKAGE( OpenCV REQUIRED )
+set(THREADS_PREFER_PTHREAD_FLAG ON)
+find_package(Threads REQUIRED)
+
+file(GLOB_RECURSE    source_files_cpp        src/*.cpp)
+file(GLOB_RECURSE    source_files_hpp        src/*.hpp)
+
+set(CMAKE_AUTOMOC ON)
+FIND_PACKAGE(Qt5Core)
+FIND_PACKAGE(GDAL CONFIG REQUIRED)
+
+option (USE_ROBOT "Use Robot" ON)
+
+if(USE_ROBOT)
+    ADD_DEFINITIONS(-DUSE_ROBOT)
+else()
+    REMOVE_DEFINITIONS(-DUSE_ROBOT)
+endif()
+
+if(UNIX)
+    ADD_DEFINITIONS(-std=c++0x -Wall)
+    ADD_DEFINITIONS(-DUNIX)
+    ADD_DEFINITIONS(-O3)
+    #ADD_DEFINITIONS(-g -Wall)
+endif()
+
 if(APPLE)
     ADD_DEFINITIONS(-DAPPLE)
 endif()
 
 
-find_package(Qt6 REQUIRED COMPONENTS Core Gui Widgets Multimedia SerialPort Network)
+SET(sources
+    ${source_files_hpp} ${source_files_cpp} ${PROJECT_BINARY_DIR}/environnement.hpp
+    ${source_files_cfg}
+    )
 
-find_package(GDAL CONFIG REQUIRED)
+# Declaration de l'executable
+add_executable(
+    lemca_excavator
+    README.md
+    src/environnement.hpp.in
+    ${sources}
+    ${source_files_moc}
+    )
 
-set(CMAKE_AUTOMOC ON)
+qt5_use_modules(lemca_excavator Widgets Multimedia SerialPort )
 
-FILE(GLOB_RECURSE src_hpp src/*.hpp)
-FILE(GLOB_RECURSE src_cpp src/*.cpp)
-FILE(GLOB_RECURSE src_h src/*.h)
-FILE(GLOB_RECURSE src_cc src/*.cc)
 
-set(sources ${src_hpp} ${src_cpp} ${src_h} ${src_cc} ${PROJECT_BINARY_DIR}/environnement.hpp src/environnement.hpp.in README.md)
-
-add_executable(lemca_excavator ${sources})
-
-target_link_libraries(lemca_excavator Qt6::Core Qt6::Gui Qt6::Widgets Qt6::SerialPort Qt6::Multimedia Qt6::Network GDAL::GDAL)
+TARGET_LINK_LIBRARIES( lemca_excavator
+    ${OpenCV_LIBS}
+    ${QT_LIBRARIES}
+    ${QT_QTNETWORK_LIBRARY}
+    Threads::Threads
+    GDAL::GDAL
+)
 
 ###
 # grouping files for visual studio or xcode
@@ -48,11 +86,8 @@ target_link_libraries(lemca_excavator Qt6::Core Qt6::Gui Qt6::Widgets Qt6::Seria
 SET(dirlist "")
 FOREACH(file_path ${sources})
     GET_FILENAME_COMPONENT(dir_path ${file_path} PATH)
-    IF(dir_path STREQUAL "")
-    ELSE()
-        STRING(REPLACE "${PROJECT_SOURCE_DIR}/" "" dir_path2 ${dir_path})
-        SET(dir_list ${dir_list} ${dir_path2})
-    ENDIF()
+    STRING(REPLACE "${PROJECT_SOURCE_DIR}/" "" dir_path2 ${dir_path})
+    SET(dir_list ${dir_list} ${dir_path2})
 ENDFOREACH()
 LIST(REMOVE_DUPLICATES dir_list)
 
