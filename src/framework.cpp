@@ -34,6 +34,7 @@ Framework::Framework(){
     m_lines.load();
 
     setEtat(Etat_Reset);
+    setEtat(Etat_Soil);
     
     m_stat_pilot_desired.m_size_max=1000;
     m_stat_pilot_mesured.m_size_max=1000;

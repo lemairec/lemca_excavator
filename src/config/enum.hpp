@@ -7,7 +7,9 @@ enum Etat {
     Etat_OK = 2,
     Etat_ParcelleAdd = 3,
     Etat_ParcellePause = 4,
-    Etat_Points = 5
+    Etat_Points = 5,
+    Etat_Luc = 6,
+    Etat_Soil = 7
 };
 
 enum ErrorOrWarning {

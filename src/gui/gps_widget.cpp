@@ -266,26 +266,94 @@ void GpsWidget::drawInfosBasLeft(){
 
     m_painter->drawRoundedRect(10, y, 0.3*m_width+10, h, 10, 10);
     
-    int x1 = 50;
-    y+=inter;
-    y+=inter;
-    std::string s = strprintf("altitude : %+.1f m", f.m_hauteur_current);
-    drawText(s, x1, y, sizeText_little, false, true);
-    y+=inter;
-    s = strprintf("h : %+.0f cm", f.m_hauteur_diff*100);
-    drawText(s, x1, y, sizeText_little, false, true);
-    y+=inter;
-    y+=inter;
-    s = strprintf("dist : %+.1f m", f.m_distance_last_point);
-    drawText(s, x1, y, sizeText_little, false, true);
-    y+=inter;
-    if(f.m_point_current){
+    if(f.getEtat() == Etat_Luc){
+        int x1 = 50;
         y+=inter;
-        s = strprintf("lat : %+.8f", f.m_point_current->m_latitude);
+        std::string s = strprintf("luc");
         drawText(s, x1, y, sizeText_little, false, true);
         y+=inter;
-        s = strprintf("long : %+.8f", f.m_point_current->m_longitude);
+        s = strprintf("altitude : %+.1f m", f.m_hauteur_current);
         drawText(s, x1, y, sizeText_little, false, true);
+        y+=inter;
+        double lat = 0, lon = 0;
+        if(f.m_point_current){
+            lat = f.m_point_current->m_latitude;
+            lon = f.m_point_current->m_longitude;
+        }
+        y+=inter;
+        s = strprintf("lat : %+.8f", lat);
+        drawText(s, x1, y, sizeText_little, false, true);
+        y+=inter;
+        s = strprintf("long : %+.8f", lon);
+        drawText(s, x1, y, sizeText_little, false, true);
+    } else if(f.getEtat() == Etat_Soil){
+        int x1 = 50;
+        int x2 = 250;
+        y+=inter;
+        std::string s = strprintf("soil");
+        drawText(s, x1, y, sizeText_little, false, true);
+        y+=inter;
+        s = strprintf("ph : %.1f", f.m_last_soil_ph);
+        drawText(s, x1, y, sizeText_little, false, true);
+        y+=inter;
+        s = strprintf("temp : %.1f °C", f.m_last_soil_temp);
+        drawText(s, x1, y, sizeText_little, false, true);
+        y+=inter;
+        s = strprintf("cond : %.1f us/cm", f.m_last_soil_cond);
+        drawText(s, x1, y, sizeText_little, false, true);
+        y+=inter;
+        s = strprintf("hum : %.1f %", f.m_last_soil_hum);
+        drawText(s, x1, y, sizeText_little, false, true);
+        y+=inter;
+        s = strprintf("n : %.1f m", f.m_last_soil_n);
+        drawText(s, x1, y, sizeText_little, false, true);
+        y+=inter;
+        s = strprintf("p : %.1f m", f.m_last_soil_p);
+        drawText(s, x1, y, sizeText_little, false, true);
+        y+=inter;
+        s = strprintf("k : %.1f m", f.m_last_soil_k);
+        drawText(s, x1, y, sizeText_little, false, true);
+        y+=inter;
+        double lat = 0, lon = 0;
+        if(f.m_point_current){
+            lat = f.m_point_current->m_latitude;
+            lon = f.m_point_current->m_longitude;
+        }
+        y = m_height*0.66+15;
+        y+=inter;
+        y+=inter;
+        s = strprintf("lat : %.8f", lat);
+        drawText(s, x2, y, sizeText_little, false, true);
+        y+=inter;
+        s = strprintf("long : %.8f", lon);
+        drawText(s, x2, y, sizeText_little, false, true);
+        y+=inter;
+        s = strprintf("altitude : %.1f m", f.m_hauteur_current);
+        drawText(s, x2, y, sizeText_little, false, true);
+        
+        
+    } else {
+        int x1 = 50;
+        y+=inter;
+        y+=inter;
+        std::string s = strprintf("altitude : %+.1f m", f.m_hauteur_current);
+        drawText(s, x1, y, sizeText_little, false, true);
+        y+=inter;
+        s = strprintf("h : %+.0f cm", f.m_hauteur_diff*100);
+        drawText(s, x1, y, sizeText_little, false, true);
+        y+=inter;
+        y+=inter;
+        s = strprintf("dist : %+.1f m", f.m_distance_last_point);
+        drawText(s, x1, y, sizeText_little, false, true);
+        y+=inter;
+        if(f.m_point_current){
+            y+=inter;
+            s = strprintf("lat : %+.8f", f.m_point_current->m_latitude);
+            drawText(s, x1, y, sizeText_little, false, true);
+            y+=inter;
+            s = strprintf("long : %+.8f", f.m_point_current->m_longitude);
+            drawText(s, x1, y, sizeText_little, false, true);
+        }
     }
     
 }
@@ -914,7 +982,7 @@ void GpsWidget::drawGpsWidget(){
     //scene->clear();
 
     
-    if(f.getEtat() == Etat_Points){
+    if(f.getEtat() == Etat_Points || f.getEtat() == Etat_Luc){
         m_painter->setPen(m_pen_red); // personnaliser
         //double x_last = 0, y_last = 0;
         

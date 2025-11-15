@@ -90,6 +90,13 @@ public:
     
     double m_profondeur_mm;
     
+    double m_last_soil_temp;
+    double m_last_soil_hum;
+    double m_last_soil_cond;
+    double m_last_soil_ph;
+    double m_last_soil_n;
+    double m_last_soil_p;
+    double m_last_soil_k;
     
     
     std::string m_messages_errors;
