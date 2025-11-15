@@ -82,7 +82,7 @@ void BaseWidget::setPainter(QPainter * p){
 
 void BaseWidget::setSize(int width, int height){
     m_black_mode = false;//FrameworkVision::instance().m_config.m_black_mode;
-    m_gros_button = 0.065*height;
+    m_gros_button = 0.05*height;
     m_petit_button = 0.035*height;
     m_gros_gros_button = 0.12*height;
     m_width = width;
