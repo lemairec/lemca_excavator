@@ -673,16 +673,16 @@ void Framework::setAntennaH(){
         antenna_h = m_config.m_outil_replay_h;
     }
     if(antenna_h > 0){
-        m_serialModule.writePilotSerialS("$CFG TERRAIN ON\r\n");
+        m_serialModule.writePort1GpsStr("$CFG TERRAIN ON\r\n");
         QString s = "$CFG TERRAIN HEIGHT " + QString::number(antenna_h, 'f', 1) + "\r\n";
-        m_serialModule.writePilotSerialS(s.toUtf8().constData());
+        m_serialModule.writePort1GpsStr(s.toUtf8().constData());
     } else {
-        m_serialModule.writePilotSerialS("$CFG TERRAIN OFF\r\n");
+        m_serialModule.writePort1GpsStr("$CFG TERRAIN OFF\r\n");
     }
 }
 
 void Framework::getAntennaH(){
-    m_serialModule.writePilotSerialS("$CFG NET\r\n");
-    m_serialModule.writePilotSerialS("$CFG TERRAIN\r\n");
-    m_serialModule.writePilotSerialS("$CFG TERRAIN HEIGHT\r\n");
+    m_serialModule.writePort1GpsStr("$CFG NET\r\n");
+    m_serialModule.writePort1GpsStr("$CFG TERRAIN\r\n");
+    m_serialModule.writePort1GpsStr("$CFG TERRAIN HEIGHT\r\n");
 }

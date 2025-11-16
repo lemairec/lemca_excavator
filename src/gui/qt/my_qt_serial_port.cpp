@@ -1,171 +1,194 @@
 #include "my_qt_serial_port.hpp"
 #include "include_qt.hpp"
-#include "../../framework.hpp"
-#include "../../util/directory_manager.hpp"
-#include <sstream>
 #include <QMetaEnum>
 #include <QSerialPortInfo>
 
+
 #include "environnement.hpp"
+#include "../../util/directory_manager.hpp"
+
+
+#include "../../framework.hpp"
 
 MyQTSerialPorts::MyQTSerialPorts(){
-    QObject::connect(this, SIGNAL(initSignal()), this, SLOT(initSlot()));
+    connect(&m_port1_gps, SIGNAL(readyRead()), this, SLOT(handlePort1GpsReadyRead()));
+    connect(&m_port1_gps, static_cast<void (QSerialPort::*)(QSerialPort::SerialPortError)>(&QSerialPort::error),
+            this, &MyQTSerialPorts::handlePort1GpsError);
     
-    connect(&m_gps_port, SIGNAL(readyRead()), this, SLOT(handleGpsReadyRead()));
-    connect(&m_gps_port, SIGNAL(error()), this, SLOT(handleGpsError()));
-    connect(&m_pilot_port, SIGNAL(readyRead()), this, SLOT(handlePilotReadyRead()));
-    connect(&m_pilot_port, SIGNAL(error()), this, SLOT(handlePilotError()));
-    connect(&m_timerPilot, SIGNAL(timeout()), this, SLOT(handleTimer()));
+    connect(&m_port2_mcu, SIGNAL(readyRead()), this, SLOT(handlePort2McuReadyRead()));
+    connect(&m_port2_mcu, static_cast<void (QSerialPort::*)(QSerialPort::SerialPortError)>(&QSerialPort::error),
+            this, &MyQTSerialPorts::handlePort2McuError);
+    
+    connect(&m_port3_soil, SIGNAL(readyRead()), this, SLOT(handlePort3SoilReadyRead()));
+    connect(&m_port3_soil, static_cast<void (QSerialPort::*)(QSerialPort::SerialPortError)>(&QSerialPort::error),
+            this, &MyQTSerialPorts::handlePort3SoilError);
+    
 }
 
 MyQTSerialPorts::~MyQTSerialPorts(){
-    INFO("destructor");
 }
 
-void MyQTSerialPorts::initOrLoad(const Config & config){
-    INFO("initOrLoad");
-    m_new_gps_serial = config.m_gps_serial;
-    m_new_pilot_serial = config.m_pilot_serial;
-    
-    m_pilot_frequence = config.m_pilot_frequence;
-    
-    INFO("ici");
-    emit initSignal();
-    INFO("open!!!!!!");
-};
+void MyQTSerialPorts::addMessage(const std::string & s){
+    INFO(s);
+    //Framework & f = Framework::Instance();
+    //f.addSerialString(s);
+}
 
-void MyQTSerialPorts::initSlot(){
-    if(m_new_gps_serial != "none" && m_new_gps_serial != "file"){
-        if(m_gps_serial == m_new_gps_serial && m_gps_port.isOpen()){
-            INFO("gps port already open");
+void MyQTSerialPorts::startConnect(int i, QSerialPort & port, std::string & old_serial, const std::string & serial, int baudrate){
+    INFO("start " << serial << " " << baudrate);
+    
+    if(serial != "none" && serial != "file"){
+        if(old_serial == serial && port.isOpen()){
+            INFO("- port already open");
+            return;
+        }
+        if(port.isOpen()){
+            port.close();
+        }
+        old_serial = serial;
+        port.setPortName(QString::fromStdString(serial));
+        port.setBaudRate(baudrate);
+        std::ostringstream oss;
+        oss << "- " << i << " open  : "  << serial << " " << baudrate;
+        addMessage(oss.str());
+        
+        if (!port.open(QIODevice::ReadWrite)) {
+            std::ostringstream oss;
+            oss << "- " << i << " failed error  : " << port.errorString().toUtf8().constData();
+            addMessage(oss.str());
         } else {
-            if(m_gps_port.isOpen()){
-                m_gps_port.close();
-            }
-            m_gps_serial = m_new_gps_serial;
-            m_gps_port.setPortName(QString::fromStdString(m_gps_serial));
-            m_gps_port.setBaudRate(115200);
-            if (!m_gps_port.open(QIODevice::ReadWrite)) {
-                std::ostringstream oss;
-                oss << "Failed to open gps port " << m_gps_serial << ", error:" << m_gps_port.errorString().toUtf8().constData();
-                //Framework::instance().addError(oss.str());
-            }
+            std::ostringstream oss;
+            oss << "- " << i << " opened";
+            addMessage(oss.str());
         }
     }
-    
-    if(m_new_pilot_serial != "none"){
-        if(m_pilot_serial == m_new_pilot_serial && m_pilot_port.isOpen()){
-            INFO("pilot port already open");
-        } else {
-            if(m_pilot_port.isOpen()){
-                m_pilot_port.close();
-            }
-            m_pilot_port.close();
-            m_pilot_serial = m_new_pilot_serial;
-            m_pilot_port.setPortName(QString::fromStdString(m_pilot_serial));
-            m_pilot_port.setBaudRate(115200);
-            if (!m_pilot_port.open(QIODevice::ReadWrite)) {
-                std::ostringstream oss;
-                oss << "Failed to open pilot \nport " << m_pilot_serial << "\nerror:\n" << m_pilot_port.errorString().toUtf8().constData();
-                //Framework::instance().m_pilot_last_error = oss.str();
-                //Framework::instance().addError(oss.str());
-            }
-        }
-    }
-    
-    m_timerPilot.stop();
-    m_timerPilot.start(1000/m_pilot_frequence);
-    DEBUG("end");
+}
+
+
+void MyQTSerialPorts::initOrLoad(const Config & config){
+    startConnect(1, m_port1_gps, m_port1_gps_serial, config.m_gps_serial, config.m_gps_baudrate);
+    //startConnect(2, m_port2_mcu, m_port1_gps_serial, config.m_gps_serial, config.m_gps_baudrate);
+    //startConnect(3, m_port1_gps, m_port1_gps_serial, config.m_gps_serial, config.m_gps_baudrate);
 };
 
 void MyQTSerialPorts::closeAll(){
     INFO("###close all");
-    if(m_gps_port.isOpen()){
-        INFO("close gps");
-        m_gps_port.close();
+    if(m_port1_gps.isOpen()){
+        INFO("m_port1_gps close");
+        m_port1_gps.close();
     }
-    if(m_pilot_port.isOpen()){
-        INFO("close pilot");
-        m_pilot_port.close();
+    if(m_port2_mcu.isOpen()){
+        INFO("m_port2_mcu close");
+        m_port2_mcu.close();
     }
-}
-
-/**
- * PILOT
- */
-
-void MyQTSerialPorts::handlePilotReadyRead(){
-    LOG_FUNCTION();
-    QByteArray b = m_pilot_port.readAll();
-    QString hex(b);
-    std::string s = (hex.toUtf8().constData());
-    for(auto c : s){
-        Framework::instance().m_nmea_parser_pilot.readChar(c);
+    if(m_port3_soil.isOpen()){
+        INFO("m_port3_soil close");
+        m_port3_soil.close();
     }
 }
 
 
-void MyQTSerialPorts::handlePilotError(QSerialPort::SerialPortError error){
-    if(error != 0){
-        std::ostringstream oss;
-        //auto error_s = std::string(QMetaEnum::fromType<QSerialPort::SerialPortError>().valueToKey(error));
-        auto error_s = "fix";
-        oss << "handleErrorPilot " << error << " " << error_s << ", error:" << m_pilot_port.errorString().toUtf8().constData();
-        //GpsFramework::instance().addError(oss.str());
-        ERROR("handleErrorPilot " << error << " " << error_s << ", error:" << m_pilot_port.errorString().toUtf8().constData());
-    }
-    
-}
-
-void MyQTSerialPorts::writePilotSerialS(const std::string & l){
-    if(m_pilot_port.isOpen()){
-        QByteArray b;
-        b.append(l.c_str());
-        //INFO(l.c_str());
-        m_pilot_port.write(b);
-    }
-}
+//port1 Gps
 
 
-/**
- * GPS
- */
-void MyQTSerialPorts::handleGpsReadyRead(){
+void MyQTSerialPorts::handlePort1GpsReadyRead(){
     DEBUG("begin");
-    /*QByteArray b = m_gps_port.readAll();
-    QString hex(b);
-    std::string s = (hex.toUtf8().constData());
-    for(auto c : s){
-        Framework::instance().m_pilot_translator_module.m_arduino_parser.readChar(c);
+    QByteArray a = m_port1_gps.readAll();
+    /*Framework & f = Framework::Instance();
+    for(int i = 0; i < (int)a.size(); ++i){
+        f.addSerialChar((char)(a.data()[i]));
     }*/
+    
     DEBUG("end");
 }
-void MyQTSerialPorts::handleGpsError(QSerialPort::SerialPortError error){
+void MyQTSerialPorts::handlePort1GpsError(QSerialPort::SerialPortError error){
     /*DEBUG("begin");
     if(error != 0){
         std::ostringstream oss;
-        oss << "handleErrorGps " << error << ", error:" << m_gps_port.errorString().toUtf8().constData();
-        Framework::instance().m_pilot_last_error = oss.str();
-        //Framework::instance().addError(oss.str());
+        oss << "handleErrorGps " << error << ", error:" << m_serialPortGps.errorString().toUtf8().constData();
+        //TODOGpsFramework::Instance().m_pilot_last_error = oss.str();
+        //GpsFramework::Instance().addError(oss.str());
         WARN(error);
     }
-    DEBUG("end");haha*/
+    DEBUG("end");*/
 }
 
-/**
- * TIMER
- */
-void MyQTSerialPorts::handleTimer(){
-    //FrameworkVision::instance().m_pilot_module.setLemcaTrame(1024, 0, 100);
-    Framework::instance().m_pilot_translator_module.handleArduino();
+void MyQTSerialPorts::writePort1GpsStr(const std::string & l){
+    if(m_port2_mcu.isOpen()){
+        QByteArray b;
+        for(long unsigned int i = 0; i < l.size(); ++i){
+            b.append(l[i]);
+        }
+        m_port1_gps.write(b);
+        //QString hex(b.toHex());
+    }
+}
+
+//port2 Mcu
+
+
+void MyQTSerialPorts::handlePort2McuReadyRead(){
+    DEBUG("begin");
+    QByteArray a = m_port2_mcu.readAll();
+    /*Framework & f = Framework::Instance();
+    for(int i = 0; i < (int)a.size(); ++i){
+        f.addSerialChar((char)(a.data()[i]));
+    }*/
+    
+    DEBUG("end");
+}
+void MyQTSerialPorts::handlePort2McuError(QSerialPort::SerialPortError error){
+    /*DEBUG("begin");
+    if(error != 0){
+        std::ostringstream oss;
+        oss << "handleErrorGps " << error << ", error:" << m_serialPortGps.errorString().toUtf8().constData();
+        //TODOGpsFramework::Instance().m_pilot_last_error = oss.str();
+        //GpsFramework::Instance().addError(oss.str());
+        WARN(error);
+    }
+    DEBUG("end");*/
+}
+
+void MyQTSerialPorts::writePort2McuStr(const std::string & l){
+    if(m_port2_mcu.isOpen()){
+        QByteArray b;
+        for(long unsigned int i = 0; i < l.size(); ++i){
+            b.append(l[i]);
+        }
+        m_port2_mcu.write(b);
+        //QString hex(b.toHex());
+    }
+}
+
+//port3 Mcu
+
+
+void MyQTSerialPorts::handlePort3SoilReadyRead(){
+    DEBUG("begin");
+    QByteArray a = m_port3_soil.readAll();
+    /*Framework & f = Framework::Instance();
+    for(int i = 0; i < (int)a.size(); ++i){
+        f.addSerialChar((char)(a.data()[i]));
+    }*/
+    
+    DEBUG("end");
+}
+void MyQTSerialPorts::handlePort3SoilError(QSerialPort::SerialPortError error){
+    /*DEBUG("begin");
+    if(error != 0){
+        std::ostringstream oss;
+        oss << "handleErrorGps " << error << ", error:" << m_serialPortGps.errorString().toUtf8().constData();
+        //TODOGpsFramework::Instance().m_pilot_last_error = oss.str();
+        //GpsFramework::Instance().addError(oss.str());
+        WARN(error);
+    }
+    DEBUG("end");*/
 }
 
 /**
  * LIST PORT
  */
-#include <iostream>
-#include <fstream>
-#include <sstream>
+
 
 std::string execute3(std::string cmd){
     std::string file = DirectoryManager::instance().getDataDirectory() + "/tmp_cmd";
@@ -178,10 +201,30 @@ std::string execute3(std::string cmd){
     return res;
 }
 
-void MyQTSerialPorts::addSerialPorts(std::string s){
-    std::string res = execute3(s);
-    std::vector<std::string> strs;
-   
+std::vector<std::string> split(std::string s, std::string delimiter) {
+    size_t pos_start = 0, pos_end, delim_len = delimiter.length();
+    std::string token;
+    std::vector<std::string> res;
+
+    while ((pos_end = s.find(delimiter, pos_start)) != std::string::npos) {
+        token = s.substr (pos_start, pos_end - pos_start);
+        pos_start = pos_end + delim_len;
+        res.push_back (token);
+    }
+
+    res.push_back (s.substr (pos_start));
+    return res;
+}
+
+
+void MyQTSerialPorts::addSerialPorts(std::string s2){
+    std::string res = execute3(s2);
+    std::vector<std::string> res2 = split(res, "\n");
+    for(auto s : res2){
+        if(!s.empty()){
+            m_serials.push_back(s);
+        }
+    }
 }
 
 std::vector<std::string> & MyQTSerialPorts::getAvailablePorts(){
@@ -194,4 +237,3 @@ std::vector<std::string> & MyQTSerialPorts::getAvailablePorts(){
 
     return m_serials;
 }
-

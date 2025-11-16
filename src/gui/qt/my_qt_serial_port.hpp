@@ -14,44 +14,47 @@ QT_USE_NAMESPACE
 class MyQTSerialPorts : public QObject{
     Q_OBJECT
     
-    std::string m_pilot_serial;
-    std::string m_new_pilot_serial;
-    int m_pilot_frequence;
-    QSerialPort m_pilot_port;
+    QSerialPort m_port1_gps;
+    std::string m_port1_gps_serial;
     
-    std::string m_gps_serial;
-    std::string m_new_gps_serial;
-    QSerialPort m_gps_port;
+    QSerialPort m_port2_mcu;
+    std::string m_port2_mcu_serial;
     
-    std::vector<std::string> m_serials;
+    QSerialPort m_port3_soil;
+    std::string m_port3_soil_serial;
+    
 public:
-    QTimer m_timerPilot;
-    
     MyQTSerialPorts();
     ~MyQTSerialPorts();
     
     void initOrLoad(const Config & config);
+    
+    void addMessage(const std::string & s);
+    void startConnect(int i, QSerialPort & port, std::string & old_serial, const std::string & serial, int baudrate);
+    
     void closeAll();
     
-    bool pilotIsOpen(){return m_pilot_port.isOpen();};
-    void writePilotSerialS(const std::string & l);
+    bool isPort1GpsOpen(){return m_port1_gps.isOpen();};
+    bool isPort2SerialOpen(){return m_port2_mcu.isOpen();};
+    bool isPort3SoilOpen(){return m_port3_soil.isOpen();};
     
+    void writePort1GpsStr(const std::string & l);
+    void writePort2McuStr(const std::string & l);
+    
+    std::vector<std::string> m_serials;
     void addSerialPorts(std::string s);
     std::vector<std::string> & getAvailablePorts();
-signals:
-    void initSignal();
-    void signalWritePilotSerialS(QByteArray b);
     
 public slots:
-    void initSlot();
+    void handlePort1GpsReadyRead();
+    void handlePort1GpsError(QSerialPort::SerialPortError error);
 
-    void handleGpsReadyRead();
-    void handleGpsError(QSerialPort::SerialPortError error);
+    void handlePort2McuReadyRead();
+    void handlePort2McuError(QSerialPort::SerialPortError error);
 
-    void handlePilotReadyRead();
-    void handlePilotError(QSerialPort::SerialPortError error);
-    
-    void handleTimer();
+    void handlePort3SoilReadyRead();
+    void handlePort3SoilError(QSerialPort::SerialPortError error);
+
 };
 
 

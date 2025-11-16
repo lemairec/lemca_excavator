@@ -379,7 +379,7 @@ double PilotTranslatorModule::getDeplacementDesiredBineuseMm(){
 
 void PilotTranslatorModule::writePilotSerialString(const std::string & l){
     m_last_order_send = l;
-    Framework::instance().m_serialModule.writePilotSerialS(l);
+    Framework::instance().m_serialModule.writePort2McuStr(l);
 }
 
 
@@ -388,10 +388,10 @@ void PilotTranslatorModule::handleArduino(){
         m_arduino_send_v++;
         if(m_arduino_send_v > m_frequence*5){
             m_arduino_send_v = 0;
-            Framework::instance().m_serialModule.writePilotSerialS("$V,*\n");
+            Framework::instance().m_serialModule.writePort2McuStr("$V,*\n");
         }
     }
-    Framework::instance().m_serialModule.writePilotSerialS("$P,*\n");
+    Framework::instance().m_serialModule.writePort2McuStr("$P,*\n");
     
     //updateSerial();
 }
