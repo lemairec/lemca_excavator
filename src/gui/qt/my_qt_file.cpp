@@ -48,7 +48,7 @@ void MyQTFile::vitesseMoins(){
 
 void MyQTFile::initOrLoad(Config & config){
     DEBUG("begin");
-    if(config.m_gps_serial == "file"){
+    if(config.m_port1_gps_serial == "file"){
         INFO("file " << config.m_gps_file);
         openFile(config);
     }

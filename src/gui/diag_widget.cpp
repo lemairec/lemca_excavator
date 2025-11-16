@@ -175,10 +175,10 @@ void DiagnosticWidget::draw(){
     //colonne 2
     y = 0.1*m_height2;
     y+=3*inter;
-    drawText("GPS", x2, y, sizeText_medium);
+    drawText("Port1 GPS", x2, y, sizeText_medium);
     y+=1.2*inter;
     {
-        QString s = "conn : " + QString::fromStdString(f.m_config.m_gps_serial);
+        QString s = "conn : " + QString::fromStdString(f.m_config.m_port1_gps_serial);
         drawQText(s, x2, y, sizeText_little);
     }
     y+=1*inter;
@@ -232,10 +232,10 @@ void DiagnosticWidget::draw(){
     //colonne 3
     y = 0.1*m_height2;
     y+=3*inter;
-    drawText("PILOT", x3, y, sizeText_medium);
+    drawText("Port2 MCU", x3, y, sizeText_medium);
     y+=1.2*inter;
     {
-        QString s = "conn : " + QString::fromStdString(f.m_config.m_pilot_serial);
+        QString s = "conn : " + QString::fromStdString(f.m_config.m_port2_mcu_serial);
         drawQText(s, x3, y, sizeText_little);
     }
     y+=1*inter;

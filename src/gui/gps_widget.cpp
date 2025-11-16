@@ -168,7 +168,7 @@ void GpsWidget::drawButtons(){
     //TODO m_painter->setBrush(m_brushDarkGray);
     m_painter->setPen(m_pen_no);
     
-    if(f.m_config.m_gps_serial == "file"){
+    if(f.m_config.m_port1_gps_serial == "file"){
         drawButtonImageCarre(m_button_vitesse_plus, m_img_plus, 0.4);
         drawButtonImageCarre(m_button_vitesse_moins, m_img_moins, 0.4);
         QString s = "v "+QString::number(f.m_fileModule.m_vitesse);
@@ -653,15 +653,15 @@ int GpsWidget::onMouse(int x, int y){
     } else if(m_button_debug.isActive(x2, y2)){
         m_debug_widget.m_close = false;
     } else if(m_button_play.isActive(x2, y2)){
-        if(f.m_config.m_gps_serial == "file"){
+        if(f.m_config.m_port1_gps_serial == "file"){
             Framework::instance().m_fileModule.m_pause = !Framework::instance().m_fileModule.m_pause;
         }
     } else if(m_button_vitesse_plus.isActive(x2, y2)){
-        if(f.m_config.m_gps_serial == "file"){
+        if(f.m_config.m_port1_gps_serial == "file"){
             Framework::instance().m_fileModule.vitessePlus();
         }
     } else if(m_button_vitesse_moins.isActive(x2, y2)){
-        if(f.m_config.m_gps_serial == "file"){
+        if(f.m_config.m_port1_gps_serial == "file"){
             Framework::instance().m_fileModule.vitesseMoins();
         }
     } else if(m_button3d.isActive(x2, y2)){

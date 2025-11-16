@@ -186,7 +186,9 @@ public:
     void drawPage7();
     void onMousePage7(int x, int y);
     
-    SelectButtonGui m_select_pilot_serial;
+    SelectButtonGui m_select_port1_gps_serial;
+    SelectButtonGui m_select_port2_mcu_serial;
+    SelectButtonGui m_select_port3_soil_serial;
     
     void open();
     

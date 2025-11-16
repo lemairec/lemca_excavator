@@ -726,25 +726,41 @@ void OptionWidget::onMousePage5(int x, int y){
 
 void OptionWidget::setSizePage6(){
     int y = m_y_begin;
-    m_select_pilot_serial.setResize(m_part_2_x+m_part_2_w/2, y, "", true, m_part_2_w/2);
     m_balise_enable.setResize(m_part_1_x2, y, m_petit_button);
     m_balise_enable.m_label = QString::fromStdString(Langage::getKey("OPT_BALISE"));
     
+    m_select_port1_gps_serial.setResize(m_part_2_x+m_part_2_w/2, y, "", true, m_part_2_w/2);
     y += m_y_inter;
     y += m_y_inter;
+    y += m_y_inter;
+    m_select_port2_mcu_serial.setResize(m_part_2_x+m_part_2_w/2, y, "", true, m_part_2_w/2);
+    y += m_y_inter;
+    y += m_y_inter;
+    y += m_y_inter;
+    m_select_port3_soil_serial.setResize(m_part_2_x+m_part_2_w/2, y, "", true, m_part_2_w/2);
+    
 };
 
 void OptionWidget::drawPage6(){
     Framework & f = Framework::instance();
     drawText("Pilotage", 0.45*m_width, m_y_title, sizeText_big, true);
     
-    drawPart1Title(m_select_pilot_serial.m_y-2*m_y_inter, 5*m_y_inter, "options");
+    drawPart1Title(m_select_port1_gps_serial.m_y-2*m_y_inter, 5*m_y_inter, "options");
     drawButtonCheck(m_balise_enable, f.m_config.m_balise_enable);
    
-    drawPart2Title(m_select_pilot_serial.m_y-2*m_y_inter, 5*m_y_inter, "connection");
-    drawButtonLabel2(m_select_pilot_serial.m_buttonOpen);
+    drawPart2Title(m_select_port1_gps_serial.m_y-2*m_y_inter, 3*m_y_inter, "port1 GPS");
+    drawButtonLabel2(m_select_port1_gps_serial.m_buttonOpen);
+    
+    drawPart2Title(m_select_port2_mcu_serial.m_y-2*m_y_inter, 3*m_y_inter, "port2 MCU");
+    drawButtonLabel2(m_select_port2_mcu_serial.m_buttonOpen);
+    
+    drawPart2Title(m_select_port3_soil_serial.m_y-2*m_y_inter, 3*m_y_inter, "port3 Soil");
+    drawButtonLabel2(m_select_port3_soil_serial.m_buttonOpen);
+    
     if(m_select_widget.m_close){
-        m_select_pilot_serial.setValueString(f.m_config.m_pilot_serial);
+        m_select_port1_gps_serial.setValueString(f.m_config.m_port1_gps_serial);
+        m_select_port2_mcu_serial.setValueString(f.m_config.m_port2_mcu_serial);
+        m_select_port3_soil_serial.setValueString(f.m_config.m_port3_soil_serial);
     }
     
     
@@ -756,7 +772,9 @@ void OptionWidget::onMousePage6(int x, int y){
     
     if(!m_select_widget.m_close){
         if(m_select_widget.onMouseSelect(x, y)){
-            f.m_config.m_pilot_serial = m_select_pilot_serial.getValueString();
+            f.m_config.m_port1_gps_serial = m_select_port1_gps_serial.getValueString();
+            f.m_config.m_port2_mcu_serial = m_select_port2_mcu_serial.getValueString();
+            f.m_config.m_port3_soil_serial = m_select_port3_soil_serial.getValueString();
         }
         f.initOrLoadConfig();
         return;
@@ -766,8 +784,10 @@ void OptionWidget::onMousePage6(int x, int y){
         f.m_config.m_balise_enable = !f.m_config.m_balise_enable;
     }
     
-    isActiveButtonSelect(&m_select_pilot_serial, x, y);
-        
+    isActiveButtonSelect(&m_select_port1_gps_serial, x, y);
+    isActiveButtonSelect(&m_select_port2_mcu_serial, x, y);
+    isActiveButtonSelect(&m_select_port3_soil_serial, x, y);
+    
     f.initOrLoadConfig();
     
 }
@@ -808,8 +828,8 @@ void OptionWidget::drawPage7(){
     drawButtonLabel2(m_select_gps_baudrates.m_buttonOpen);
     
     if(m_select_widget.m_close){
-        m_select_gps_baudrates.setValueInt(f.m_config.m_gps_baudrate);
-        m_select_gps_serial.setValueString(f.m_config.m_gps_serial);
+        //m_select_gps_baudrates.setValueInt(f.m_config.m_gps_baudrate);
+        //m_select_gps_serial.setValueString(f.m_config.m_gps_serial);
     }
     
     drawButtonLabel2(m_button_get_antenna);
@@ -832,8 +852,8 @@ void OptionWidget::onMousePage7(int x, int y){
     
     if(!m_select_widget.m_close){
         if(m_select_widget.onMouseSelect(x, y)){
-            f.m_config.m_gps_baudrate = m_select_gps_baudrates.getValueInt();;
-            f.m_config.m_gps_serial = m_select_gps_serial.getValueString();
+            //f.m_config.m_gps_baudrate = m_select_gps_baudrates.getValueInt();;
+            //f.m_config.m_gps_serial = m_select_gps_serial.getValueString();
         }
         f.initOrLoadConfig();
         return;
@@ -879,12 +899,17 @@ void OptionWidget::addSerials(){
     
     
     m_select_gps_serial.clear();
-    m_select_pilot_serial.clear();
+    m_select_port1_gps_serial.clear();
+    m_select_port2_mcu_serial.clear();
+    m_select_port3_soil_serial.clear();
     for(auto serial: serials){
         m_select_gps_serial.addValue(serial);
         
+        m_select_port1_gps_serial.addValue(serial);
         if(serial != "file"){
-            m_select_pilot_serial.addValue(serial);
+            m_select_port2_mcu_serial.addValue(serial);
+            m_select_port3_soil_serial.addValue(serial);
+            
         }
     }
 }

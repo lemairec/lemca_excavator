@@ -20,12 +20,15 @@ public:
     
     int m_profondeur_mm = 0;
     
-    std::string m_gps_serial;
-    int m_gps_baudrate = 115200;
+    std::string m_port1_gps_serial;
+    int m_port1_gps_baudrate = 115200;
     std::string m_gps_file;
     
-    std::string m_pilot_serial = "none";
-    int m_pilot_baudrate = 115200;
+    std::string m_port2_mcu_serial = "none";
+    int m_port2_mcu_baudrate = 115200;
+    
+    std::string m_port3_soil_serial = "none";
+    int m_port3_soil_baudrate = 115200;
     
     bool m_gga = false;
     

@@ -142,7 +142,7 @@ void MainWindow::openFile(){
     
     Framework & f = Framework::instance();
     f.m_config.m_gps_file = fileName.toUtf8().constData();
-    f.m_config.m_gps_serial = "file";
+    f.m_config.m_port1_gps_serial = "file";
     f.initOrLoadConfig();
     DEBUG("end");
 }
