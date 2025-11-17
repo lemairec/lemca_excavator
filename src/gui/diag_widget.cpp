@@ -220,11 +220,7 @@ void DiagnosticWidget::draw(){
         std::string s = f.m_nmea_parser_gps.m_last_gga_str;
         drawText(s, x2, y, sizeText_little);
     }
-    y+=1*inter;
-    {
-        std::string s = f.m_nmea_parser_pilot.m_last_gga_str;
-        drawText(s, x2, y, sizeText_little);
-    }
+    
     
     y+=2*inter;
     
@@ -245,16 +241,16 @@ void DiagnosticWidget::draw(){
     }
     y+=1*inter;
     {
-        std::string s = strprintf("conn error nb : %d %d" ,f.m_nmea_parser_pilot.m_nb_error_check, f.m_nmea_parser_pilot.m_nbr_error);
+        std::string s = strprintf("conn error nb : %d %d" ,f.m_nmea_parser_mcu.m_nb_error_check, f.m_nmea_parser_mcu.m_nbr_error);
         drawText(s, x3, y, sizeText_little);
     }
     y+=1*inter;
     {
-        drawText(f.m_nmea_parser_pilot.m_last_error, x3, y, sizeText_little);
+        drawText(f.m_nmea_parser_mcu.m_last_error, x3, y, sizeText_little);
     }
     y+=1*inter;
     {
-        drawText(f.m_nmea_parser_pilot.m_other_str, x3, y, sizeText_little);
+        drawText(f.m_nmea_parser_mcu.m_other_str, x3, y, sizeText_little);
     }
     
     

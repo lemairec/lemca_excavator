@@ -243,7 +243,7 @@ public:
      
     Tracteur m_tracteur;
     NmeaParser m_nmea_parser_gps;
-    NmeaParser m_nmea_parser_pilot;
+    NmeaParser m_nmea_parser_mcu;
     MyQTSerialPorts m_serialModule;
     MyQTFile m_fileModule;
     PilotTranslatorModule m_pilot_translator_module;

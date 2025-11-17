@@ -833,14 +833,6 @@ void OptionWidget::drawPage7(){
     }
     
     drawButtonLabel2(m_button_get_antenna);
-    int y = m_button_get_antenna.m_y + m_y_inter;
-    int inter = m_y_inter/2;
-    drawText(f.m_nmea_parser_pilot.m_cfg_net_str, m_part_2_x, y);
-    y += inter;
-    drawText(f.m_nmea_parser_pilot.m_cfg_terrain_str, m_part_2_x, y);
-    y += inter;
-    drawText(f.m_nmea_parser_pilot.m_cfg_height_str, m_part_2_x, y);
-    
     drawButtonLabel2(m_button_set_antenna);
 }
 

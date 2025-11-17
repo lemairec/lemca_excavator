@@ -96,10 +96,10 @@ void MyQTSerialPorts::closeAll(){
 void MyQTSerialPorts::handlePort1GpsReadyRead(){
     DEBUG("begin");
     QByteArray a = m_port1_gps.readAll();
-    /*Framework & f = Framework::Instance();
+    Framework & f = Framework::instance();
     for(int i = 0; i < (int)a.size(); ++i){
-        f.addSerialChar((char)(a.data()[i]));
-    }*/
+        f.m_nmea_parser_gps.readChar((char)(a.data()[i]));
+    }
     
     DEBUG("end");
 }
@@ -132,10 +132,10 @@ void MyQTSerialPorts::writePort1GpsStr(const std::string & l){
 void MyQTSerialPorts::handlePort2McuReadyRead(){
     DEBUG("begin");
     QByteArray a = m_port2_mcu.readAll();
-    /*Framework & f = Framework::Instance();
+    Framework & f = Framework::instance();
     for(int i = 0; i < (int)a.size(); ++i){
-        f.addSerialChar((char)(a.data()[i]));
-    }*/
+        f.m_nmea_parser_mcu.readChar((char)(a.data()[i]));
+    }
     
     DEBUG("end");
 }
