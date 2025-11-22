@@ -100,6 +100,7 @@ void MyQTSerialPorts::handlePort1GpsReadyRead(){
     for(int i = 0; i < (int)a.size(); ++i){
         f.m_nmea_parser_gps.readChar((char)(a.data()[i]));
     }
+    m_port1_gps_count++;
     
     DEBUG("end");
 }
@@ -136,6 +137,7 @@ void MyQTSerialPorts::handlePort2McuReadyRead(){
     for(int i = 0; i < (int)a.size(); ++i){
         f.m_nmea_parser_mcu.readChar((char)(a.data()[i]));
     }
+    m_port2_mcu_count++;
     
     DEBUG("end");
 }
@@ -162,7 +164,7 @@ void MyQTSerialPorts::writePort2McuStr(const std::string & l){
     }
 }
 
-//port3 Mcu
+//port3 Soil
 
 
 void MyQTSerialPorts::handlePort3SoilReadyRead(){
@@ -172,6 +174,8 @@ void MyQTSerialPorts::handlePort3SoilReadyRead(){
     for(int i = 0; i < (int)a.size(); ++i){
         f.m_hexa_parser.readChar((char)(a.data()[i]));
     }
+    m_port3_soil_count++;
+    
     
     DEBUG("end");
 }

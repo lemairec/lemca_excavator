@@ -14,16 +14,20 @@ QT_USE_NAMESPACE
 class MyQTSerialPorts : public QObject{
     Q_OBJECT
     
+    
+public:
     QSerialPort m_port1_gps;
     std::string m_port1_gps_serial;
+    int m_port1_gps_count = 0;
     
     QSerialPort m_port2_mcu;
     std::string m_port2_mcu_serial;
+    int m_port2_mcu_count = 0;
     
     QSerialPort m_port3_soil;
     std::string m_port3_soil_serial;
-    
-public:
+    int m_port3_soil_count = 0;
+
     MyQTSerialPorts();
     ~MyQTSerialPorts();
     

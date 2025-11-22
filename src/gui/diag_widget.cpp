@@ -183,6 +183,11 @@ void DiagnosticWidget::draw(){
     }
     y+=1*inter;
     {
+        QString s = "count : " + QString::number(f.m_serialModule.m_port1_gps_count);
+        drawQText(s, x2, y, sizeText_little);
+    }
+    y+=1*inter;
+    {
         std::string s = strprintf("conn : %.1f ms (%.1f)" ,f.m_gps_time.m_moy, f.m_gps_time.m_et);
         drawDiag(s, x2, y, f.m_gps_time.m_moy, 80, 120);
     }
@@ -230,6 +235,11 @@ void DiagnosticWidget::draw(){
         QString s = "conn : " + QString::fromStdString(f.m_config.m_port2_mcu_serial);
         drawQText(s, x2, y, sizeText_little);
     }
+    y+=1.2*inter;
+    {
+        QString s = "count : " + QString::number(f.m_serialModule.m_port2_mcu_count);
+        drawQText(s, x2, y, sizeText_little);
+    }
     y+=1*inter;
     {
         std::string s = strprintf("conn : %.1f ms (%.1f)" ,f.m_pilot_translator_module.m_pilot_time.m_moy, f.m_pilot_translator_module.m_pilot_time.m_et);
@@ -254,6 +264,11 @@ void DiagnosticWidget::draw(){
     y+=1.2*inter;
     {
         QString s = "conn : " + QString::fromStdString(f.m_config.m_port3_soil_serial);
+        drawQText(s, x2, y, sizeText_little);
+    }
+    y+=1*inter;
+    {
+        QString s = "count : " + QString::number(f.m_serialModule.m_port3_soil_count);
         drawQText(s, x2, y, sizeText_little);
     }
     y+=1*inter;
