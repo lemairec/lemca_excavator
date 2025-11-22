@@ -21,6 +21,7 @@
 #include "gps/tracteur.hpp"
 #include "balise/balises.hpp"
 #include "util/stat.hpp"
+#include "parser/hexa_parser.hpp"
 
 #include "gui/qt/my_qt_network.hpp"
 
@@ -244,6 +245,7 @@ public:
     Tracteur m_tracteur;
     NmeaParser m_nmea_parser_gps;
     NmeaParser m_nmea_parser_mcu;
+    HexaParser m_hexa_parser;
     MyQTSerialPorts m_serialModule;
     MyQTFile m_fileModule;
     PilotTranslatorModule m_pilot_translator_module;

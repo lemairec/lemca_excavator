@@ -224,25 +224,21 @@ void DiagnosticWidget::draw(){
     
     y+=2*inter;
     
-   
-    //colonne 3
-    y = 0.1*m_height2;
-    y+=3*inter;
-    drawText("Port2 MCU", x3, y, sizeText_medium);
+    drawText("Port2 MCU", x2, y, sizeText_medium);
     y+=1.2*inter;
     {
         QString s = "conn : " + QString::fromStdString(f.m_config.m_port2_mcu_serial);
-        drawQText(s, x3, y, sizeText_little);
+        drawQText(s, x2, y, sizeText_little);
     }
     y+=1*inter;
     {
         std::string s = strprintf("conn : %.1f ms (%.1f)" ,f.m_pilot_translator_module.m_pilot_time.m_moy, f.m_pilot_translator_module.m_pilot_time.m_et);
-        drawText(s, x3, y, sizeText_little);
+        drawText(s, x2, y, sizeText_little);
     }
     y+=1*inter;
     {
         std::string s = strprintf("conn error nb : %d %d" ,f.m_nmea_parser_mcu.m_nb_error_check, f.m_nmea_parser_mcu.m_nbr_error);
-        drawText(s, x3, y, sizeText_little);
+        drawText(s, x2, y, sizeText_little);
     }
     y+=1*inter;
     {
@@ -252,6 +248,38 @@ void DiagnosticWidget::draw(){
     {
         drawText(f.m_nmea_parser_mcu.m_other_str, x3, y, sizeText_little);
     }
+    
+    y+=2*inter;
+   drawText("Port3 Soil", x2, y, sizeText_medium);
+    y+=1.2*inter;
+    {
+        QString s = "conn : " + QString::fromStdString(f.m_config.m_port3_soil_serial);
+        drawQText(s, x2, y, sizeText_little);
+    }
+    y+=1*inter;
+    /*{
+        std::string s = strprintf("conn : %.1f ms (%.1f)" ,f.m_pilot_translator_module.m_pilot_time.m_moy, f.m_pilot_translator_module.m_pilot_time.m_et);
+        drawText(s, x2, y, sizeText_little);
+    }
+    y+=1*inter;
+    {
+        std::string s = strprintf("conn error nb : %d %d" ,f.m_nmea_parser_mcu.m_nb_error_check, f.m_nmea_parser_mcu.m_nbr_error);
+        drawText(s, x2, y, sizeText_little);
+    }
+    y+=1*inter;
+    {
+        drawText(f.m_nmea_parser_mcu.m_last_error, x3, y, sizeText_little);
+    }
+    y+=1*inter;
+    {
+        drawText(f.m_nmea_parser_mcu.m_other_str, x3, y, sizeText_little);
+    }*/
+    
+    
+   
+    //colonne 3
+    y = 0.1*m_height2;
+    y+=3*inter;
     
     
     y+=2*inter;

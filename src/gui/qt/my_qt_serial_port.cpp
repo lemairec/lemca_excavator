@@ -104,15 +104,15 @@ void MyQTSerialPorts::handlePort1GpsReadyRead(){
     DEBUG("end");
 }
 void MyQTSerialPorts::handlePort1GpsError(QSerialPort::SerialPortError error){
-    /*DEBUG("begin");
+    DEBUG("begin");
     if(error != 0){
         std::ostringstream oss;
-        oss << "handleErrorGps " << error << ", error:" << m_serialPortGps.errorString().toUtf8().constData();
+        oss << "handleErrorGps " << error << ", error:" << m_port1_gps.errorString().toUtf8().constData();
         //TODOGpsFramework::Instance().m_pilot_last_error = oss.str();
         //GpsFramework::Instance().addError(oss.str());
         WARN(error);
     }
-    DEBUG("end");*/
+    DEBUG("end");
 }
 
 void MyQTSerialPorts::writePort1GpsStr(const std::string & l){
@@ -140,15 +140,15 @@ void MyQTSerialPorts::handlePort2McuReadyRead(){
     DEBUG("end");
 }
 void MyQTSerialPorts::handlePort2McuError(QSerialPort::SerialPortError error){
-    /*DEBUG("begin");
+    DEBUG("begin");
     if(error != 0){
         std::ostringstream oss;
-        oss << "handleErrorGps " << error << ", error:" << m_serialPortGps.errorString().toUtf8().constData();
+        oss << "handleErrorGps " << error << ", error:" << m_port2_mcu.errorString().toUtf8().constData();
         //TODOGpsFramework::Instance().m_pilot_last_error = oss.str();
-        //GpsFramework::Instance().addError(oss.str());
+        Framework::instance().addError(oss.str());
         WARN(error);
     }
-    DEBUG("end");*/
+    DEBUG("end");
 }
 
 void MyQTSerialPorts::writePort2McuStr(const std::string & l){
@@ -168,10 +168,10 @@ void MyQTSerialPorts::writePort2McuStr(const std::string & l){
 void MyQTSerialPorts::handlePort3SoilReadyRead(){
     DEBUG("begin");
     QByteArray a = m_port3_soil.readAll();
-    /*Framework & f = Framework::Instance();
+    Framework & f = Framework::instance();
     for(int i = 0; i < (int)a.size(); ++i){
-        f.addSerialChar((char)(a.data()[i]));
-    }*/
+        f.m_hexa_parser.readChar((char)(a.data()[i]));
+    }
     
     DEBUG("end");
 }
