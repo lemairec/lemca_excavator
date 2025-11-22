@@ -167,6 +167,11 @@ void PilotTranslatorModule::setLamp(bool open){
     m_must_be_change = true;
 }
 
+void PilotTranslatorModule::inverseLamp(){
+    m_lamp_open = !m_lamp_open;
+    m_must_be_change = true;
+}
+
 void PilotTranslatorModule::setLemcaTrameV2(int pas, bool point_3, int count){
     int nb_count = count - m_last_count;
     if(nb_count > 10000){

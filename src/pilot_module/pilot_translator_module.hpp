@@ -151,6 +151,7 @@ public:
     void setLemcaTrameV2(int pas, bool point_3, int count);
     void setLemcaTrame(int pas, bool point_3, double pulse_time_ms);
     void setLamp(bool open);
+    void inverseLamp();
     
     std::string m_pilot_version = "";
     int m_arduino_send_v = 0;

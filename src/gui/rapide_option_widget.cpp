@@ -308,16 +308,29 @@ void RapideOptionWidget::onMousePage4(int x, int y){
 
 // Page 5
 void RapideOptionWidget::setSizePage5(int width, int height){
-   
+    m_button_left.setResizeStd(m_x_middle, 0.3*m_height2, Langage::getKey("LEFT"), true);
+    m_button_right.setResizeStd(m_x_middle, 0.5*m_height2, "droite", true);
+    m_button_lamp.setResizeStd(m_x_middle, 0.7*m_height2, "lampe", true);
 }
 
 void RapideOptionWidget::drawPage5(){
-    
+    drawText(Langage::getKey("INFOS"), m_x+m_width2/2, m_y_title, sizeText_big, true);
+    drawButtonLabel2(m_button_right);
+    drawButtonLabel2(m_button_left);
+    drawButtonLabel2(m_button_lamp);
     //y+=inter;
 }
 
 void RapideOptionWidget::onMousePage5(int x, int y){
-   
+    if(m_button_right.isActive(x, y) != 0){
+        Framework::instance().m_pilot_translator_module.openRelayRight(400);
+    }
+    if(m_button_left.isActive(x, y) != 0){
+        Framework::instance().m_pilot_translator_module.openRelayLeft(400);
+    }
+    if(m_button_lamp.isActive(x, y) != 0){
+        Framework::instance().m_pilot_translator_module.inverseLamp();
+    }
 }
 
 

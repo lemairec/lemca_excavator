@@ -79,9 +79,9 @@ public:
     void onMouse(ValueGui & keypad, double x, double y, double pas = 1.0);
     
     //page5
-    ButtonGui m_camera_change;
-    ButtonGui m_camera_auto;
-    ButtonGui m_lamp;
+    ButtonGui m_button_right;
+    ButtonGui m_button_left;
+    ButtonGui m_button_lamp;
     void setSizePage5(int width, int height);
     void drawPage5();
     void onMousePage5(int x, int y);
