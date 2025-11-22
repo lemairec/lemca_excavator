@@ -11,14 +11,16 @@
 #include "../../framework.hpp"
 
 MyQTTimer::MyQTTimer(){
-    connect(&m_timer_100_ms, SIGNAL(timeout()), this, SLOT(handle100Ms()));
-    connect(&m_timer_25_ms, SIGNAL(timeout()), this, SLOT(handle25Ms()));
+    connect(&m_timer_100_ms, SIGNAL(timeout()), this, SLOT(handle100ms()));
+    connect(&m_timer_25_ms, SIGNAL(timeout()), this, SLOT(handle25ms()));
 }
 
 MyQTTimer::~MyQTTimer(){
 }
 
 void MyQTTimer::init(){
+    INFO("iniiiiiiiit");
+    
     m_timer_100_ms.stop();
     m_timer_100_ms.start(1000/10);
     m_timer_25_ms.stop();
@@ -32,5 +34,6 @@ void MyQTTimer::handle100ms(){
 
 void MyQTTimer::handle25ms(){
     Framework & f = Framework::instance();
+    //INFO("l");
     f.m_pilot_translator_module.handleArduino();
 }

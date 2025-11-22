@@ -194,7 +194,6 @@ void MyQTSerialPorts::handlePort3SoilError(QSerialPort::SerialPortError error){
 }
 
 void MyQTSerialPorts::writePort3SoilHexa(std::vector<unsigned char> & l){
-    INFO("lalal");
     if(m_port3_soil.isOpen()){
         QByteArray b;
         for(long unsigned int i = 0; i < l.size(); ++i){
