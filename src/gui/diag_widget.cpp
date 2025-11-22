@@ -227,7 +227,7 @@ void DiagnosticWidget::draw(){
     }
     
     
-    y+=2*inter;
+    y+=1.4*inter;
     
     drawText("Port2 MCU", x2, y, sizeText_medium);
     y+=1.2*inter;
@@ -259,7 +259,7 @@ void DiagnosticWidget::draw(){
         drawText(f.m_nmea_parser_mcu.m_other_str, x3, y, sizeText_little);
     }
     
-    y+=2*inter;
+    y+=1.4*inter;
    drawText("Port3 Soil", x2, y, sizeText_medium);
     y+=1.2*inter;
     {
@@ -271,7 +271,12 @@ void DiagnosticWidget::draw(){
         QString s = "count : " + QString::number(f.m_serialModule.m_port3_soil_count);
         drawQText(s, x2, y, sizeText_little);
     }
-    y+=1*inter;
+    y+=1.4*inter;
+    for(auto s : f.m_serialModule.messages){
+        QString s2 = "-- " + QString::fromStdString(s);
+        drawQText(s2, x2, y, sizeText_little);
+        y+=1*inter;
+    }
     /*{
         std::string s = strprintf("conn : %.1f ms (%.1f)" ,f.m_pilot_translator_module.m_pilot_time.m_moy, f.m_pilot_translator_module.m_pilot_time.m_et);
         drawText(s, x2, y, sizeText_little);

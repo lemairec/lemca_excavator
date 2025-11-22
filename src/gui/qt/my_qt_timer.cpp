@@ -12,12 +12,25 @@
 
 MyQTTimer::MyQTTimer(){
     connect(&m_timer_100_ms, SIGNAL(timeout()), this, SLOT(handle100Ms()));
+    connect(&m_timer_25_ms, SIGNAL(timeout()), this, SLOT(handle25Ms()));
 }
 
 MyQTTimer::~MyQTTimer(){
 }
 
+void MyQTTimer::init(){
+    m_timer_100_ms.stop();
+    m_timer_100_ms.start(1000/10);
+    m_timer_25_ms.stop();
+    m_timer_25_ms.start(1000/40);
+}
+
 void MyQTTimer::handle100ms(){
     Framework & f = Framework::instance();
-    //f.m_hexa_parser.handle100ms();
+    f.m_hexa_parser.handle100ms();
+}
+
+void MyQTTimer::handle25ms(){
+    Framework & f = Framework::instance();
+    f.m_pilot_translator_module.handleArduino();
 }

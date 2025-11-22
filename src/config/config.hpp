@@ -28,7 +28,7 @@ public:
     int m_port2_mcu_baudrate = 115200;
     
     std::string m_port3_soil_serial = "none";
-    int m_port3_soil_baudrate = 115200;
+    int m_port3_soil_baudrate = 4800;
     
     bool m_gga = false;
     

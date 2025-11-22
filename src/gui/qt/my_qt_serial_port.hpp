@@ -19,15 +19,20 @@ public:
     QSerialPort m_port1_gps;
     std::string m_port1_gps_serial;
     int m_port1_gps_count = 0;
+    std::string m_port1_gps_etat;
     
     QSerialPort m_port2_mcu;
     std::string m_port2_mcu_serial;
     int m_port2_mcu_count = 0;
+    std::string m_port2_mcu_etat;
     
     QSerialPort m_port3_soil;
     std::string m_port3_soil_serial;
     int m_port3_soil_count = 0;
-
+    std::string m_port3_soil_etat;
+    
+    std::list<std::string> messages;
+    
     MyQTSerialPorts();
     ~MyQTSerialPorts();
     
@@ -44,6 +49,7 @@ public:
     
     void writePort1GpsStr(const std::string & l);
     void writePort2McuStr(const std::string & l);
+    void writePort3SoilHexa(std::vector<unsigned char> & l);
     
     std::vector<std::string> m_serials;
     void addSerialPorts(std::string s);

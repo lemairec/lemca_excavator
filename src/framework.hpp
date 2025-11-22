@@ -6,6 +6,7 @@
 #include "gps/nmea_parser.hpp"
 #include "gui/qt/my_qt_serial_port.hpp"
 #include "gui/qt/my_qt_file.hpp"
+#include "gui/qt/my_qt_timer.hpp"
 #include "gui/qt/my_qt_media_player.hpp"
 #include "config/config.hpp"
 #include "parcours/parcours.hpp"
@@ -253,6 +254,7 @@ public:
     MyQTNetwork m_qt_network;
     AutoPathModule m_auto_path_module;
     MyQtMediaPlayer m_qt_media_player;
+    MyQTTimer m_qt_timer;
     
     std::list<std::string> m_listLog;
 private:

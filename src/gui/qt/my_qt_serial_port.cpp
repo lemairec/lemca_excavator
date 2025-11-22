@@ -29,9 +29,11 @@ MyQTSerialPorts::~MyQTSerialPorts(){
 }
 
 void MyQTSerialPorts::addMessage(const std::string & s){
+    messages.push_front(s);
+    if(messages.size()> 10){
+        messages.pop_back();
+    }
     INFO(s);
-    //Framework & f = Framework::Instance();
-    //f.addSerialString(s);
 }
 
 void MyQTSerialPorts::startConnect(int i, QSerialPort & port, std::string & old_serial, const std::string & serial, int baudrate){
@@ -189,6 +191,17 @@ void MyQTSerialPorts::handlePort3SoilError(QSerialPort::SerialPortError error){
         WARN(error);
     }
     DEBUG("end");*/
+}
+
+void MyQTSerialPorts::writePort3SoilHexa(std::vector<unsigned char> & l){
+    INFO("lalal");
+    if(m_port3_soil.isOpen()){
+        QByteArray b;
+        for(long unsigned int i = 0; i < l.size(); ++i){
+            b.append(l[i]);
+        }
+        m_port3_soil.write(b);
+    }
 }
 
 /**

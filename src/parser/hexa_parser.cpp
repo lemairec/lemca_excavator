@@ -51,11 +51,9 @@ void HexaParser::handle100ms(){
     m_parser_i++;
     if(m_parser_i>9){
         m_parser_i = 0;
-        //Framework & f = Framework::Instance();
-        //if(f.m_hexa){
-            //std::vector<unsigned char> l = {0x01, 0x03, 0x00, 0x00, 0x00, 0x07, 0x04, 0x08};
-            //f.sendMessagesHexa(l);
-        //}
+        Framework & f = Framework::instance();
+        std::vector<unsigned char> l = {0x01, 0x03, 0x00, 0x00, 0x00, 0x07, 0x04, 0x08};
+        f.m_serialModule.writePort3SoilHexa(l);
     }
     
 }

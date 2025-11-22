@@ -25,14 +25,14 @@ void Config::work(QSettings & settings, bool save){
     saveLoadBool(settings, "fullscreen", m_fullscreen, save);
     
     saveLoadString(settings, "port1_gps_serial", m_port1_gps_serial, save);
-    saveLoadInt(settings, "port1_gps_baudrate", m_port1_gps_baudrate, save);
+    //saveLoadInt(settings, "port1_gps_baudrate", m_port1_gps_baudrate, save);
     saveLoadString(settings, "gps_file", m_gps_file, save);
     
     saveLoadString(settings, "port2_mcu_serial", m_port2_mcu_serial, save);
-    saveLoadInt(settings, "port2_mcu_baudrate", m_port2_mcu_baudrate, save);
+    //saveLoadInt(settings, "port2_mcu_baudrate", m_port2_mcu_baudrate, save);
     
     saveLoadString(settings, "port3_soil_serial", m_port3_soil_serial, save);
-    saveLoadInt(settings, "port3_soil_baudrate", m_port3_soil_baudrate, save);
+    //saveLoadInt(settings, "port3_soil_baudrate", m_port3_soil_baudrate, save);
     
     saveLoadDouble(settings, "tracteur_antenne_pont_arriere", m_tracteur_antenne_pont_arriere, save);
     saveLoadDouble(settings, "tracteur_empatement", m_tracteur_empatement, save);

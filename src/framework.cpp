@@ -93,6 +93,8 @@ void Framework::initOrLoadConfig(){
     m_balises.load();
     
     m_profondeur_mm = m_config.m_profondeur_mm*0.001;
+    
+    m_qt_timer.init();
 }
 
 void Framework::addError(std::string s){
