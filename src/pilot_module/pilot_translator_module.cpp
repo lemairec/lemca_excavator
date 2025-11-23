@@ -397,6 +397,4 @@ void PilotTranslatorModule::handleArduino(){
         }
     }
     Framework::instance().m_serialModule.writePort2McuStr("$P,*\n");
-    
-    updateSerial();
 }
