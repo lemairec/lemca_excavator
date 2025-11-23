@@ -323,10 +323,10 @@ void RapideOptionWidget::drawPage5(){
 
 void RapideOptionWidget::onMousePage5(int x, int y){
     if(m_button_right.isActive(x, y) != 0){
-        Framework::instance().m_pilot_translator_module.openRelayRight(400);
+        Framework::instance().m_pilot_translator_module.openRelayRight(2000);
     }
     if(m_button_left.isActive(x, y) != 0){
-        Framework::instance().m_pilot_translator_module.openRelayLeft(400);
+        Framework::instance().m_pilot_translator_module.openRelayLeft(2000);
     }
     if(m_button_lamp.isActive(x, y) != 0){
         Framework::instance().m_pilot_translator_module.inverseLamp();
