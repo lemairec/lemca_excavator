@@ -67,16 +67,17 @@ void HexaParser::parseSoil(){
     int p = ((uchar)m_buffer[13])*256+((uchar)m_buffer[14]);
     int k = ((uchar)m_buffer[15])*256+((uchar)m_buffer[16]);
     
-    double humidity_ = humidity*0.1;
-    double temperature_ = temperature*0.1;
-    double conductivity_ = conductivity*1;
-    double ph_ = ph*0.1;
-    double n_ = n*1;
-    double p_ = p*1;
-    double k_ = k*1;
+    Framework & f = Framework::instance();
+    f.m_last_soil_hum = humidity*0.1;
+    f.m_last_soil_temp = temperature*0.1;
+    f.m_last_soil_cond = conductivity*1;
+    f.m_last_soil_ph = ph*0.1;
+    f.m_last_soil_n = n*1;
+    f.m_last_soil_p = p*1;
+    f.m_last_soil_k = k*1;
     
     //Framework & f = Framework::Instance();
-    std::string s = strprintf("res => hum %.1f  temp %.1f  cond %.1f ph %.1f  n %.1f  p %.1f  k %.1f", humidity_, temperature_, conductivity_ , ph_, n_, p_, k_);
+    //std::string s = strprintf("res => hum %.1f  temp %.1f  cond %.1f ph %.1f  n %.1f  p %.1f  k %.1f", humidity_, temperature_, conductivity_ , ph_, n_, p_, k_);
     //f.addSerialMessage(s);
     
 }
