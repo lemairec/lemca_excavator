@@ -161,7 +161,17 @@ void GpsWidget::drawButtons(){
         drawButtonImageCarre(m_button_diag, m_img_infos, 0.3,  !m_rapide_option_widget.m_close && m_rapide_option_widget.m_page == 6, Langage::getKey("LOGO_INFOS"));
         
     }
-    
+    int y_bas2 = m_height*0.92;
+    {
+        int x = 0.65*m_width+20;
+        int w = 0.24*m_width;
+        int x2 = x+w/2-0.08*m_width;
+        m_button_left.setResize(x2, y_bas2, m_gros_button);
+        x2 = x+w/2;
+        m_button_middle.setResize(x2, y_bas2, "", true, m_gros_button*2*1.4,m_gros_button*2);
+        x2 = x+w/2+0.08*m_width;
+        m_button_right.setResize(x2, y_bas2, m_gros_button);
+    }
     drawButtonImageCarre(m_button_plus, m_img_plus, 0.4);
     drawButtonImageCarre(m_button_moins, m_img_moins, 0.4);
     
@@ -252,6 +262,25 @@ void GpsWidget::drawInfos(){
         drawMyImage(*m_img_compteur,x_v, y_top-21, 1.5*0.3, true);
     }
     
+    
+    drawRightLeft();
+}
+
+void GpsWidget::drawRightLeft(){
+    int h = 0.15*m_height;
+    int y = m_height - h - 10;
+    int x = 0.65*m_width+20;
+    int w = 0.24*m_width;
+    
+    m_painter->setBrush(m_brush_background_2);
+    m_painter->setPen(m_pen_no);
+    
+    m_painter->drawRoundedRect(x, y, w, h, 10, 10);
+    
+    drawButtonImageCarre(m_button_right, m_img_right, 0.3, false, "RIGHT");
+    
+    drawButtonImageCarre(m_button_middle, m_img_middle, 0.3, false, "LAMP");
+    drawButtonImageCarre(m_button_left, m_img_left, 0.3, false, "LEFT");
 }
 
 void GpsWidget::drawInfosBasLeft(){
@@ -425,8 +454,6 @@ void GpsWidget::drawInfosExcavator(){
     }
 }
 
-void GpsWidget::drawRightLeft(){
-}
 
 void GpsWidget::drawAlertes(){
     Framework & f = Framework::instance();
@@ -646,8 +673,14 @@ int GpsWidget::onMouse(int x, int y){
     } else if(m_button_moins.isActive(x2, y2)){
         m_zoom /= 1.2;
         m_zoom = std::round(m_zoom*10.0)/10.0;
-    }else if(m_button_option.isActive(x2, y2)){
+    } else if(m_button_option.isActive(x2, y2)){
         m_option_widget.open();
+    } else if(m_button_left.isActive(x2, y2)){
+        Framework::instance().m_pilot_translator_module.openRelayLeft(2000);
+    } else if(m_button_middle.isActive(x2, y2)){
+        Framework::instance().m_pilot_translator_module.inverseLamp();
+    } else if(m_button_right.isActive(x2, y2)){
+        Framework::instance().m_pilot_translator_module.openRelayRight(2000);
     } else if(m_button_diag.isActive(x2, y2)){
         openRapideWidget(6);
     } else if(m_button_debug.isActive(x2, y2)){

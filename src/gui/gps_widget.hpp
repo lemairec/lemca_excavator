@@ -85,6 +85,11 @@ public:
     ButtonGui m_button_vitesse_plus;
     ButtonGui m_button_vitesse_moins;
     
+    ButtonGui m_button_left;
+    ButtonGui m_button_middle;
+    ButtonGui m_button_right;
+    
+    
     //ButtonGui m_button_volant;
     
     bool m_debug = false;
@@ -98,8 +103,8 @@ public:
     void drawExcavator();
     void drawInfos();
     void drawInfosBasLeft();
-    void drawInfosExcavator();
     void drawRightLeft();
+    void drawInfosExcavator();
     void drawAlertes();
     void drawLicence();
     
