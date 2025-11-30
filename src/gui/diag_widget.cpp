@@ -258,6 +258,8 @@ void DiagnosticWidget::draw(){
     {
         drawText(f.m_nmea_parser_mcu.m_other_str, x3, y, sizeText_little);
     }
+    y+=1*inter;
+    drawText(f.m_pilot_translator_module.m_last_order_send, x1, y, sizeText_little, false);
     
     y+=1.4*inter;
    drawText("Port3 Soil", x2, y, sizeText_medium);

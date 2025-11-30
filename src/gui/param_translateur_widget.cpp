@@ -672,8 +672,7 @@ void ParamTranslateurWidget::drawPage9(){
     drawQText("---", x1, y, sizeText_little, false);
     y+=inter;
     drawText(f.getLastSerial(), x1, y, sizeText_little, false);
-    y+=inter;
-    drawText(f.m_pilot_module.m_last_order_send, x1, y, sizeText_little, false);*/
+    */
     
     
     if(m_time_page){
