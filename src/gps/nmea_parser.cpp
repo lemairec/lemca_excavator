@@ -73,6 +73,10 @@ void NmeaParser::parseBuffer(){
             if(checkBuffer()){
                 parseLemcaTranslatorV2();
             }
+        } else if(m_bufferIndLast > 8 && m_buffer[0] == 'L' &&  m_buffer[1] == 'E' && m_buffer[2] == 'M' && m_buffer[3] == 'V' && m_buffer[4] == '3'){
+            if(checkBuffer()){
+                parseLemcaTranslatorV2();
+            }
         } else if(m_buffer[0] == 'V'  && m_buffer[1] == ','){
             std::string s;
             for(size_t i =0; i < m_bufferIndLast; ++i){
