@@ -177,7 +177,7 @@ void MyQTSerialPorts::writePort2McuStr(const std::string & l){
 
 
 void MyQTSerialPorts::handlePort3SoilReadyRead(){
-    DEBUG("begin");
+    /*DEBUG("begin");
     QByteArray a = m_port3_soil.readAll();
     Framework & f = Framework::instance();
     for(int i = 0; i < (int)a.size(); ++i){
@@ -186,10 +186,10 @@ void MyQTSerialPorts::handlePort3SoilReadyRead(){
     m_port3_soil_count++;
     
     
-    DEBUG("end");
+    DEBUG("end");*/
 }
 void MyQTSerialPorts::handlePort3SoilError(QSerialPort::SerialPortError error){
-    DEBUG("begin");
+    /*DEBUG("begin");
     if(error != 0){
         std::ostringstream oss;
         oss << "handleErrorGps " << error << ", error:" << m_port3_soil.errorString().toUtf8().constData();
@@ -197,7 +197,7 @@ void MyQTSerialPorts::handlePort3SoilError(QSerialPort::SerialPortError error){
         Framework::instance().addError(oss.str());
         WARN(error);
     }
-    DEBUG("end");
+    DEBUG("end");*/
 }
 
 void MyQTSerialPorts::writePort3SoilHexa(std::vector<unsigned char> & l){
