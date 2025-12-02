@@ -143,10 +143,14 @@ void MyQTSerialPorts::handlePort2McuReadyRead(){
     DEBUG("begin");
     QByteArray a = m_port2_mcu.readAll();
     Framework & f = Framework::instance();
+    std::ostringstream oss;
+    oss << "toto ";
     for(int i = 0; i < (int)a.size(); ++i){
         f.m_nmea_parser_mcu.readChar((char)(a.data()[i]));
+        oss << (char)(a.data()[i]);
     }
     m_port2_mcu_count++;
+    addMessage(oss.str());
     
     DEBUG("end");
 }
