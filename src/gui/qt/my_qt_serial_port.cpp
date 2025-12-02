@@ -68,6 +68,7 @@ void MyQTSerialPorts::startConnect(int i, QSerialPort & port, std::string & old_
 
 
 void MyQTSerialPorts::initOrLoad(const Config & config){
+    Framework::instance().addError("toto");
     startConnect(1, m_port1_gps, m_port1_gps_serial, config.m_port1_gps_serial, config.m_port1_gps_baudrate);
     startConnect(2, m_port2_mcu, m_port2_mcu_serial, config.m_port2_mcu_serial, config.m_port2_mcu_baudrate);
     startConnect(3, m_port3_soil, m_port3_soil_serial, config.m_port3_soil_serial, config.m_port3_soil_baudrate);
@@ -77,17 +78,23 @@ void MyQTSerialPorts::initOrLoad(const Config & config){
 
 void MyQTSerialPorts::closeAll(){
     INFO("###close all");
+    INFO("m_port1_gps begin close");
     if(m_port1_gps.isOpen()){
         INFO("m_port1_gps close");
         m_port1_gps.close();
+        INFO("m_port1_mcu is close");
     }
+    INFO("m_port2_mcu begin close");
     if(m_port2_mcu.isOpen()){
         INFO("m_port2_mcu close");
         m_port2_mcu.close();
+        INFO("m_port2_mcu is close");
     }
+    INFO("m_port3_soil begin close");
     if(m_port3_soil.isOpen()){
         INFO("m_port3_soil close");
         m_port3_soil.close();
+        INFO("m_port3_soil is close");
     }
 }
 
