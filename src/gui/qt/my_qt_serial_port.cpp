@@ -71,7 +71,7 @@ void MyQTSerialPorts::initOrLoad(const Config & config){
     Framework::instance().addError("toto");
     startConnect(1, m_port1_gps, m_port1_gps_serial, config.m_port1_gps_serial, config.m_port1_gps_baudrate);
     startConnect(2, m_port2_mcu, m_port2_mcu_serial, config.m_port2_mcu_serial, config.m_port2_mcu_baudrate);
-    startConnect(3, m_port3_soil, m_port3_soil_serial, config.m_port3_soil_serial, config.m_port2_mcu_baudrate);
+    startConnect(3, m_port3_soil, m_port3_soil_serial, config.m_port3_soil_serial, config.m_port3_soil_baudrate);
     //startConnect(2, m_port2_mcu, m_port1_gps_serial, config.m_gps_serial, config.m_gps_baudrate);
     //startConnect(3, m_port1_gps, m_port1_gps_serial, config.m_gps_serial, config.m_gps_baudrate);
 };
@@ -177,7 +177,7 @@ void MyQTSerialPorts::writePort2McuStr(const std::string & l){
 
 
 void MyQTSerialPorts::handlePort3SoilReadyRead(){
-    /*DEBUG("begin");
+    DEBUG("begin");
     QByteArray a = m_port3_soil.readAll();
     Framework & f = Framework::instance();
     for(int i = 0; i < (int)a.size(); ++i){
@@ -186,10 +186,10 @@ void MyQTSerialPorts::handlePort3SoilReadyRead(){
     m_port3_soil_count++;
     
     
-    DEBUG("end");*/
+    DEBUG("end");
 }
 void MyQTSerialPorts::handlePort3SoilError(QSerialPort::SerialPortError error){
-    /*DEBUG("begin");
+    DEBUG("begin");
     if(error != 0){
         std::ostringstream oss;
         oss << "handleErrorGps " << error << ", error:" << m_port3_soil.errorString().toUtf8().constData();
@@ -197,17 +197,17 @@ void MyQTSerialPorts::handlePort3SoilError(QSerialPort::SerialPortError error){
         Framework::instance().addError(oss.str());
         WARN(error);
     }
-    DEBUG("end");*/
+    DEBUG("end");
 }
 
 void MyQTSerialPorts::writePort3SoilHexa(std::vector<unsigned char> & l){
-    /*if(m_port3_soil.isOpen()){
+    if(m_port3_soil.isOpen()){
         QByteArray b;
         for(long unsigned int i = 0; i < l.size(); ++i){
             b.append(l[i]);
         }
         m_port3_soil.write(b);
-    }*/
+    }
 }
 
 /**
