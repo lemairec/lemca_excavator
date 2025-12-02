@@ -78,6 +78,10 @@ void DiagnosticWidget::draw(){
     y+=3*inter;
     drawText("B&W", x1, y, sizeText_medium);
     y+=1.2*inter;
+    {
+        QString s2 = "error : " + QString::fromStdString(f.m_messages_errors);
+        drawQText(s2, x1, y, sizeText_little);
+    }
     /*{
         QString s = "coeff : " + QString::number(f.m_config.m_coeff_color);
         drawQText(s, x1, y, sizeText_little);

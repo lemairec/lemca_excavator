@@ -112,7 +112,7 @@ void MyQTSerialPorts::handlePort1GpsError(QSerialPort::SerialPortError error){
         std::ostringstream oss;
         oss << "handleErrorGps " << error << ", error:" << m_port1_gps.errorString().toUtf8().constData();
         //TODOGpsFramework::Instance().m_pilot_last_error = oss.str();
-        //GpsFramework::Instance().addError(oss.str());
+        Framework::instance().addError(oss.str());
         WARN(error);
     }
     DEBUG("end");
@@ -182,15 +182,15 @@ void MyQTSerialPorts::handlePort3SoilReadyRead(){
     DEBUG("end");
 }
 void MyQTSerialPorts::handlePort3SoilError(QSerialPort::SerialPortError error){
-    /*DEBUG("begin");
+    DEBUG("begin");
     if(error != 0){
         std::ostringstream oss;
-        oss << "handleErrorGps " << error << ", error:" << m_serialPortGps.errorString().toUtf8().constData();
+        oss << "handleErrorGps " << error << ", error:" << m_port3_soil.errorString().toUtf8().constData();
         //TODOGpsFramework::Instance().m_pilot_last_error = oss.str();
-        //GpsFramework::Instance().addError(oss.str());
+        Framework::instance().addError(oss.str());
         WARN(error);
     }
-    DEBUG("end");*/
+    DEBUG("end");
 }
 
 void MyQTSerialPorts::writePort3SoilHexa(std::vector<unsigned char> & l){
