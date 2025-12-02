@@ -674,6 +674,8 @@ int GpsWidget::onMouse(int x, int y){
         m_zoom /= 1.2;
         m_zoom = std::round(m_zoom*10.0)/10.0;
     } else if(m_button_option.isActive(x2, y2)){
+        m_diagnostic_widget.m_close = true;
+        m_rapide_option_widget.m_close = true;
         m_option_widget.open();
     } else if(m_button_left.isActive(x2, y2)){
         Framework::instance().m_pilot_translator_module.openRelayLeft(2000);
