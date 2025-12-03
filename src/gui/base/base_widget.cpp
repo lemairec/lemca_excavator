@@ -1,7 +1,7 @@
 #include "base_widget.hpp"
 #include "../../util/directory_manager.hpp"
 #include "../../util/log.hpp"
-//#include "../../framework_vision.hpp"
+#include "../../framework.hpp"
 #include <iostream>
 #include <sstream>
 
@@ -151,7 +151,7 @@ void BaseWidget::drawButtonImageCarre(ButtonGui & button, QPixmap * pixmap, doub
         } else {
             m_painter->setPen(m_pen_black);
         }
-        drawQText(QString::fromStdString(s), button.m_x, button.m_y + button.m_height/4, sizeText_logo, true);
+        drawQTexts(QString::fromStdString(s), button.m_x, button.m_y + button.m_height/4+3, sizeText_logo, true, false, true);
     }
 }
 
@@ -161,6 +161,20 @@ void BaseWidget::drawMyImage(QPixmap & pixmap, int x, int y, double scale, bool 
 
     m_painter->drawPixmap(x-w/2, y-h/2, w, h, pixmap);
 }
+
+void BaseWidget::drawButtonCheckIgnoreColor(ButtonGui & button, bool check, const std::string & s){
+    int x = button.m_x+2*button.m_rayon;
+    int y = button.m_y;
+    
+    if(check){
+        drawButtonImage(button, m_img_check_on, 0.6);
+    } else {
+        drawButtonImage(button, m_img_check_off, 0.6);
+    }
+    
+    drawText(s, x, y, sizeText_medium);
+}
+
 
 void BaseWidget::drawButtonCheck(ButtonGui & button, bool check, const std::string & s){
     int x = button.m_x+2*button.m_rayon;
@@ -266,7 +280,7 @@ void BaseWidget::drawQText(const QString & s, int x, int y, SizeText size, bool 
    
 }
 
-void BaseWidget::drawQTexts(const QString & s, int x, int y, SizeText size, bool center, bool white){
+void BaseWidget::drawQTexts(const QString & s, int x, int y, SizeText size, bool center, bool white, bool center_h){
     int s2 = 10;
     switch (size) {
         case sizeText_bigbig:
@@ -298,6 +312,10 @@ void BaseWidget::drawQTexts(const QString & s, int x, int y, SizeText size, bool
     m_painter->setFont(font);
     
     int y2 = y+5;
+    if(center_h){
+        y2 -= (list1.size()-1)*s2*0.6;
+    }
+    
     for(auto s3 : list1){
         if(center){
             //auto mBounds = textItem->boundingRect();
@@ -315,7 +333,6 @@ void BaseWidget::drawQTexts(const QString & s, int x, int y, SizeText size, bool
 QPixmap * BaseWidget::loadImage(const std::string & s, bool inv){
     std::string s2 = DirectoryManager::instance().getSourceDirectory()+s;
     QImage image2(QString::fromStdString(s2));
-    //INFO(s2);
     if(inv){
         image2.invertPixels();
     }

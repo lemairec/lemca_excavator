@@ -66,7 +66,6 @@ public:
     double m_height;
     bool m_close = true;
     
-    KeyPadWidget * m_key_pad_widget;
     KeyBoardWidget * m_key_board_widget;
     BaseWidget();
     
@@ -82,6 +81,7 @@ public:
     virtual void open();
     virtual bool isOpen();
     
+    void drawButtonCheckIgnoreColor(ButtonGui & button, bool check, const std::string & s);
     void drawButtonCheck(ButtonGui & button, bool check, const std::string & s);
     void drawButtonCheck(ButtonGui & button, bool check);
     void drawButtonLabel2(ButtonGui & button, int color = 0);
@@ -92,7 +92,7 @@ public:
     
     void drawText(const std::string & text, int x, int y, SizeText = sizeText_little, bool center = false, bool white = false);
     void drawQText(const QString & text, int x, int y, SizeText = sizeText_little, bool center = false, bool white = false);
-    void drawQTexts(const QString & text, int x, int y, SizeText = sizeText_little, bool center = false, bool white = false);
+    void drawQTexts(const QString & text, int x, int y, SizeText = sizeText_little, bool center = false, bool white = false, bool center_h = false);
     
     void drawValueGuiKeyPadFalse(ValueGui & value);
     void drawValueGuiKeyPad2(ValueGui & keypad);

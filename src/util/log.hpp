@@ -26,11 +26,9 @@ oss << message; \
 Logger::instance().log(level, CLASS_METHOD, __LINE__, oss);\
 };
 
-#define LOG_FUNCTION() \
-LogFunction l(TraceFunction, CLASS_METHOD);
+#define LOG_FUNCTION()
 
-#define LOG_FUNCTION_INFO() \
-LogFunction l(Info, CLASS_METHOD);
+#define LOG_FUNCTION_INFO()
 
 #define LOG_ASSERT(cond, message)  \
 {\
@@ -46,7 +44,7 @@ LOG(Warning_Assert, message) \
 };\
 };
 
-#define DEBUG(x) LOG(Trace0,x)
+#define DEBUG(x)
 #define INFO(x) LOG(Info,x)
 #define WARN(x) LOG(Warning,x)
 #define ERROR(x) LOG(MyError,x)

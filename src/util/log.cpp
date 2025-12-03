@@ -2,8 +2,7 @@
 #include "util.hpp"
 #include "environnement.hpp"
 #include "directory_manager.hpp"
-#include <iostream>
-#include <cerrno>
+
 
 LogFile::LogFile(std::string path, Level levelMin)
    :ILogger(levelMin)
@@ -31,7 +30,7 @@ void LogCout::log(Level level, const std::string & s){
 }
 
 Logger::Logger()
-   :m_logFile(DirectoryManager::instance().m_log_file, Trace0) // ouverture en écriture avec effacement du fichier ouver
+   :m_logFile(DirectoryManager::instance().m_log_file, Warning) // ouverture en écriture avec effacement du fichier ouver
    ,m_logCout(Info)
    ,m_logger(NULL)
 {

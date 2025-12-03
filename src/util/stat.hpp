@@ -35,6 +35,17 @@ public:
         }
     }
     
+    bool isConnectedTimeS(double time_s){
+        auto begin = std::chrono::system_clock::now();
+        std::chrono::duration<double> diff = begin - m_last_time_received;
+
+        if(diff.count() < time_s){
+            return true;
+        } else {
+            return false;
+        }
+    }
+    
     
     void addNewValue(double value){
         if(value > 10000){
