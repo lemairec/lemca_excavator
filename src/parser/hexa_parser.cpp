@@ -77,7 +77,7 @@ void HexaParser::parseSoil(){
     f.m_last_soil_k = k*1;
     
     //Framework & f = Framework::Instance();
-    //std::string s = strprintf("res => hum %.1f  temp %.1f  cond %.1f ph %.1f  n %.1f  p %.1f  k %.1f", humidity_, temperature_, conductivity_ , ph_, n_, p_, k_);
-    //f.addSerialMessage(s);
+    std::string s = strprintf("SOIL,%.1f,%.1f,%.1f,%.1f,%.1f,%.1f,%.1f", f.m_last_soil_hum, f.m_last_soil_temp, f.m_last_soil_cond , f.m_last_soil_ph, f.m_last_soil_n, f.m_last_soil_p, f.m_last_soil_k);
+    f.m_job_manager.log(s);
     
 }

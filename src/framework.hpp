@@ -25,6 +25,7 @@
 #include "parser/hexa_parser.hpp"
 
 #include "gui/qt/my_qt_network.hpp"
+#include "job/job_manager.hpp"
 
 class IGpsObserver {
 public:
@@ -255,6 +256,7 @@ public:
     AutoPathModule m_auto_path_module;
     MyQtMediaPlayer m_qt_media_player;
     MyQTTimer m_qt_timer;
+    JobManager m_job_manager;
     
     std::list<std::string> m_listLog;
 private:

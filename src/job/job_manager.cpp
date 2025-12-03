@@ -1,7 +1,7 @@
 #include "job_manager.hpp"
 #include "../util/directory_manager.hpp"
 #include "../util/log.hpp"
-#include "../framework_vision.hpp"
+#include "../framework.hpp"
 
 JobManager::JobManager(){
     
@@ -33,8 +33,11 @@ void JobManager::init(){
         std::cerr << "*** can not execute : " << s2 << std::endl;;
     };
     
-    m_file = dir = DirectoryManager::instance().getHome()+"/lemca_data/job/"+m_begin+"/job.txt";
+    m_file = DirectoryManager::instance().getHome()+"/lemca_data/job/"+m_begin+"/job.txt";
     handle60s();
+    
+    m_log_path = DirectoryManager::instance().getHome()+"/lemca_data/job/"+m_begin+"/log.txt";
+    m_log_file.open(m_log_path);
 }
 
 int m_s = 0;
@@ -50,7 +53,7 @@ void JobManager::handle60s(){
     std::ofstream file;
     file.open(m_file);
     
-    file << "PROG,BINEUSE" << std::endl;
+    file << "PROG,EXCAVATOR" << std::endl;
     file << "BEGIN," << m_begin << std::endl;
     
     time_t     now = time(0);
@@ -62,10 +65,14 @@ void JobManager::handle60s(){
     strftime(buf, sizeof(buf), "%Y_%m_%d_%H_%M_%S", &tstruct);
     file << "END," << buf << std::endl;
     
-    file << "SESSION_H," << FrameworkVision::instance().m_qt_compteur_heure.m_heure_session << std::endl;
+    /*file << "SESSION_H," << FrameworkVision::instance().m_qt_compteur_heure.m_heure_session << std::endl;
     file << "SESSION_HA," << FrameworkVision::instance().m_qt_compteur_heure.m_ha_session << std::endl;
     file << "SESSION_TOTAL_H," << FrameworkVision::instance().m_qt_compteur_heure.m_heure_total << std::endl;
-    file << "SESSION_TOTAL_HA," << FrameworkVision::instance().m_qt_compteur_heure.m_ha_total << std::endl;
+    file << "SESSION_TOTAL_HA," << FrameworkVision::instance().m_qt_compteur_heure.m_ha_total << std::endl;*/
     
     file.close();
+}
+
+void JobManager::log(const std::string & s){
+    m_log_file << s << "\n";
 }

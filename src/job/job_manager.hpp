@@ -13,6 +13,12 @@ public:
     void init();
     void handleSeconde();
     void handle60s();
+    
+    std::string m_log_path;
+    std::ofstream m_log_file;
+    
+    void log(const std::string & string);
+    void addData(const std::string & string);
 };
 
 #endif

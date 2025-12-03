@@ -54,6 +54,7 @@ void Framework::initOrLoadConfig(){
     m_qt_network.initOrLoad(m_config);
     m_qt_media_player.initOrLoad(m_config);
     m_pilot_translator_module.initOrLoad(m_config);
+    m_job_manager.init();
     
     m_job_module.onNewMessage("config");
     
@@ -371,6 +372,7 @@ bool Framework::isTranslateurConnected(){
 
 
 void Framework::onFrame(const std::string &frame){
+    m_job_manager.log(frame);
     m_job_module.onNewFrame(frame);
     m_auto_path_module.onNewFrame(frame);
 }
