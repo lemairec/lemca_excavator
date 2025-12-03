@@ -102,6 +102,17 @@ public:
     double m_last_soil_k;
     
     
+    double m_record_lat;
+    double m_record_lon;
+    double m_record_soil_temp;
+    double m_record_soil_hum;
+    double m_record_soil_cond;
+    double m_record_soil_ph;
+    double m_record_soil_n;
+    double m_record_soil_p;
+    double m_record_soil_k;
+    
+    
     std::string m_messages_errors;
     void addError(std::string s);
     

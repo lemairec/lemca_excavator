@@ -166,6 +166,7 @@ public:
     int m_begin_cycle = 0;
     std::string m_cycle_m = "";
     void startCycle();
+    void resetCycle();
     
     void handle25ms();
 };

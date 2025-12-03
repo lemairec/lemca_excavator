@@ -38,6 +38,9 @@ void JobManager::init(){
     
     m_log_path = DirectoryManager::instance().getHome()+"/lemca_data/job/"+m_begin+"/log.txt";
     m_log_file.open(m_log_path);
+    
+    m_data_path = DirectoryManager::instance().getHome()+"/lemca_data/job/"+m_begin+"/soil.txt";
+    m_data_file.open(m_data_path);
 }
 
 int m_s = 0;
@@ -75,4 +78,10 @@ void JobManager::handle60s(){
 
 void JobManager::log(const std::string & s){
     m_log_file << s << "\n";
+}
+
+void JobManager::addData(const std::string & s){
+    INFO(s);
+    m_data_file << s << "\n";
+    m_data_file.flush();
 }

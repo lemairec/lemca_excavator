@@ -407,9 +407,26 @@ void PilotTranslatorModule::writePilotSerialString(const std::string & l){
     Framework::instance().m_serialModule.writePort2McuStr(l);
 }
 
+void PilotTranslatorModule::resetCycle(){
+    Framework & f = Framework::instance();
+    f.m_record_lat = 0;
+    f.m_record_lon = 0;
+    f.m_record_soil_temp = 0;
+    f.m_record_soil_hum = 0;
+    f.m_record_soil_cond = 0;
+    f.m_record_soil_ph = 0;
+    f.m_record_soil_n = 0;
+    f.m_record_soil_p = 0;
+    f.m_record_soil_k = 0;
+}
+
 void PilotTranslatorModule::startCycle(){
-    m_etat = SerialEtat_Cycle;
-    m_begin_cycle = getMillis();
+    if(m_etat != SerialEtat_Cycle){
+        m_etat = SerialEtat_Cycle;
+        m_begin_cycle = getMillis();
+        
+        resetCycle();
+    }
 }
 
 
@@ -417,6 +434,7 @@ void PilotTranslatorModule::updateCycle(){
     m_cycle_up = 0;
     m_cycle_down = 0;
     m_cycle_lamp = 0;
+    Framework & f = Framework::instance();
     
     int millis = getMillis() - m_begin_cycle;
     double s = millis*0.001;
@@ -433,13 +451,23 @@ void PilotTranslatorModule::updateCycle(){
         m_cycle_lamp = 1;
         m_cycle_m = strprintf("%.1f down wait", s);
     } else if(s < 3+1){
+        if(f.m_position_module.m_last_gga){
+            f.m_record_lat = f.m_position_module.m_last_gga->m_latitude;
+            f.m_record_lon = f.m_position_module.m_last_gga->m_longitude;
+        }
         m_cycle_up = 1;
         m_cycle_lamp = 1;
         m_cycle_m = strprintf("%.1f up", s);
-    } else if(s < 11){
+    } else if(s < 12){
         m_cycle_m = strprintf("%.1f data wait", s);
     } else if(s < 13){
-        m_cycle_m = strprintf("%.1f record", s);
+        m_cycle_m = strprintf("%.1f record data", s);
+        if(f.m_record_lat > 0){
+            std::string s = strprintf("%.7f,%.7f,%.1f,%.1f,%.1f,%.1f,%.1f,%.1f,%.1f", f.m_record_lat, f.m_record_lon, f.m_last_soil_hum, f.m_last_soil_temp, f.m_last_soil_cond , f.m_last_soil_ph, f.m_last_soil_n, f.m_last_soil_p, f.m_last_soil_k);
+            f.m_job_manager.addData(s);
+            resetCycle();
+        }
+        
     } else {
         m_etat = SerialEtat_Temp;
         m_cycle_m = strprintf("%.1f --off", s);

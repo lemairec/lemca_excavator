@@ -282,7 +282,7 @@ void GpsWidget::drawRightLeft(){
     drawButtonImageCarre(m_button_right, m_img_right, 0.3, f.m_pilot_translator_module.m_cycle_up, "RIGHT");
     
     drawButtonImageCarre(m_button_middle, m_img_middle, 0.3, f.m_pilot_translator_module.m_cycle_lamp, "LAMP");
-    drawButtonImageCarre(m_button_cycle, m_img_middle, 0.3, false, "CYCLE");
+    drawButtonImageCarre(m_button_cycle, m_img_middle, 0.3, (f.m_pilot_translator_module.m_etat == SerialEtat_Cycle), "CYCLE");
     drawButtonImageCarre(m_button_left, m_img_left, 0.3, f.m_pilot_translator_module.m_cycle_down, "LEFT");
 }
 
