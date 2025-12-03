@@ -9,6 +9,7 @@ enum SerialEtat {
     SerialEtat_Off = 0,
     SerialEtat_Pas = 1,
     SerialEtat_Temp = 2,
+    SerialEtat_Cycle = 3,
 };
 
 enum TypeAlgoCommand {
@@ -156,7 +157,17 @@ public:
     std::string m_pilot_version = "";
     int m_arduino_send_v = 0;
     void writePilotSerialString(const std::string & l);
-    void handleArduino();
+    
+    
+    int m_cycle_up = 0;
+    int m_cycle_down = 0;
+    int m_cycle_lamp = 0;
+    void updateCycle();
+    int m_begin_cycle = 0;
+    std::string m_cycle_m = "";
+    void startCycle();
+    
+    void handle25ms();
 };
 
 #endif

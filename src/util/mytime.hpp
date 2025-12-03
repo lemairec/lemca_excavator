@@ -19,4 +19,6 @@
 myTime myTimeInit();
 double myTimeDurationMs(myTime & begin, myTime & end);
 
+int getMillis();
+
 #endif //MY_TIME_H

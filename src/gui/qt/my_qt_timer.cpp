@@ -32,5 +32,5 @@ void MyQTTimer::handle100ms(){
 
 void MyQTTimer::handle25ms(){
     Framework & f = Framework::instance();
-    f.m_pilot_translator_module.handleArduino();
+    f.m_pilot_translator_module.handle25ms();
 }

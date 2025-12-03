@@ -365,6 +365,26 @@ void PilotTranslatorModule::updateSerial(){
                  m_direction = 0;
              }
          }
+     } else if(m_etat == SerialEtat_Cycle){
+         Framework::instance().m_debug_str_3 = "cycle";
+         
+         if(m_cycle_up){
+             openRelayLeft();
+         } else {
+             closeRelayLeft();
+         }
+         
+         if(m_cycle_down){
+             openRelayRight();
+         } else {
+             closeRelayRight();
+         }
+         
+         if(m_cycle_lamp){
+             setLamp(1);
+         } else {
+             setLamp(0);
+         }
      } else {
         closeRelayRight();
         closeRelayLeft();
@@ -387,8 +407,51 @@ void PilotTranslatorModule::writePilotSerialString(const std::string & l){
     Framework::instance().m_serialModule.writePort2McuStr(l);
 }
 
+void PilotTranslatorModule::startCycle(){
+    m_etat = SerialEtat_Cycle;
+    m_begin_cycle = getMillis();
+}
 
-void PilotTranslatorModule::handleArduino(){
+
+void PilotTranslatorModule::updateCycle(){
+    m_cycle_up = 0;
+    m_cycle_down = 0;
+    m_cycle_lamp = 0;
+    
+    int millis = getMillis() - m_begin_cycle;
+    double s = millis*0.001;
+    if( s < 0 || s > 100){
+        m_cycle_m = strprintf("%.1f ---off", s);
+        return;
+    }
+    
+    if(s < 1){
+        m_cycle_down = 1;
+        m_cycle_lamp = 1;
+        m_cycle_m = strprintf("%.1f down", s);
+    } else if(s < 3){
+        m_cycle_lamp = 1;
+        m_cycle_m = strprintf("%.1f down wait", s);
+    } else if(s < 3+1){
+        m_cycle_up = 1;
+        m_cycle_lamp = 1;
+        m_cycle_m = strprintf("%.1f up", s);
+    } else if(s < 11){
+        m_cycle_m = strprintf("%.1f data wait", s);
+    } else if(s < 13){
+        m_cycle_m = strprintf("%.1f record", s);
+    } else {
+        m_etat = SerialEtat_Temp;
+        m_cycle_m = strprintf("%.1f --off", s);
+    }
+    
+}
+int last_millis = 0;
+std::string m_cycle_m = "";
+
+
+
+void PilotTranslatorModule::handle25ms(){
     if(m_pilot_version.size() < 2){
         m_arduino_send_v++;
         if(m_arduino_send_v > m_frequence*5){
@@ -396,5 +459,6 @@ void PilotTranslatorModule::handleArduino(){
             Framework::instance().m_serialModule.writePort2McuStr("$V,*\n");
         }
     }
+    updateCycle();
     Framework::instance().m_serialModule.writePort2McuStr("$P,*\n");
 }

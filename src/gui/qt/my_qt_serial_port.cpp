@@ -68,8 +68,7 @@ void MyQTSerialPorts::startConnect(int i, QSerialPort & port, std::string & old_
 
 
 void MyQTSerialPorts::initOrLoad(const Config & config){
-    Framework::instance().addError("toto");
-    startConnect(1, m_port1_gps, m_port1_gps_serial, config.m_port1_gps_serial, 9600);
+    startConnect(1, m_port1_gps, m_port1_gps_serial, config.m_port1_gps_serial, config.m_port1_gps_baudrate);
     startConnect(2, m_port2_mcu, m_port2_mcu_serial, config.m_port2_mcu_serial, config.m_port2_mcu_baudrate);
     startConnect(3, m_port3_soil, m_port3_soil_serial, config.m_port3_soil_serial, config.m_port3_soil_baudrate);
 };
@@ -141,14 +140,10 @@ void MyQTSerialPorts::handlePort2McuReadyRead(){
     DEBUG("begin");
     QByteArray a = m_port2_mcu.readAll();
     Framework & f = Framework::instance();
-    std::ostringstream oss;
-    oss << "toto ";
     for(int i = 0; i < (int)a.size(); ++i){
         f.m_nmea_parser_mcu.readChar((char)(a.data()[i]));
-        oss << (char)(a.data()[i]);
     }
     m_port2_mcu_count++;
-    addMessage(oss.str());
     
     DEBUG("end");
 }
@@ -182,13 +177,13 @@ void MyQTSerialPorts::handlePort3SoilReadyRead(){
     DEBUG("begin");
     QByteArray a = m_port3_soil.readAll();
     Framework & f = Framework::instance();
-    std::ostringstream oss;
-    oss << "tata ";
+    //std::ostringstream oss;
+    //oss << "tata ";
     for(int i = 0; i < (int)a.size(); ++i){
         f.m_hexa_parser.readChar((char)(a.data()[i]));
     }
     m_port3_soil_count++;
-    addMessage(oss.str());
+    //addMessage(oss.str());
     
     DEBUG("end");
 }

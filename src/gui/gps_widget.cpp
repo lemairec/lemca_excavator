@@ -169,6 +169,7 @@ void GpsWidget::drawButtons(){
         m_button_left.setResize(x2, y_bas2, m_gros_button);
         x2 = x+w/2;
         m_button_middle.setResize(x2, y_bas2, "", true, m_gros_button*2*1.4,m_gros_button*2);
+        m_button_cycle.setResize(x2, y_bas2-100, "", true, m_gros_button*2*1.4,m_gros_button*2);
         x2 = x+w/2+0.08*m_width;
         m_button_right.setResize(x2, y_bas2, m_gros_button);
     }
@@ -277,10 +278,12 @@ void GpsWidget::drawRightLeft(){
     
     m_painter->drawRoundedRect(x, y, w, h, 10, 10);
     
-    drawButtonImageCarre(m_button_right, m_img_right, 0.3, false, "RIGHT");
+    Framework & f = Framework::instance();
+    drawButtonImageCarre(m_button_right, m_img_right, 0.3, f.m_pilot_translator_module.m_cycle_up, "RIGHT");
     
-    drawButtonImageCarre(m_button_middle, m_img_middle, 0.3, false, "LAMP");
-    drawButtonImageCarre(m_button_left, m_img_left, 0.3, false, "LEFT");
+    drawButtonImageCarre(m_button_middle, m_img_middle, 0.3, f.m_pilot_translator_module.m_cycle_lamp, "LAMP");
+    drawButtonImageCarre(m_button_cycle, m_img_middle, 0.3, false, "CYCLE");
+    drawButtonImageCarre(m_button_left, m_img_left, 0.3, f.m_pilot_translator_module.m_cycle_down, "LEFT");
 }
 
 void GpsWidget::drawInfosBasLeft(){
@@ -359,6 +362,10 @@ void GpsWidget::drawInfosBasLeft(){
         y+=inter;
         s = strprintf("altitude : %.1f m", f.m_hauteur_current);
         drawText(s, x2, y, sizeText_little, false, true);
+        
+        y+=inter;
+        y+=inter;
+        drawText(f.m_pilot_translator_module.m_cycle_m, x2, y, sizeText_little, false, true);
         
         
     } else {
@@ -681,6 +688,8 @@ int GpsWidget::onMouse(int x, int y){
         Framework::instance().m_pilot_translator_module.openRelayLeft(2000);
     } else if(m_button_middle.isActive(x2, y2)){
         Framework::instance().m_pilot_translator_module.inverseLamp();
+    }  else if(m_button_cycle.isActive(x2, y2)){
+        Framework::instance().m_pilot_translator_module.startCycle();
     } else if(m_button_right.isActive(x2, y2)){
         Framework::instance().m_pilot_translator_module.openRelayRight(2000);
     } else if(m_button_diag.isActive(x2, y2)){

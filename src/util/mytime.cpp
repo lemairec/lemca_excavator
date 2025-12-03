@@ -27,3 +27,11 @@
       return std::chrono::duration_cast<std::chrono::milliseconds>(end-begin).count();
    }
 #endif
+
+
+int getMillis(){
+    struct timespec _t;
+    clock_gettime(CLOCK_REALTIME, &_t);
+    long res = _t.tv_sec*1000 + lround(_t.tv_nsec/1e6);
+    return (int)res;
+}
