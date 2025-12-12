@@ -85,12 +85,18 @@ public:
     int m_offset_auto = 0;
     int m_offset2_mm = 0;
     
+    int m_etat = 0; //0 excavator, 1 luc, 2 soil
+    
     bool isDeveloppeur(){
         return true;//m_user_mode > 1;
     }
     
     bool isTechnicien(){
         return true;//m_user_mode > 0;
+    }
+    
+    bool isBaliseEnable(){
+        return (m_balise_enable || (m_etat == 1));
     }
     
     Config();

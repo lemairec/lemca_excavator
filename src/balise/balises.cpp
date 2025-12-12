@@ -103,6 +103,7 @@ void Balises::sort(GpsPoint_ptr p){
 void Balises::newBalise(){
     Framework & f = Framework::instance();
     GpsPoint_ptr p = f.m_lastPoint;
+   
     
     if(p){
         Balise * b = new Balise();
@@ -115,6 +116,8 @@ void Balises::newBalise(){
         b->m_is_synchro = false;
         m_balises_new.push_back(b);
         m_balises.push_back(b);
+        std::string s = strprintf("%.7f,%.7f,%.2f",p->m_latitude, p->m_longitude, p->m_altitude);
+        f.m_job_manager.addData(s);
         f.m_position_module.setXY(*b);
         save();
     }

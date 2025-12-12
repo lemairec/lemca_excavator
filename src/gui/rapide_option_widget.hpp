@@ -62,7 +62,6 @@ public:
     void onMousePage2(int x, int y);
     
     //page3
-    ButtonGui m_mode_balise;
     void setSizePage3(int width, int height);
     void drawPage3();
     void onMousePage3(int x, int y);

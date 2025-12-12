@@ -213,8 +213,6 @@ void RapideOptionWidget::onMousePage2(int x, int y){
 
 
 void RapideOptionWidget::setSizePage3(int width, int height){
-    int y = m_y_begin;
-    m_mode_balise.setResizeStd(m_x+m_width2*0.5, y, "mode balises", true);
 }
 
 void RapideOptionWidget::drawPage3(){
@@ -222,9 +220,7 @@ void RapideOptionWidget::drawPage3(){
     
     Framework & f = Framework::instance();
     int y = m_y_begin;
-    drawButtonLabel2(m_mode_balise);
     m_painter->setPen(m_pen_black_inv);
-    y += m_y_inter;
     QString s = "nbr balises : "+QString::number(f.m_balises.m_balises.size());
     drawQTexts(s, m_x+m_width2*0.2, y);
     
@@ -242,10 +238,6 @@ void RapideOptionWidget::drawPage3(){
     }
 }
 void RapideOptionWidget::onMousePage3(int x, int y){
-    if(m_mode_balise.isActive(x, y)){
-        Framework & f = Framework::instance();
-        f.setEtat(Etat_Points);
-    }
 }
 
 

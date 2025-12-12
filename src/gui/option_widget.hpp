@@ -76,6 +76,8 @@ public:
     ButtonGui m_son2;
     ButtonGui m_son3;
     
+    SelectButtonGui m_select_etat;
+    
     ValueGuiKeyBoard m_company;
     void setSizePage1();
     void drawPage1();

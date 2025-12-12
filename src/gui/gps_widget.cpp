@@ -154,9 +154,9 @@ void GpsWidget::drawButtons(){
         }
         
         drawButtonImageCarre(m_button_option, m_img_option, 0.4);
-        drawButtonImageCarre(m_button_offset, m_img_offset, 0.3, (!m_rapide_option_widget.m_close && m_rapide_option_widget.m_page == 4), Langage::getKey("LOGO_OFFSET"));
-        if(f.m_config.m_balise_enable){
-            drawButtonImageCarre(m_button_balise, m_img_balise, 0.3,  !m_rapide_option_widget.m_close && m_rapide_option_widget.m_page == 3, Langage::getKey("LOGO_BALISE"));
+        drawButtonImageCarre(m_button_offset, m_img_offset, 0.3, (!m_rapide_option_widget.m_close && m_rapide_option_widget.m_page == 4), "recherche");
+        if(f.m_config.isBaliseEnable()){
+            drawButtonImageCarre(m_button_balise, m_img_balise, 0.3,  !m_rapide_option_widget.m_close && m_rapide_option_widget.m_page == 3, "arpentage");
         }
         drawButtonImageCarre(m_button_diag, m_img_infos, 0.3,  !m_rapide_option_widget.m_close && m_rapide_option_widget.m_page == 6, Langage::getKey("LOGO_INFOS"));
         
@@ -262,12 +262,9 @@ void GpsWidget::drawInfos(){
         
         drawMyImage(*m_img_compteur,x_v, y_top-21, 1.5*0.3, true);
     }
-    
-    
-    drawRightLeft();
 }
 
-void GpsWidget::drawRightLeft(){
+void GpsWidget::drawRightLeftSoil(){
     int h = 0.15*m_height;
     int y = m_height - h - 10;
     int x = 0.65*m_width+20;
@@ -391,6 +388,10 @@ void GpsWidget::drawInfosBasLeft(){
             drawText(s, x1, y, sizeText_little, false, true);
         }
     }
+    
+}
+
+void GpsWidget::drawInfosLuc(){
     
 }
 
@@ -583,9 +584,16 @@ void GpsWidget::draw(){
     drawButtons();
     drawInfos();
     drawInfosBasLeft();
-    drawInfosExcavator();
+    if(f.m_etat == Etat_Luc){
+        drawInfosLuc();
+    } else {
+        drawInfosExcavator();
+    }
     
-    drawRightLeft();
+    if(f.m_etat == Etat_Soil){
+        drawRightLeftSoil();
+    }
+    
     drawAlertes();
     
     
@@ -711,10 +719,10 @@ int GpsWidget::onMouse(int x, int y){
     } else if(m_button3d.isActive(x2, y2)){
         Framework::instance().m_config.m_3d = !Framework::instance().m_config.m_3d;
     } else if(m_button_offset.isActive(x, y)){
-        openRapideWidget(4);
+        openRapideWidget(3);
     } else if(m_button_balise.isActive(x, y)){
-        if(f.m_config.m_balise_enable){
-            openRapideWidget(3);
+        if(f.m_config.isBaliseEnable()){
+            openRapideWidget(1);
         }
     }
     
@@ -1026,7 +1034,7 @@ void GpsWidget::drawGpsWidget(){
     //scene->clear();
 
     
-    if(f.getEtat() == Etat_Points || f.getEtat() == Etat_Luc){
+    if(f.getEtat() == Etat_Luc){
         m_painter->setPen(m_pen_red); // personnaliser
         //double x_last = 0, y_last = 0;
         

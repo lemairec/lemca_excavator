@@ -240,8 +240,6 @@ void OptionWidget::setSizePage1(){
     m_lum1.setResize(m_width3*(0.04+0.4*0.44), y, m_petit_button);
     m_lum2.setResize(m_width3*(0.04+0.6*0.44), y, m_petit_button);
     m_lum3.setResize(m_width3*(0.04+0.8*0.44), y, m_petit_button);
-    y+= m_y_inter;
-    y+= m_y_inter;
     
     y += m_y_inter;
    
@@ -258,6 +256,13 @@ void OptionWidget::setSizePage1(){
     y += m_y_inter;
     y += m_y_inter;
     m_company.setResize(m_part_2_x+m_part_2_w/2, y);
+    
+    y+= m_y_inter;
+    y+= m_y_inter;
+    m_select_etat.setResize(m_part_2_x+m_part_2_w/2, y, "", true, m_part_2_w/2);
+    
+    
+    
     
 };
 
@@ -294,6 +299,7 @@ void OptionWidget::drawPage1(){
     
     
     
+
     drawPart2Title(m_son1.m_y-2*m_y_inter, m_y_inter*6, Langage::getKey("OPT_SON"));
     m_painter->setBrush(QBrush(QColor(115, 115, 115)));
     m_painter->setPen(m_pen_no);
@@ -322,13 +328,33 @@ void OptionWidget::drawPage1(){
     drawPart2Title(m_company.m_y-2*m_y_inter, m_y_inter*3, "companie");
     m_company.m_text = f.m_config.m_company;
     
+    drawButtonLabel2(m_select_etat.m_buttonOpen);
+    
+    if(m_select_widget.m_close){
+        m_select_etat.setSelectedValue(f.m_config.m_etat);
+    }
+    
     drawValueGuiKeyBoard(m_company);
+    
+    
     
     
 }
 
 void OptionWidget::onMousePage1(int x, int y){
+    
     Framework & f = Framework::instance();
+     if(!m_select_widget.m_close){
+         if(m_select_widget.onMouseSelect(x, y)){
+             f.m_config.m_etat = m_select_etat.m_selectedValue;
+         }
+         f.initOrLoadConfig();
+         return;
+     }
+     
+     isActiveButtonSelect(&m_select_etat, x, y);
+     
+    
     Config & config = f.m_config;
     
     
@@ -868,6 +894,10 @@ void OptionWidget::onMousePage7(int x, int y){
 
 void OptionWidget::open(){
     m_close = false;
+    m_select_etat.clear();
+    m_select_etat.addValue("None");
+    m_select_etat.addValue("Arpentage");
+    m_select_etat.addValue("Soil");
     addSerials();
 }
 

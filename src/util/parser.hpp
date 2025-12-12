@@ -21,7 +21,6 @@ public:
     bool m_has_error = false;
     void error();
     
-    std::string m_last_error = "";
     int m_nb_error_check = 0;
     bool checkBuffer();
 protected:

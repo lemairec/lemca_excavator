@@ -256,7 +256,7 @@ void DiagnosticWidget::draw(){
     }
     y+=1*inter;
     {
-        drawText(f.m_nmea_parser_mcu.m_last_error, x3, y, sizeText_little);
+        //drawText(f.m_nmea_parser_mcu.m_last_error, x3, y, sizeText_little);
     }
     y+=1*inter;
     {

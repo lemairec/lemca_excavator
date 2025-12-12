@@ -70,6 +70,7 @@ void Config::work(QSettings & settings, bool save){
     
     saveLoadBool(settings, "balise_enable", m_balise_enable, save);
      
+    saveLoadInt(settings, "etat", m_etat, save);
     
 }
 

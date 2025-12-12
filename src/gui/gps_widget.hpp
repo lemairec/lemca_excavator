@@ -104,8 +104,9 @@ public:
     void drawExcavator();
     void drawInfos();
     void drawInfosBasLeft();
-    void drawRightLeft();
+    void drawRightLeftSoil();
     void drawInfosExcavator();
+    void drawInfosLuc();
     void drawAlertes();
     void drawLicence();
     

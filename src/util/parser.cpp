@@ -60,12 +60,6 @@ bool Parser::checkBuffer(){
         checksum = checksum ^ c;
     }
     m_nb_error_check++;
-    
-    std::string s = "";
-    for(size_t i =0; i < m_bufferIndLast; ++i){
-        s += m_buffer[i];
-    }
-    m_last_error = s;
     return false;
 }
 

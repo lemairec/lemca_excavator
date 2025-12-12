@@ -144,7 +144,7 @@ public:
     bool m_gga = false;
     
     EtatAB m_etat_ab = EtatAB_Line;
-private:
+public:
     Etat m_etat = Etat_Reset;
 public:
     void setEtat(Etat etat);
