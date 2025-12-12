@@ -96,6 +96,7 @@ public:
     
     void drawValueGuiKeyPadFalse(ValueGui & value);
     void drawValueGuiKeyPad2(ValueGui & keypad);
+    void drawValueGuiKeyPad3(ValueGui & keypad);
     bool isActiveValueGuiKeyPad(ValueGui & value, int x, int y);
     bool onMouseKeyPad2(ValueGui & keypad, double x, double y, double inter = 1.0);
 

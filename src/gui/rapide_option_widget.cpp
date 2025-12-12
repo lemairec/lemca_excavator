@@ -221,6 +221,7 @@ void RapideOptionWidget::drawPage3(){
     Framework & f = Framework::instance();
     int y = m_y_begin;
     m_painter->setPen(m_pen_black_inv);
+    y += m_y_inter;
     QString s = "nbr balises : "+QString::number(f.m_balises.m_balises.size());
     drawQTexts(s, m_x+m_width2*0.2, y);
     

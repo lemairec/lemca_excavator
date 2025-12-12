@@ -380,6 +380,15 @@ void BaseWidget::drawValueGuiKeyPad2(ValueGui & keypad){
     drawQText(s, keypad.m_x, keypad.m_y, sizeText_medium, true);
 }
 
+void BaseWidget::drawValueGuiKeyPad3(ValueGui & keypad){
+    QString s = QString::number(keypad.m_value);
+    m_painter->setPen(m_pen_no);
+    m_painter->setBrush(m_brush_background_3);
+    m_painter->drawRoundedRect(keypad.m_x-40, keypad.m_y-15, 80, 30, 5, 5);
+    m_painter->setPen(m_pen_black_inv);
+    drawQText(s, keypad.m_x, keypad.m_y, sizeText_medium, true);
+}
+
 bool BaseWidget::isActiveValueGuiKeyPad(ValueGui & value, int x, int y){
     if(value.m_x - 40 < x && x < value.m_x + 40 && value.m_y-15 < y && y < value.m_y+15){
         return true;

@@ -91,7 +91,7 @@ int KeyPadWidget::onMouse(int x, int y){
     } else if(m_button_point.isActive(x, y)){
         addChiffre(".");
     } else if(m_button_ok.isActive(x, y)){
-        double res = m_res.toFloat();
+        double res = m_res.toDouble();
         if(m_value){
             m_value->m_value = res;
         }

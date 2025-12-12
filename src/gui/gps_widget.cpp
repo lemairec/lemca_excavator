@@ -76,6 +76,7 @@ void GpsWidget::setPainter(QPainter * p){
     }
     m_rapide_option_widget.setPainter(p);
     m_debug_widget.setPainter(p);
+    m_balise_widget.setPainter(p);
     m_key_board_widget.setPainter(p);
     
     m_first_widget.setPainter(p);
@@ -98,7 +99,9 @@ void GpsWidget::setSize(int width, int height){
     m_rapide_option_widget.setSize(m_width, m_height);
     m_diagnostic_widget.setSize(m_width, m_height);
     m_debug_widget.setSize(m_width, m_height);
+    m_balise_widget.setSize(m_width, m_height);
    
+
     m_button_debug.setResize(40, 20, m_gros_button);
     int x_right = width-m_gros_button-20;
     int inter = m_gros_button*2.1;
@@ -114,6 +117,8 @@ void GpsWidget::setSize(int width, int height){
     m_button_offset.setResize(x_right, y, m_gros_button);
     y += inter;
     m_button_balise.setResize(x_right, y, m_gros_button);
+    y += inter;
+    m_button_balise2.setResize(x_right, y, m_gros_button);
     y += inter;
     m_button_diag.setResize(x_right, y, m_gros_button);
     
@@ -157,6 +162,7 @@ void GpsWidget::drawButtons(){
         drawButtonImageCarre(m_button_offset, m_img_offset, 0.3, (!m_rapide_option_widget.m_close && m_rapide_option_widget.m_page == 4), "recherche");
         if(f.m_config.isBaliseEnable()){
             drawButtonImageCarre(m_button_balise, m_img_balise, 0.3,  !m_rapide_option_widget.m_close && m_rapide_option_widget.m_page == 3, "arpentage");
+            drawButtonImageCarre(m_button_balise2, m_img_balise, 0.3,  false, "list");
         }
         drawButtonImageCarre(m_button_diag, m_img_infos, 0.3,  !m_rapide_option_widget.m_close && m_rapide_option_widget.m_page == 6, Langage::getKey("LOGO_INFOS"));
         
@@ -614,6 +620,9 @@ void GpsWidget::draw(){
     if(!m_debug_widget.m_close){
         m_debug_widget.draw();
     }
+    if(!m_balise_widget.m_close){
+        m_balise_widget.draw();
+    }
     if(false){
         drawLicence();
     }
@@ -677,6 +686,9 @@ int GpsWidget::onMouse(int x, int y){
     if(!m_debug_widget.m_close){
         m_debug_widget.onMouse(x, y);
     }
+    if(!m_balise_widget.m_close){
+        m_balise_widget.onMouse(x, y);
+    }
     
     double x2 = x;
     double y2 = y;
@@ -724,6 +736,8 @@ int GpsWidget::onMouse(int x, int y){
         if(f.m_config.isBaliseEnable()){
             openRapideWidget(1);
         }
+    } else if(m_button_balise2.isActive(x, y)){
+        m_balise_widget.open();
     }
     
     return 0;
