@@ -61,8 +61,10 @@ void BalisesWidget::open(){
     m_mode = 0;
     
     std::string res = execute2("ls /media/lemca/");
-    std::vector<std::string> strs;
-    split(res, '\n');
+    INFO("ls /media/lemca/");
+    INFO(res);
+    std::vector<std::string> strs = split(res, '\n');
+    
     
     
     m_file_select.clear();
