@@ -32,6 +32,6 @@
 int getMillis(){
     struct timespec _t;
     clock_gettime(CLOCK_REALTIME, &_t);
-    long res = _t.tv_sec*1000 + lround(_t.tv_nsec/1e6);
+    long res = _t.tv_sec*1000 + (_t.tv_nsec/1e6);
     return (int)res;
 }
