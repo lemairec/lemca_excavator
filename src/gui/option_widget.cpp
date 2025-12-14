@@ -633,6 +633,7 @@ void OptionWidget::setSizePage5(){
     y+= m_y_inter;
     m_mcu.setResize(m_part_2_x+m_part_2_w*0.6, y, m_height2*0.35);
     y+= m_y_inter;
+    ValueGuiKeyBoard m_licence;
     m_licence.setResize(m_part_2_x+m_part_2_w*0.6, y, m_height2*0.35);
     y+= m_y_inter;
     y_licence = y;

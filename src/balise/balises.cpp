@@ -21,10 +21,7 @@ void Balises::clear(){
     save();
 }
 
-void Balises::addBalise(Balise *b){
-    m_balises.push_back(b);
-    save();
-}
+
 
 void Balises::load(){
     m_balises.clear();
@@ -100,6 +97,30 @@ void Balises::sort(GpsPoint_ptr p){
     std::sort (m_balises_sort.begin(), m_balises_sort.end(), myfunction);
 }
 
+void Balises::addBalise(Balise *b){
+    m_balises.push_back(b);
+    save();
+}
+
+void Balises::addBalise(const std::string & name, double latitude, double longitude, double altitude){
+    Framework & f = Framework::instance();
+    
+    Balise * b = new Balise();
+    b->m_latitude = latitude;
+    b->m_longitude = longitude;
+    b->m_altitude = altitude;
+    b->m_datetime = "";
+    b->m_name =  name;
+    b->m_color = "red";
+    b->m_is_synchro = false;
+    m_balises.push_back(b);
+    std::string s = strprintf("%s,%.7f,%.7f,%.2f", b->m_name.c_str(), b->m_latitude, b->m_longitude, b->m_altitude);
+    f.m_job_manager.addData(s);
+    f.m_position_module.setXY(*b);
+    save();
+}
+
+
 void Balises::newBalise(){
     Framework & f = Framework::instance();
     GpsPoint_ptr p = f.m_lastPoint;
@@ -116,10 +137,32 @@ void Balises::newBalise(){
         b->m_is_synchro = false;
         m_balises_new.push_back(b);
         m_balises.push_back(b);
-        std::string s = strprintf("%.7f,%.7f,%.2f",p->m_latitude, p->m_longitude, p->m_altitude);
+        std::string s = strprintf("%s,%.7f,%.7f,%.2f", b->m_name.c_str(), b->m_latitude, b->m_longitude, b->m_altitude);
         f.m_job_manager.addData(s);
         f.m_position_module.setXY(*b);
         save();
     }
     
+}
+
+void Balises::importFile(const std::string & path){
+    std::ifstream file(path);
+    std::string line;
+    int count = 0;
+    
+    char sep = '\n';
+    {
+        std::ifstream tmp(path);
+        char c;
+        while (tmp.get(c)) {
+            if (c == '\n') break;
+            if (c == '\r') { sep = '\r'; break; }
+        }
+    }
+    
+    while (std::getline(file, line, sep)) {
+        if (!line.empty() && (line.back() == '\n' || line.back() == '\r')){
+            line.pop_back();
+        }
+    }
 }

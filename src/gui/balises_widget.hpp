@@ -13,6 +13,7 @@ class BalisesWidget : public BaseWidget {
     ButtonGui m_button_page_down;
     
     ButtonGui m_button_add;
+    ButtonGui m_button_import;
     
     int m_page = 0;
     
@@ -38,10 +39,18 @@ public:
     
     ValueGui m_latitude;
     ValueGui m_longitude;
+    ValueGuiKeyBoard m_name;
+    
     ButtonGui m_button_save;
     void setSizeAdd(int width, int height);
     void drawAdd();
     int onMouseAdd(int x, int y);
+    
+    void setSizeImport(int width, int height);
+    void drawImport();
+    int onMouseImport(int x, int y);
+    
+    void importFile(const std::string & path);
     
     
     int onMouse(int x, int y);

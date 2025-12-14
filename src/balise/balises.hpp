@@ -30,9 +30,11 @@ public:
     void save();
     void load();
     void addBalise(Balise * b);
+    void addBalise(const std::string & name, double latitude, double longitude, double altitude = 0.0);
     
     void newBalise();
     
+    void importFile(const std::string & path);
     void sort(GpsPoint_ptr p);
 };
 

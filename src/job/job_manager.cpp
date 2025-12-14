@@ -57,7 +57,7 @@ void JobManager::handle60s(){
     file.open(m_file);
     
     file << "PROG,EXCAVATOR" << std::endl;
-    file << "BEGIN," << m_begin << std::endl;
+    file << "BEGIN;" << m_begin << std::endl;
     
     time_t     now = time(0);
     struct tm  tstruct;
@@ -66,7 +66,7 @@ void JobManager::handle60s(){
     // Visit http://en.cppreference.com/w/cpp/chrono/c/strftime
     // for more information about date/time format
     strftime(buf, sizeof(buf), "%Y_%m_%d_%H_%M_%S", &tstruct);
-    file << "END," << buf << std::endl;
+    file << "END;" << buf << std::endl;
     
     /*file << "SESSION_H," << FrameworkVision::instance().m_qt_compteur_heure.m_heure_session << std::endl;
     file << "SESSION_HA," << FrameworkVision::instance().m_qt_compteur_heure.m_ha_session << std::endl;

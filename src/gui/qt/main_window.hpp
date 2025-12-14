@@ -49,6 +49,7 @@ private slots:
     void onTimerSlot();
     
     void openFile();
+    void importGpsFile();
 
 };
 

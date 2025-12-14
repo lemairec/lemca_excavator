@@ -125,6 +125,7 @@ void MainWindow::creerMenu()
     menuFichier->addSeparator();
     menuFichier->addAction("open File", this, SLOT(openFile()));
     menuFichier->addAction("open Camera", this, SLOT(openCamera()));
+    menuFichier->addAction("import Balise File", this, SLOT(importGpsFile()));
 
 }
 
@@ -144,6 +145,17 @@ void MainWindow::openFile(){
     f.m_config.m_gps_file = fileName.toUtf8().constData();
     f.m_config.m_port1_gps_serial = "file";
     f.initOrLoadConfig();
+    DEBUG("end");
+}
+
+void MainWindow::importGpsFile(){
+    DEBUG("begin");
+    QString fileName = QFileDialog::getOpenFileName(this,
+                                                    tr("Open Address Book"), QString::fromStdString(DirectoryManager::instance().getSourceDirectory())+QString("/gps_samples"),
+                                                    tr("Gps files (*.csv)"));
+    
+    Framework & f = Framework::instance();
+    f.m_balises.importFile(fileName.toUtf8().constData());
     DEBUG("end");
 }
 
