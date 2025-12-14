@@ -284,23 +284,11 @@ void BalisesWidget::drawImport(){
     }
 }
 
-/*m_close = false;
-
-m_select_widget.setValueGuiKeyPad(&m_select_files);
-*/
-
-    /*if(m_file_widget.onMouse(x, y)){
-        std::string s = "/media/lemca/"+m_file_widget.m_select_files.getValueString()+"/bineuse.tar.gz";
-        call("sh " + DirectoryManager::instance().getSourceDirectory() + "/src/sh/bineuse_update_usb.sh " + s);
-    } else {
-        call("echo fail; exit 0;");
-    }*/
-
 int BalisesWidget::onMouseImport(int x, int y){
     if(!m_select_widget.m_close){
         if(m_select_widget.onMouseSelect(x, y)){
-            //std::string s = "/media/lemca/"+m_file_widget.m_select_files.getValueString()+"/bineuse.tar.gz";
-            //call("sh " + DirectoryManager::instance().getSourceDirectory() + "/src/sh/bineuse_update_usb.sh " + s);
+            std::string s = "/media/lemca/"+m_file_select.getValueString()+"/import.csv";
+            Framework::instance().m_balises.importFile(s);
         }
     }
     if(m_file_select.m_buttonOpen.isActive(x, y)){
