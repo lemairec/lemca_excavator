@@ -2,6 +2,8 @@
 
 #include "base/base_widget.hpp"
 #include "base/keyboard_widget.hpp"
+#include "base/select_widget.hpp"
+
 
 class Config;
 
@@ -27,6 +29,7 @@ public:
     
     KeyPadWidget m_keypad_widget;
     KeyBoardWidget m_keyboard_widget;
+    SelectWidget m_select_widget;
     
     void setPainter(QPainter *p);
     
@@ -48,6 +51,7 @@ public:
     void drawAdd();
     int onMouseAdd(int x, int y);
     
+    SelectButtonGui m_file_select;
     void setSizeImport(int width, int height);
     void drawImport();
     int onMouseImport(int x, int y);

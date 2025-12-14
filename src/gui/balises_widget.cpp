@@ -39,19 +39,46 @@ void BalisesWidget::setSize(int width, int height){
     
     m_keypad_widget.setSize(width, height);
     m_keyboard_widget.setSize(width, height);
+    m_select_widget.setSize(width, height);
     setSizeClear(width, height);
+    setSizeImport(width, height);
+}
+
+std::vector<std::string> split(const std::string& s, char delim) {
+    std::vector<std::string> result;
+    std::stringstream ss(s);
+    std::string item;
+
+    while (std::getline(ss, item, delim)) {
+        result.push_back(item);
+    }
+    return result;
 }
 
 void BalisesWidget::open(){
     BaseWidget::open();
     m_page = 0;
     m_mode = 0;
+    
+    std::string res = execute2("ls /media/lemca/");
+    std::vector<std::string> strs;
+    split(res, '\n');
+    
+    
+    m_file_select.clear();
+    for(auto s : strs){
+        if(!s.empty()){
+            INFO(s);
+            m_file_select.addValue(s);
+        }
+    }
 }
 
 void BalisesWidget::setPainter(QPainter *p){
     m_painter = p;
     m_keypad_widget.setPainter(p);
     m_keyboard_widget.setPainter(p);
+    m_select_widget.setPainter(p);
 }
 
 void BalisesWidget::draw(){
@@ -226,6 +253,21 @@ int BalisesWidget::onMouseAdd(int x, int y){
     return 0;
 }
 
+
+
+
+/*if(m_select_widget.m_close){
+    //m_select_gps_baudrates.setValueInt(f.m_config.m_gps_baudrate);
+    //m_select_gps_serial.setValueString(f.m_config.m_gps_serial);
+}
+isActiveButtonSelect(&m_select_gps_serial, x, y);
+isActiveButtonSelect(&m_select_gps_baudrates, x, y);*/
+    
+void BalisesWidget::setSizeImport(int width, int height){
+    m_file_select.setResize(m_x2+0.5*m_width2, 0.5*m_height2,"", true, 0.4*m_width2);
+
+}
+
 void BalisesWidget::drawImport(){
     double y = 0.1*m_height2;
     double inter = 0.05*m_height2;
@@ -236,10 +278,35 @@ void BalisesWidget::drawImport(){
     y+=inter;
     drawText("Format name,latitude,longitude (exemple test, 49.xx, 4.xx)", m_x2+0.2*m_width2, y, sizeText_little);
     
+    drawButtonLabel2(m_file_select.m_buttonOpen);
+    if(!m_select_widget.m_close){
+        m_select_widget.draw();
+    }
 }
 
+/*m_close = false;
+
+m_select_widget.setValueGuiKeyPad(&m_select_files);
+*/
+
+    /*if(m_file_widget.onMouse(x, y)){
+        std::string s = "/media/lemca/"+m_file_widget.m_select_files.getValueString()+"/bineuse.tar.gz";
+        call("sh " + DirectoryManager::instance().getSourceDirectory() + "/src/sh/bineuse_update_usb.sh " + s);
+    } else {
+        call("echo fail; exit 0;");
+    }*/
+
 int BalisesWidget::onMouseImport(int x, int y){
-    
+    if(!m_select_widget.m_close){
+        if(m_select_widget.onMouseSelect(x, y)){
+            //std::string s = "/media/lemca/"+m_file_widget.m_select_files.getValueString()+"/bineuse.tar.gz";
+            //call("sh " + DirectoryManager::instance().getSourceDirectory() + "/src/sh/bineuse_update_usb.sh " + s);
+        }
+    }
+    if(m_file_select.m_buttonOpen.isActive(x, y)){
+        m_select_widget.open();
+        m_select_widget.setValueGuiKeyPad(&m_file_select);
+    }
     return 0;
 }
 
