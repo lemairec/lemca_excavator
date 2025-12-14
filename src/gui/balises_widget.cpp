@@ -1,4 +1,4 @@
-#include "balise_widget.hpp"
+#include "balises_widget.hpp"
 
 #include "../framework.hpp"
 #include "qt/main_window.hpp"
@@ -11,10 +11,10 @@
 
 const size_t LEN = 15;
 
-BaliseWidget::BaliseWidget(){
+BalisesWidget::BalisesWidget(){
 }
 
-void BaliseWidget::setSize(int width, int height){
+void BalisesWidget::setSize(int width, int height){
     BaseWidget::setSize(width, height);
     m_y2 = m_height*0.04;
     m_x2 = m_y2;
@@ -34,19 +34,19 @@ void BaliseWidget::setSize(int width, int height){
     m_keyboard_widget.setSize(width, height);
 }
 
-void BaliseWidget::open(){
+void BalisesWidget::open(){
     BaseWidget::open();
     m_page = 0;
     m_mode = 0;
 }
 
-void BaliseWidget::setPainter(QPainter *p){
+void BalisesWidget::setPainter(QPainter *p){
     m_painter = p;
     m_keypad_widget.setPainter(p);
     m_keyboard_widget.setPainter(p);
 }
 
-void BaliseWidget::draw(){
+void BalisesWidget::draw(){
     
     m_painter->setPen(m_pen_black);
     m_painter->setBrush(m_brush_white);
@@ -63,7 +63,7 @@ void BaliseWidget::draw(){
     }
 };
 
-int BaliseWidget::onMouse(int x, int y){
+int BalisesWidget::onMouse(int x, int y){
     if(m_mode == 0){
         onMouseBalises(x, y);
     } else {
@@ -73,7 +73,7 @@ int BaliseWidget::onMouse(int x, int y){
     return 0;
 }
 
-void BaliseWidget::drawBalises(){
+void BalisesWidget::drawBalises(){
     Framework & f = Framework::instance();
     double y = 0.1*m_height2;
     double m_y_inter = 0.04*m_height2;
@@ -114,7 +114,7 @@ void BaliseWidget::drawBalises(){
     drawButtonLabel2(m_button_add, COLOR_VALIDATE);
 }
 
-int BaliseWidget::onMouseBalises(int x, int y){
+int BalisesWidget::onMouseBalises(int x, int y){
     if(m_button_close.isActive(x, y)){
         m_close = true;
     }
@@ -132,7 +132,7 @@ int BaliseWidget::onMouseBalises(int x, int y){
 
 
 
-void BaliseWidget::drawAdd(){
+void BalisesWidget::drawAdd(){
     double y = 0.1*m_height2;
     drawText("Add", m_x2+0.5*m_width2, y, sizeText_medium, true);
     drawText("latitude (49.xx)", m_x2+0.1*m_width2, m_latitude.m_y, sizeText_medium);
@@ -149,7 +149,7 @@ void BaliseWidget::drawAdd(){
     
 }
 
-int BaliseWidget::onMouseAdd(int x, int y){
+int BalisesWidget::onMouseAdd(int x, int y){
     if(!m_keypad_widget.m_close){
         if(m_keypad_widget.onMouse(x, y)){
             std::string s2 = strprintf("%.7f, %.7f", m_latitude.m_value, m_longitude.m_value);

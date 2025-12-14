@@ -76,7 +76,7 @@ void GpsWidget::setPainter(QPainter * p){
     }
     m_rapide_option_widget.setPainter(p);
     m_debug_widget.setPainter(p);
-    m_balise_widget.setPainter(p);
+    m_balises_widget.setPainter(p);
     m_key_board_widget.setPainter(p);
     
     m_first_widget.setPainter(p);
@@ -99,7 +99,7 @@ void GpsWidget::setSize(int width, int height){
     m_rapide_option_widget.setSize(m_width, m_height);
     m_diagnostic_widget.setSize(m_width, m_height);
     m_debug_widget.setSize(m_width, m_height);
-    m_balise_widget.setSize(m_width, m_height);
+    m_balises_widget.setSize(m_width, m_height);
    
 
     m_button_debug.setResize(40, 20, m_gros_button);
@@ -620,8 +620,8 @@ void GpsWidget::draw(){
     if(!m_debug_widget.m_close){
         m_debug_widget.draw();
     }
-    if(!m_balise_widget.m_close){
-        m_balise_widget.draw();
+    if(!m_balises_widget.m_close){
+        m_balises_widget.draw();
     }
     if(false){
         drawLicence();
@@ -686,8 +686,8 @@ int GpsWidget::onMouse(int x, int y){
     if(!m_debug_widget.m_close){
         m_debug_widget.onMouse(x, y);
     }
-    if(!m_balise_widget.m_close){
-        m_balise_widget.onMouse(x, y);
+    if(!m_balises_widget.m_close){
+        m_balises_widget.onMouse(x, y);
     }
     
     double x2 = x;
@@ -737,7 +737,7 @@ int GpsWidget::onMouse(int x, int y){
             openRapideWidget(1);
         }
     } else if(m_button_balise2.isActive(x, y)){
-        m_balise_widget.open();
+        m_balises_widget.open();
     }
     
     return 0;

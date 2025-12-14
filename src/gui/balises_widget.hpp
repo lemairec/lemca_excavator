@@ -6,7 +6,7 @@
 class Config;
 
 
-class BaliseWidget : public BaseWidget {
+class BalisesWidget : public BaseWidget {
     ButtonGui m_button_close;
     
     ButtonGui m_button_page_up;
@@ -20,7 +20,7 @@ class BaliseWidget : public BaseWidget {
 public:
     int m_x2, m_y2;
     int m_width2, m_height2;
-    BaliseWidget();
+    BalisesWidget();
     
     KeyPadWidget m_keypad_widget;
     KeyBoardWidget m_keyboard_widget;

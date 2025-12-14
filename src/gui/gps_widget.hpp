@@ -6,7 +6,7 @@
 #include "option_widget.hpp"
 #include "diag_widget.hpp"
 #include "debug_widget.hpp"
-#include "balise_widget.hpp"
+#include "balises_widget.hpp"
 #include "rapide_option_widget.hpp"
 #include "param_translateur_widget.hpp"
 #include "first_widget.hpp"
@@ -27,7 +27,7 @@ public:
     RapideOptionWidget m_rapide_option_widget;
     DiagnosticWidget m_diagnostic_widget;
     DebugWidget m_debug_widget;
-    BaliseWidget m_balise_widget;
+    BalisesWidget m_balises_widget;
     
     OptionWidget m_option_widget;
     ParamTranslateurWidget m_param_translateur_widget;
