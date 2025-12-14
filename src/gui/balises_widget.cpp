@@ -281,6 +281,7 @@ void BalisesWidget::drawImport(){
     drawText("Format name,latitude,longitude (exemple test, 49.xx, 4.xx)", m_x2+0.2*m_width2, y, sizeText_little);
     
     drawButtonLabel2(m_file_select.m_buttonOpen);
+    drawButtonLabel2(m_button_close);
     if(!m_select_widget.m_close){
         m_select_widget.draw();
     }
@@ -291,11 +292,16 @@ int BalisesWidget::onMouseImport(int x, int y){
         if(m_select_widget.onMouseSelect(x, y)){
             std::string s = "/media/lemca/"+m_file_select.getValueString()+"/import.csv";
             Framework::instance().m_balises.importFile(s);
+            open();
         }
+        return 0;
     }
     if(m_file_select.m_buttonOpen.isActive(x, y)){
         m_select_widget.open();
         m_select_widget.setValueGuiKeyPad(&m_file_select);
+    }
+    if(m_button_close.isActive(x, y)){
+        m_close = true;
     }
     return 0;
 }
