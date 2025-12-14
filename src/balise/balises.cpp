@@ -17,6 +17,13 @@
 
 
 void Balises::clear(){
+    Framework & f = Framework::instance();
+    f.m_job_manager.log("remove");
+    for(auto b : m_balises){
+        std::string s = strprintf("%s,%.7f,%.7f,%.2f", b->m_name.c_str(), b->m_latitude, b->m_longitude, b->m_altitude);
+        f.m_job_manager.log(s);
+    }
+    f.m_job_manager.log("remove done");
     m_balises.clear();
     save();
 }
@@ -115,7 +122,7 @@ void Balises::addBalise(const std::string & name, double latitude, double longit
     b->m_is_synchro = false;
     m_balises.push_back(b);
     std::string s = strprintf("%s,%.7f,%.7f,%.2f", b->m_name.c_str(), b->m_latitude, b->m_longitude, b->m_altitude);
-    f.m_job_manager.addData(s);
+    f.m_job_manager.log(s);
     f.m_position_module.setXY(*b);
     save();
 }
@@ -138,11 +145,18 @@ void Balises::newBalise(){
         m_balises_new.push_back(b);
         m_balises.push_back(b);
         std::string s = strprintf("%s,%.7f,%.7f,%.2f", b->m_name.c_str(), b->m_latitude, b->m_longitude, b->m_altitude);
-        f.m_job_manager.addData(s);
+        f.m_job_manager.log(s);
         f.m_position_module.setXY(*b);
         save();
     }
     
+}
+
+double parseDouble(const std::string & s){
+    std::string s1 = s;
+    std::replace(s1.begin(), s1.end(), ',', '.');
+    double out = std::stod(s1);
+    return out;
 }
 
 void Balises::importFile(const std::string & path){
@@ -164,5 +178,30 @@ void Balises::importFile(const std::string & path){
         if (!line.empty() && (line.back() == '\n' || line.back() == '\r')){
             line.pop_back();
         }
+        
+        std::stringstream ss(line);
+        std::string cell;
+
+        int j = 0;
+        
+        std::string name;
+        double latitude = 0;
+        double longitude = 0;
+        while (std::getline(ss, cell, ';')) {
+            if(j==0){
+                name = cell;
+            } else if(j==1){
+                latitude = parseDouble(cell);
+            } else if(j==2){
+                longitude = parseDouble(cell);
+            }
+            ++j;
+        }
+        std::string s2 = strprintf("%s => %.7f, %.7f", name.c_str(), latitude, longitude);
+        if(j == 3){
+            addBalise(name, latitude, longitude);
+        }
+        INFO(count << " " << j << " " << s2);
+        ++count;
     }
 }

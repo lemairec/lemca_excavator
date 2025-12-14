@@ -21,11 +21,15 @@ void BalisesWidget::setSize(int width, int height){
     m_width2 = m_width*2/3-2*m_y2;
     m_height2 = m_height-2*m_y2;
     
+    double y = 0.98*m_height2;
+    m_button_add.setResizeStd(m_x2 + 0.4*m_width2, y, "add", true);
+    m_button_import.setResizeStd(m_x2 + 0.6*m_width2, y, "import", true);
+    m_button_clear.setResizeStd(m_x2 + 0.2*m_width2, y, "clear", true);
+    
+    
     m_button_close.setResizeStd(m_x2 + 0.8*m_width2, 0.9*m_height2, "close", true);
     m_button_page_up.setResizeStd(m_x2 + 0.4*m_width2, 0.9*m_height2, ">", true);
     m_button_page_down.setResizeStd(m_x2 + 0.2*m_width2, 0.9*m_height2, "<", true);
-    m_button_add.setResizeStd(m_x2 + 0.6*m_width2, 0.9*m_height2, "add", true);
-    m_button_import.setResizeStd(m_x2 + 0.6*m_width2, 0.95*m_height2, "import", true);
     
     m_latitude.setResize(m_x2 + 0.5*m_width2, 0.3*m_height2, m_petit_button);
     m_longitude.setResize(m_x2 + 0.5*m_width2, 0.4*m_height2, m_petit_button);
@@ -35,6 +39,7 @@ void BalisesWidget::setSize(int width, int height){
     
     m_keypad_widget.setSize(width, height);
     m_keyboard_widget.setSize(width, height);
+    setSizeClear(width, height);
 }
 
 void BalisesWidget::open(){
@@ -61,6 +66,8 @@ void BalisesWidget::draw(){
         drawAdd();
     } else if(m_mode == 2){
         drawImport();
+    } else if(m_mode == 3){
+        drawClear();
     }
     
     if(!m_keypad_widget.m_close){
@@ -75,6 +82,8 @@ int BalisesWidget::onMouse(int x, int y){
         onMouseAdd(x, y);
     } else if(m_mode == 2){
         onMouseImport(x, y);
+    } else if(m_mode == 3   ){
+        onMouseClear(x, y);
     }
     
     return 0;
@@ -85,7 +94,7 @@ void BalisesWidget::drawBalises(){
     double y = 0.1*m_height2;
     double m_y_inter = 0.04*m_height2;
     double x1 = m_x2+0.05*m_width2;
-    double x2 = m_x2+0.15*m_width2;
+    double x2 = m_x2+0.2*m_width2;
     double x3 = m_x2+0.65*m_width2;
     drawText("Balises", m_x2+0.5*m_width2, y, sizeText_medium, true);
     
@@ -122,6 +131,7 @@ void BalisesWidget::drawBalises(){
     drawButtonLabel2(m_button_close);
     drawButtonLabel2(m_button_import, COLOR_VALIDATE);
     drawButtonLabel2(m_button_add, COLOR_VALIDATE);
+    drawButtonLabel2(m_button_clear, COLOR_CANCEL);
 }
 
 int BalisesWidget::onMouseBalises(int x, int y){
@@ -139,6 +149,9 @@ int BalisesWidget::onMouseBalises(int x, int y){
     }
     if(m_button_import.isActive(x, y)){
         m_mode =2;
+    }
+    if(m_button_clear.isActive(x, y)){
+        m_mode =3;
     }
     return 0;
 }
@@ -227,5 +240,39 @@ void BalisesWidget::drawImport(){
 
 int BalisesWidget::onMouseImport(int x, int y){
     
+    return 0;
+}
+
+
+
+void BalisesWidget::setSizeClear(int width, int height){
+    double y = 0.6*m_height2;
+    m_button_yes.setResizeStd(m_x2 + 0.6*m_width2, y, "Oui", true);
+    m_button_no.setResizeStd(m_x2 + 0.2*m_width2, y, "Non", true);
+    
+}
+
+void BalisesWidget::drawClear(){
+    double y = 0.1*m_height2;
+    double inter = 0.05*m_height2;
+    drawText("Clear", m_x2+0.5*m_width2, y, sizeText_medium, true);
+    y+=inter;
+    y+=inter;
+    drawText("Voulez vous tout supprimer?", m_x2+0.2*m_width2, y, sizeText_little);
+    
+    drawButtonLabel2(m_button_yes);
+    drawButtonLabel2(m_button_no);
+    
+    
+}
+
+int BalisesWidget::onMouseClear(int x, int y){
+    if(m_button_yes.isActive(x, y)){
+        Framework::instance().m_balises.clear();
+        open();
+    }
+    if(m_button_no.isActive(x, y)){
+        open();
+    }
     return 0;
 }

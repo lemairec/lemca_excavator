@@ -78,6 +78,7 @@ void JobManager::handle60s(){
 
 void JobManager::log(const std::string & s){
     m_log_file << s << "\n";
+    m_log_file.flush();
 }
 
 void JobManager::addData(const std::string & s){

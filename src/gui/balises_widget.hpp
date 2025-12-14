@@ -14,6 +14,8 @@ class BalisesWidget : public BaseWidget {
     
     ButtonGui m_button_add;
     ButtonGui m_button_import;
+    ButtonGui m_button_clear;
+    
     
     int m_page = 0;
     
@@ -49,6 +51,13 @@ public:
     void setSizeImport(int width, int height);
     void drawImport();
     int onMouseImport(int x, int y);
+    
+    ButtonGui m_button_yes;
+    ButtonGui m_button_no;
+    
+    void setSizeClear(int width, int height);
+    void drawClear();
+    int onMouseClear(int x, int y);
     
     void importFile(const std::string & path);
     
