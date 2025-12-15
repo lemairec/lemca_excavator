@@ -56,7 +56,7 @@ void JobManager::handle60s(){
     std::ofstream file;
     file.open(m_file);
     
-    file << "PROG,EXCAVATOR" << std::endl;
+    file << "PROG;EXCAVATOR" << std::endl;
     file << "BEGIN;" << m_begin << std::endl;
     
     time_t     now = time(0);
