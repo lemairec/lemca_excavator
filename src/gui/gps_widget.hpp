@@ -67,6 +67,7 @@ public:
     QPixmap * m_img_3_point_down;
     
     QPixmap * m_excavator_2d;
+    QPixmap * m_tracteur_2d;
     
     QPixmap * m_img_right;
     QPixmap * m_img_left;
@@ -104,6 +105,7 @@ public:
     void setPainter(QPainter * s);
     
     void drawButtons();
+    void drawTracteur();
     void drawExcavator();
     void drawInfos();
     void drawInfosBasLeft();

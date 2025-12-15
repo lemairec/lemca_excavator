@@ -53,6 +53,7 @@ void GpsWidget::loadImages(){
     
     m_imgFleche = loadImage("/gui/fleche.png");
     m_excavator_2d = loadImage("/gui/excavator.png");
+    m_tracteur_2d = loadImage("/gui/tracteur_2d.png");
     
     m_img_right = loadImageInv("/gui/right.png");
     m_img_middle = loadImageInv("/gui/middle.png");
@@ -575,7 +576,7 @@ void GpsWidget::draw(){
     m_painter->drawRect(0, 0, m_width, m_height);
     
     m_debug = f.m_config.isTechnicien();
-    m_vue_3D = f.m_config.m_3d;
+    m_vue_3D = false;//f.m_config.m_3d;
     
     m_widthMax = m_width/2+f.m_config.m_outil_largeur*m_zoom/2;
     m_heightMax = m_height/2+f.m_config.m_outil_largeur*m_zoom/2;
@@ -1075,6 +1076,18 @@ void GpsWidget::drawGpsWidget(){
             
         }
         x_last = 0;
+    } else if(f.getEtat() == Etat_Soil){
+        drawParcelle();
+        if(f.getEtat() == Etat_PointASaved){
+            drawPoint(f.m_lineAB.m_pointA, "A");
+        }
+        drawLineCurve();
+        
+        //drawSurfaceToDraw();
+        
+        drawTracteur();
+        
+        drawDebugEkf();
     } else {
         drawParcelle();
         if(f.getEtat() == Etat_PointASaved){
@@ -1271,6 +1284,20 @@ void GpsWidget::drawExcavator(){
     int w = 2*m_zoom;
     
     m_painter->drawPixmap(x_tracteur-w/2, y_tracteur-h*0.55, w, h, *m_excavator_2d);
+}
+
+void GpsWidget::drawTracteur(){
+    Framework & f = Framework::instance();
+    
+    double x_tracteur = m_width/2, y_tracteur = m_height/2;
+    if(f.m_tracteur.m_pt_antenne_corrige){
+        myProjete2(f.m_tracteur.m_pt_antenne_corrige->m_x, f.m_tracteur.m_pt_antenne_corrige->m_y, x_tracteur, y_tracteur);
+    }
+    
+    int h = 4*m_zoom;
+    int w = 4*m_zoom;
+    
+    m_painter->drawPixmap(x_tracteur-w/2, y_tracteur-h*0.55, w, h, *m_tracteur_2d);
 }
 
 void GpsWidget::drawBalises(){
