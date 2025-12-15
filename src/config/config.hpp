@@ -77,6 +77,8 @@ public:
     int m_offset_mm = 0;
     bool m_inverse_relai = false;
     
+    bool m_soil_loop = false;
+    
     std::string m_company = "test";
     
     

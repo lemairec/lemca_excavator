@@ -93,6 +93,7 @@ public:
     ButtonGui m_button_middle;
     ButtonGui m_button_cycle;
     ButtonGui m_button_right;
+    ButtonGui m_soil_loop;
     
     
     //ButtonGui m_button_volant;

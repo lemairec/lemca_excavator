@@ -68,6 +68,10 @@ void GpsWidget::loadImages(){
     m_img_3_point_down = loadImageInv("/gui/3_point_down.png");
     m_img_metre = loadImageInv("/gui/metre.png");
     m_img_compteur = loadImageInv("/gui/compteur.png");
+    
+    m_img_check_on = loadImage("/gui/check_on.png");
+    m_img_check_off = loadImage("/gui/check_off.png");
+    
 }
     
 void GpsWidget::setPainter(QPainter * p){
@@ -176,6 +180,8 @@ void GpsWidget::drawButtons(){
         m_button_left.setResize(x2, y_bas2, m_gros_button);
         x2 = x+w/2;
         m_button_middle.setResize(x2, y_bas2, "", true, m_gros_button*2*1.4,m_gros_button*2);
+        m_soil_loop.setResize(x+w/2-0.08*m_width, y_bas2-100, m_petit_button);
+        
         m_button_cycle.setResize(x2, y_bas2-100, "", true, m_gros_button*2*1.4,m_gros_button*2);
         x2 = x+w/2+0.08*m_width;
         m_button_right.setResize(x2, y_bas2, m_gros_button);
@@ -288,6 +294,9 @@ void GpsWidget::drawRightLeftSoil(){
     drawButtonImageCarre(m_button_middle, m_img_middle, 0.3, f.m_pilot_translator_module.m_cycle_lamp, "LAMP");
     drawButtonImageCarre(m_button_cycle, m_img_middle, 0.3, (f.m_pilot_translator_module.m_etat == SerialEtat_Cycle), "CYCLE");
     drawButtonImageCarre(m_button_left, m_img_left, 0.3, f.m_pilot_translator_module.m_cycle_down, "LEFT");
+    
+    drawButtonCheck(m_soil_loop, f.m_config.m_soil_loop);
+   
 }
 
 void GpsWidget::drawInfosBasLeft(){
@@ -709,7 +718,9 @@ int GpsWidget::onMouse(int x, int y){
         Framework::instance().m_pilot_translator_module.openRelayLeft(2000);
     } else if(m_button_middle.isActive(x2, y2)){
         Framework::instance().m_pilot_translator_module.inverseLamp();
-    }  else if(m_button_cycle.isActive(x2, y2)){
+    } else if(m_soil_loop.isActive(x2, y2)){
+        Framework::instance().m_config.m_soil_loop = !Framework::instance().m_config.m_soil_loop;
+    } else if(m_button_cycle.isActive(x2, y2)){
         Framework::instance().m_pilot_translator_module.startCycle();
     } else if(m_button_right.isActive(x2, y2)){
         Framework::instance().m_pilot_translator_module.openRelayRight(2000);
@@ -1324,7 +1335,6 @@ void GpsWidget::drawMesures(){
     m_painter->setBrush(m_brush_red);
     
     
-    int i = 0;
     for(auto p: f.m_mesures){
         double x1, y1;
         myProjete2(p.m_point.m_x, p.m_point.m_y, x1, y1);
@@ -1333,19 +1343,16 @@ void GpsWidget::drawMesures(){
         if(p.m_ph <= 7){
             int value = p.m_ph/7.0*255;
             QBrush brush = QBrush (QColor(255,value, value));
-            INFO(i << " " << value);
             m_painter->setBrush(brush);
         } else if(p.m_ph <= 14){
             int value = 255-(p.m_ph-7.0)/7.0*255;
             QBrush brush = QBrush (QColor(value, 255, value));
-            INFO(i << " " << value);
             m_painter->setBrush(brush);
         } else {
             m_painter->setBrush(m_brush_black);
         }
         
         m_painter->drawEllipse(x1-l, y1-l, 2*l, 2*l);
-        ++i;
     }
 }
 

@@ -467,6 +467,10 @@ void PilotTranslatorModule::updateCycle(){
             f.m_job_manager.addData(s);
             f.addMesure(f.m_record_lat, f.m_record_lon, f.m_last_soil_ph);
             resetCycle();
+            if(f.m_config.m_soil_loop){
+                m_etat = SerialEtat_Temp;
+                startCycle();
+            }
         }
         
     } else {
