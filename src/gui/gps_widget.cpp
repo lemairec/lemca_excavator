@@ -1086,6 +1086,7 @@ void GpsWidget::drawGpsWidget(){
         //drawSurfaceToDraw();
         
         drawTracteur();
+        drawMesures();
         
         drawDebugEkf();
     } else {
@@ -1313,6 +1314,38 @@ void GpsWidget::drawBalises(){
         if(!p->m_name.empty()){
             drawText(p->m_name, x1, y1-l*1.5, sizeText_little, true);
         }
+    }
+}
+
+void GpsWidget::drawMesures(){
+    Framework & f = Framework::instance();
+    
+    m_painter->setPen(m_pen_black);
+    m_painter->setBrush(m_brush_red);
+    
+    
+    int i = 0;
+    for(auto p: f.m_mesures){
+        double x1, y1;
+        myProjete2(p.m_point.m_x, p.m_point.m_y, x1, y1);
+        double l = 10*m_zoom/2;
+        
+        if(p.m_ph <= 7){
+            int value = p.m_ph/7.0*255;
+            QBrush brush = QBrush (QColor(255,value, value));
+            INFO(i << " " << value);
+            m_painter->setBrush(brush);
+        } else if(p.m_ph <= 14){
+            int value = 255-(p.m_ph-7.0)/7.0*255;
+            QBrush brush = QBrush (QColor(value, 255, value));
+            INFO(i << " " << value);
+            m_painter->setBrush(brush);
+        } else {
+            m_painter->setBrush(m_brush_black);
+        }
+        
+        m_painter->drawEllipse(x1-l, y1-l, 2*l, 2*l);
+        ++i;
     }
 }
 

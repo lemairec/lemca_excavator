@@ -27,6 +27,8 @@
 #include "gui/qt/my_qt_network.hpp"
 #include "job/job_manager.hpp"
 
+#include "gps/mesure.hpp"
+
 class IGpsObserver {
 public:
     virtual void onNewPoint() = 0;
@@ -252,6 +254,9 @@ public:
     
     void setAntennaH();
     void getAntennaH();
+    
+    std::vector<Mesure> m_mesures;
+    void addMesure(double latitude, double lonbgitude, double ph);
     
     double m_angle_roue_by_yawl_deg = 0;
      

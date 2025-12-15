@@ -695,3 +695,12 @@ void Framework::getAntennaH(){
     m_serialModule.writePort1GpsStr("$CFG TERRAIN\r\n");
     m_serialModule.writePort1GpsStr("$CFG TERRAIN HEIGHT\r\n");
 }
+
+void Framework::addMesure(double latitude, double longitude, double ph){
+    Mesure m;
+    m.m_point.m_latitude = latitude;
+    m.m_point.m_longitude = longitude;
+    m.m_ph = ph;
+    m_position_module.setXY(m.m_point);
+    m_mesures.push_back(m);
+}

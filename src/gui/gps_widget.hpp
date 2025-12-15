@@ -149,6 +149,7 @@ public:
     
     void drawRect3D(double x, double y, double l, double lg);
     void drawBalises();
+    void drawMesures();
     
     void drawDebugEkf();
     
