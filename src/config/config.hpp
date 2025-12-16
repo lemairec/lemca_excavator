@@ -89,6 +89,11 @@ public:
     
     int m_etat = 0; //0 excavator, 1 luc, 2 soil
     
+    double m_soil_tp_down_s = 1;
+    double m_soil_tp_down_wait_s = 2;
+    double m_soil_tp_up_s = 0.5;
+    double m_soil_tp_wait_s = 12;
+    
     bool isDeveloppeur(){
         return true;//m_user_mode > 1;
     }

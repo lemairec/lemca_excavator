@@ -90,6 +90,12 @@ public:
     ValueGui m_outil_record_h;
     ValueGui m_outil_replay_h;
     
+    //page2
+    ValueGui m_soil_tp_down;
+    ValueGui m_soil_tp_down_wait;
+    ValueGui m_soil_tp_up;
+    ValueGui m_soil_tp_wait;
+    
     void setSizePage2();
     void drawPage2();
     void onMousePage2(int x, int y);

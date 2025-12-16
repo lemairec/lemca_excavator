@@ -158,6 +158,10 @@ public:
     int m_arduino_send_v = 0;
     void writePilotSerialString(const std::string & l);
     
+    double m_soil_tp_down_s = 1;
+    double m_soil_tp_down_wait_s = 2;
+    double m_soil_tp_up_s = 1;
+    double m_soil_tp_wait_s = 12;
     
     int m_cycle_up = 0;
     int m_cycle_down = 0;

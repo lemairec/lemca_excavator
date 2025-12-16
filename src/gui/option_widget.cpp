@@ -419,6 +419,16 @@ void OptionWidget::setSizePage2(){
     m_outil_record_h.setResize(m_part_1_x3, y, m_petit_button);
     y+= m_y_inter;
     m_outil_replay_h.setResize(m_part_1_x3, y, m_petit_button);
+    
+    y = m_y_begin;
+    m_soil_tp_down.setResize(m_part_2_x3, y, m_petit_button);
+    y+= m_y_inter;
+    m_soil_tp_down_wait.setResize(m_part_2_x3, y, m_petit_button);
+    y+= m_y_inter;
+    m_soil_tp_up.setResize(m_part_2_x3, y, m_petit_button);
+    y+= m_y_inter;
+    m_soil_tp_wait.setResize(m_part_2_x3, y, m_petit_button);
+    y+= m_y_inter;
 }
 void OptionWidget::drawPage2(){
     Framework & f = Framework::instance();
@@ -447,6 +457,26 @@ void OptionWidget::drawPage2(){
         drawText(Langage::getKey("OPT_OUTIL_REPLAY_H"), m_part_1_x2,m_outil_replay_h.m_y, sizeText_medium);
         drawValueGuiKeyPad2(m_outil_replay_h);
     }
+    {
+        m_soil_tp_down.m_value = config.m_soil_tp_down_s;
+        drawText(Langage::getKey("SOIL_TP_DOWN"), m_part_2_x2,m_soil_tp_down.m_y, sizeText_medium);
+        drawValueGuiKeyPad2(m_soil_tp_down);
+    }
+    {
+        m_soil_tp_down_wait.m_value = config.m_soil_tp_down_wait_s;
+        drawText(Langage::getKey("SOIL_TP_DOWN_WAIT"), m_part_2_x2,m_soil_tp_down_wait.m_y, sizeText_medium);
+        drawValueGuiKeyPad2(m_soil_tp_down_wait);
+    }
+    {
+        m_soil_tp_up.m_value = config.m_soil_tp_up_s;
+        drawText(Langage::getKey("SOIL_TP_UP"), m_part_2_x2,m_soil_tp_up.m_y, sizeText_medium);
+        drawValueGuiKeyPad2(m_soil_tp_up);
+    }
+    {
+        m_soil_tp_wait.m_value = config.m_soil_tp_wait_s;
+        drawText(Langage::getKey("SOIL_TP_WAIT"), m_part_2_x2,m_soil_tp_wait.m_y, sizeText_medium);
+        drawValueGuiKeyPad2(m_soil_tp_wait);
+    }
 }
 void OptionWidget::onMousePage2(int x, int y){
     Config & config = Framework::instance().m_config;
@@ -460,6 +490,22 @@ void OptionWidget::onMousePage2(int x, int y){
     };
     if(onMouseKeyPad2(m_outil_replay_h, x, y, 0.05)){
         config.m_outil_replay_h = m_outil_replay_h.m_value;
+        loadConfig();
+    };
+    if(onMouseKeyPad2(m_soil_tp_down, x, y, 0.1)){
+        config.m_soil_tp_down_s = m_soil_tp_down.m_value;
+        loadConfig();
+    };
+    if(onMouseKeyPad2(m_soil_tp_down_wait, x, y, 0.1)){
+        config.m_soil_tp_down_wait_s = m_soil_tp_down_wait.m_value;
+        loadConfig();
+    };
+    if(onMouseKeyPad2(m_soil_tp_up, x, y, 0.1)){
+        config.m_soil_tp_up_s = m_soil_tp_up.m_value;
+        loadConfig();
+    };
+    if(onMouseKeyPad2(m_soil_tp_wait, x, y, 0.1)){
+        config.m_soil_tp_wait_s = m_soil_tp_wait.m_value;
         loadConfig();
     };
 }
