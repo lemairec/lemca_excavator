@@ -278,7 +278,7 @@ void BalisesWidget::drawImport(){
     y+=inter;
     drawText("Fichier import.csv dans la clef usb", m_x2+0.2*m_width2, y, sizeText_little);
     y+=inter;
-    drawText("Format name,latitude,longitude (exemple test, 49.xx, 4.xx)", m_x2+0.2*m_width2, y, sizeText_little);
+    drawText("Format name;latitude;longitude (exemple test; 49.xx; 4.xx)", m_x2+0.2*m_width2, y, sizeText_little);
     
     drawButtonLabel2(m_file_select.m_buttonOpen);
     drawButtonLabel2(m_button_close);
