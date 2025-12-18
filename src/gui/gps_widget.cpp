@@ -225,7 +225,6 @@ void GpsWidget::drawInfos(){
     QPixmap * img = NULL;
     std::string s = "--";
     if(f.isGpsConnected() && last_frame){
-        std::string s = "--1";
         if(last_frame->m_fix == 4){
             f.m_rtk = true;
         }
@@ -255,10 +254,11 @@ void GpsWidget::drawInfos(){
             s = "invalid";
         }
     } else {
-        std::string s = "--2";
         if(f.m_gpgn_time.isConnected()){
+            s = "not pt";
             img = m_imgSatBlanc;
         } else {
+            s = "not gga";
             img = m_imgSatRouge;
         }
     }
