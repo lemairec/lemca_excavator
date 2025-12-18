@@ -223,7 +223,7 @@ void GpsWidget::drawInfos(){
     
     auto last_frame = f.m_position_module.m_last_gga;
     QPixmap * img = NULL;
-    std::string s = "";
+    std::string s = "--";
     if(f.isGpsConnected() && last_frame){
         if(last_frame->m_fix == 4){
             f.m_rtk = true;
@@ -264,8 +264,9 @@ void GpsWidget::drawInfos(){
     if(img){
         //int y = m_height*0.95;
         drawMyImage(*img, x_q, y_top-25, 2*0.3, true);
-        drawText(s, x_q, y_top, sizeText_little, true, true);
     }
+    drawText(s, x_q, y_top, sizeText_little, true, true);
+    
     
     
     {
