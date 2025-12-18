@@ -63,17 +63,9 @@ void PositionModule::SetLatLong(GpsPoint & point){
 
 
 void PositionModule::onGGAFrame(GGAFrame_ptr gga){
-    Framework & f = Framework::instance();
+    //Framework & f = Framework::instance();
     m_last_gga = gga;
     //INFO("gga");
-    
-    GpsPointCap_ptr p(new GpsPointCap());
-    p->m_latitude = gga->m_latitude;
-    p->m_longitude = gga->m_longitude;
-    if(m_last_gga){
-        p->m_altitude = gga->m_altitude;
-    }
-    f.onNewPoint(p);
 }
 
 void PositionModule::onAutoPath(double latitude, double longitude, double altitude){
@@ -155,7 +147,12 @@ void PositionModule::onRMCFrame(RMCFrame_ptr rmc){
    
     
     
-    
+    p->m_latitude = rmc->m_latitude;
+    p->m_longitude = rmc->m_longitude;
+    if(m_last_gga){
+        p->m_altitude = m_last_gga->m_altitude;
+    }
+    f.onNewPoint(p);
 }
 
 void PositionModule::onVTGFrame(VTGFrame_ptr vtg){
