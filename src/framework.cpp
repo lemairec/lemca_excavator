@@ -47,6 +47,15 @@ void Framework::initOrLoadConfig(){
     m_config.validate();
     m_config.save();
     
+    {
+        std::string s = strprintf("INIT_PH4 %.1f", m_config.m_soil_ph4);
+        m_job_manager.log(s);
+    }
+    {
+        std::string s = strprintf("INIT_PH7 %.1f", m_config.m_soil_ph7);
+        m_job_manager.log(s);
+    }
+    
     m_serialModule.initOrLoad(m_config);
     m_fileModule.initOrLoad(m_config);
     m_position_module.initOrLoad(m_config);
@@ -101,6 +110,14 @@ void Framework::initOrLoadConfig(){
     } else if(m_config.m_etat == 2){
         setEtat(Etat_Soil);
     }
+}
+
+void Framework::setPh(double ph){
+    m_last_soil_ph = ph;
+    double ph4 = m_config.m_soil_ph4;
+    double ph7 = m_config.m_soil_ph7;
+    
+    m_last_soil_ph_corr =  my_map(ph, 4, 7, ph4, ph7);
 }
 
 void Framework::addError(std::string s){

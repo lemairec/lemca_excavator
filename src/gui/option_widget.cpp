@@ -435,6 +435,11 @@ void OptionWidget::setSizePage2(){
     y+= m_y_inter;
     m_soil_tp_wait.setResize(m_part_2_x3, y, m_petit_button);
     y+= m_y_inter;
+    y+= m_y_inter;
+    y+= m_y_inter;
+    m_button_ph4.setResize(m_part_2_x+0.25*m_part_2_w, y,  QString::fromStdString(Langage::getKey("PH4")), true, 0.45*m_part_2_w);
+    m_button_ph7.setResize(m_part_2_x+0.75*m_part_2_w, y,  QString::fromStdString(Langage::getKey("PH7")), true, 0.45*m_part_2_w);
+    
     
 }
 void OptionWidget::drawPage2(){
@@ -492,6 +497,22 @@ void OptionWidget::drawPage2(){
         drawText(Langage::getKey("SOIL_TP_WAIT"), m_part_2_x2,m_soil_tp_wait.m_y, sizeText_medium);
         drawValueGuiKeyPad2(m_soil_tp_wait);
     }
+    int y = m_button_ph4.m_y - m_y_inter;
+    {
+        std::string s = strprintf("%.1f", f.m_config.m_soil_ph4);
+        drawText(s, m_part_2_x+0.25*m_part_2_w,y, sizeText_medium);
+    }
+    {
+        std::string s = strprintf("%.1f", f.m_config.m_soil_ph7);
+        drawText(s, m_part_2_x+0.75*m_part_2_w,y, sizeText_medium);
+    }
+    {
+        std::string s = strprintf("%.1f", f.m_last_soil_ph_corr);
+        drawText(s, m_part_2_x+0.5*m_part_2_w,y, sizeText_medium);
+    }
+    
+    drawButtonLabel2(m_button_ph4);
+    drawButtonLabel2(m_button_ph7);
 }
 void OptionWidget::onMousePage2(int x, int y){
     Framework & f = Framework::instance();
@@ -536,6 +557,15 @@ void OptionWidget::onMousePage2(int x, int y){
         config.m_soil_tp_wait_s = m_soil_tp_wait.m_value;
         loadConfig();
     };
+    
+    if(m_button_ph4.isActive(x, y) != 0){
+        f.m_config.m_soil_ph4 = f.m_last_soil_ph;
+        loadConfig();
+    }
+    if(m_button_ph7.isActive(x, y) != 0){
+        f.m_config.m_soil_ph7 = f.m_last_soil_ph;
+        loadConfig();
+    }
 }
 
 

@@ -98,6 +98,10 @@ public:
     
     SelectButtonGui m_select_soil;
     
+    ButtonGui m_button_ph4;
+    ButtonGui m_button_ph7;
+    
+    
     
     void setSizePage2();
     void drawPage2();

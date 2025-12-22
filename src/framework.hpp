@@ -99,9 +99,12 @@ public:
     double m_last_soil_hum;
     double m_last_soil_cond;
     double m_last_soil_ph;
+    double m_last_soil_ph_corr;
     double m_last_soil_n;
     double m_last_soil_p;
     double m_last_soil_k;
+    
+    void setPh(double ph);
     
     
     double m_record_lat;
