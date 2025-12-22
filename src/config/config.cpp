@@ -72,10 +72,15 @@ void Config::work(QSettings & settings, bool save){
      
     saveLoadInt(settings, "etat", m_etat, save);
     
+    saveLoadInt(settings, "soil_capteur", m_soil_capteur, save);
     saveLoadDouble(settings, "soil_tp_down_s", m_soil_tp_down_s, save);
     saveLoadDouble(settings, "soil_tp_down_wait_s", m_soil_tp_down_wait_s, save);
     saveLoadDouble(settings, "soil_tp_up_s", m_soil_tp_up_s, save);
     saveLoadDouble(settings, "soil_tp_wait_s", m_soil_tp_wait_s, save);
+    
+    saveLoadDouble(settings, "m_soil_ph4", m_soil_ph4, save);
+    saveLoadDouble(settings, "m_soil_ph7", m_soil_ph7, save);
+    
 }
 
 void Config::validate(){

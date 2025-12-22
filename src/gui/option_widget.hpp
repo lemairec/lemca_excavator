@@ -96,6 +96,9 @@ public:
     ValueGui m_soil_tp_up;
     ValueGui m_soil_tp_wait;
     
+    SelectButtonGui m_select_soil;
+    
+    
     void setSizePage2();
     void drawPage2();
     void onMousePage2(int x, int y);

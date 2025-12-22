@@ -420,7 +420,13 @@ void OptionWidget::setSizePage2(){
     y+= m_y_inter;
     m_outil_replay_h.setResize(m_part_1_x3, y, m_petit_button);
     
-    y = m_y_begin;
+    m_select_soil.clear();
+    m_select_soil.addValue("analogique");
+    m_select_soil.addValue("numerique");
+    m_select_soil.addValue("toto2");
+    y = m_y_begin-m_y_inter;
+    m_select_soil.setResize(m_part_2_x+m_part_2_w/2, y, "", true, m_part_2_w/2);
+    y+= m_y_inter;
     m_soil_tp_down.setResize(m_part_2_x3, y, m_petit_button);
     y+= m_y_inter;
     m_soil_tp_down_wait.setResize(m_part_2_x3, y, m_petit_button);
@@ -429,6 +435,7 @@ void OptionWidget::setSizePage2(){
     y+= m_y_inter;
     m_soil_tp_wait.setResize(m_part_2_x3, y, m_petit_button);
     y+= m_y_inter;
+    
 }
 void OptionWidget::drawPage2(){
     Framework & f = Framework::instance();
@@ -457,6 +464,14 @@ void OptionWidget::drawPage2(){
         drawText(Langage::getKey("OPT_OUTIL_REPLAY_H"), m_part_1_x2,m_outil_replay_h.m_y, sizeText_medium);
         drawValueGuiKeyPad2(m_outil_replay_h);
     }
+    
+    
+    drawButtonLabel2(m_select_soil.m_buttonOpen);
+    
+    if(m_select_widget.m_close){
+        m_select_soil.setSelectedValue(f.m_config.m_soil_capteur);
+    }
+    
     {
         m_soil_tp_down.m_value = config.m_soil_tp_down_s;
         drawText(Langage::getKey("SOIL_TP_DOWN"), m_part_2_x2,m_soil_tp_down.m_y, sizeText_medium);
@@ -479,7 +494,20 @@ void OptionWidget::drawPage2(){
     }
 }
 void OptionWidget::onMousePage2(int x, int y){
+    Framework & f = Framework::instance();
     Config & config = Framework::instance().m_config;
+    
+    if(!m_select_widget.m_close){
+        if(m_select_widget.onMouseSelect(x, y)){
+            f.m_config.m_soil_capteur = m_select_etat.m_selectedValue;
+        }
+        f.initOrLoadConfig();
+        return;
+    }
+    
+    isActiveButtonSelect(&m_select_soil, x, y);
+    
+    
     if(onMouseKeyPad2(m_outil_l, x, y, 0.05)){
         config.m_outil_largeur = m_outil_l.m_value;
         loadConfig();

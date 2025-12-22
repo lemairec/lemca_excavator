@@ -89,10 +89,14 @@ public:
     
     int m_etat = 0; //0 excavator, 1 luc, 2 soil
     
+    int m_soil_capteur = 0; //0 analogique, 1 numerique
     double m_soil_tp_down_s = 1;
     double m_soil_tp_down_wait_s = 2;
     double m_soil_tp_up_s = 0.5;
     double m_soil_tp_wait_s = 12;
+    
+    double m_soil_ph4 = 4.0;
+    double m_soil_ph7 = 7.0;
     
     bool isDeveloppeur(){
         return true;//m_user_mode > 1;
