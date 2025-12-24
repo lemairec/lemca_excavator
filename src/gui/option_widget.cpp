@@ -499,16 +499,21 @@ void OptionWidget::drawPage2(){
     }
     int y = m_button_ph4.m_y - m_y_inter;
     {
-        std::string s = strprintf("%.1f", f.m_config.m_soil_ph4);
+        std::string s = strprintf("ph4 : %.1f", f.m_config.m_soil_ph4);
         drawText(s, m_part_2_x+0.25*m_part_2_w,y, sizeText_medium);
     }
     {
-        std::string s = strprintf("%.1f", f.m_config.m_soil_ph7);
+        std::string s = strprintf("ph7 : %.1f", f.m_config.m_soil_ph7);
         drawText(s, m_part_2_x+0.75*m_part_2_w,y, sizeText_medium);
     }
+    
     {
-        std::string s = strprintf("%.1f", f.m_last_soil_ph_corr);
+        std::string s = strprintf("ph_orig : %.1f", f.m_last_soil_ph);
         drawText(s, m_part_2_x+0.5*m_part_2_w,y, sizeText_medium);
+    }
+    {
+        std::string s = strprintf("ph_cor : %.1f", f.m_last_soil_ph_corr);
+        drawText(s, m_part_2_x+0.5*m_part_2_w,y-m_y_inter, sizeText_medium);
     }
     
     drawButtonLabel2(m_button_ph4);
@@ -520,7 +525,7 @@ void OptionWidget::onMousePage2(int x, int y){
     
     if(!m_select_widget.m_close){
         if(m_select_widget.onMouseSelect(x, y)){
-            f.m_config.m_soil_capteur = m_select_etat.m_selectedValue;
+            f.m_config.m_soil_capteur = m_select_soil.m_selectedValue;
         }
         f.initOrLoadConfig();
         return;
