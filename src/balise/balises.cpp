@@ -11,6 +11,7 @@
 #include "environnement.hpp"
 #include "../framework.hpp"
 #include "../util/directory_manager.hpp"
+#include "../util/csv.hpp"
 
 #include <QDateTime>
 #include "../lib/SimpleJSON/src/JSON.h"
@@ -152,56 +153,41 @@ void Balises::newBalise(){
     
 }
 
-double parseDouble(const std::string & s){
-    std::string s1 = s;
-    std::replace(s1.begin(), s1.end(), ',', '.');
-    double out = std::stod(s1);
-    return out;
-}
 
 void Balises::importFile(const std::string & path){
-    std::ifstream file(path);
-    std::string line;
-    int count = 0;
+    CSVFile file;
+    file.importFile(path);
     
-    char sep = '\n';
-    {
-        std::ifstream tmp(path);
-        char c;
-        while (tmp.get(c)) {
-            if (c == '\n') break;
-            if (c == '\r') { sep = '\r'; break; }
-        }
-    }
-    
-    while (std::getline(file, line, sep)) {
-        if (!line.empty() && (line.back() == '\n' || line.back() == '\r')){
-            line.pop_back();
-        }
-        
-        std::stringstream ss(line);
-        std::string cell;
-
-        int j = 0;
-        
-        std::string name;
-        double latitude = 0;
-        double longitude = 0;
-        while (std::getline(ss, cell, ';')) {
-            if(j==0){
-                name = cell;
-            } else if(j==1){
-                latitude = parseDouble(cell);
-            } else if(j==2){
-                longitude = parseDouble(cell);
-            }
-            ++j;
-        }
-        std::string s2 = strprintf("%s => %.7f, %.7f", name.c_str(), latitude, longitude);
-        if(j == 3){
+    for(auto line : file.m_lines){
+        if(line.m_words.size() > 2){
+            std::string name = line.m_words[0];
+            double latitude = line.getDouble(1);
+            double longitude = line.getDouble(2);
+            std::string s2 = strprintf("%s => %.7f, %.7f", name.c_str(), latitude, longitude);
             addBalise(name, latitude, longitude);
         }
-        INFO(count << " " << j << " " << s2);
-        ++count;
     }
+}
+
+void Balises::exportFile(const std::string & path){
+    CSVFile file;
+    
+    for(auto b : m_balises){
+        CSVLine line;
+        line.addWord(b->m_name);
+        {
+            std::string s2 = strprintf("%.7f", b->m_latitude);
+            line.addWord(s2);
+        }
+        {
+            std::string s2 = strprintf("%.7f", b->m_longitude);
+            line.addWord(s2);
+        }
+        {
+            std::string s2 = strprintf("%.7f", b->m_altitude);
+            line.addWord(s2);
+        }
+    }
+    file.exportFile(path);
+    
 }

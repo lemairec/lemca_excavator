@@ -35,6 +35,7 @@ public:
     void newBalise();
     
     void importFile(const std::string & path);
+    void exportFile(const std::string & path);
     void sort(GpsPoint_ptr p);
 };
 

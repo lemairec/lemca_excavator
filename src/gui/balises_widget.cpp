@@ -25,6 +25,7 @@ void BalisesWidget::setSize(int width, int height){
     m_button_add.setResizeStd(m_x2 + 0.4*m_width2, y, "add", true);
     m_button_import.setResizeStd(m_x2 + 0.6*m_width2, y, "import", true);
     m_button_clear.setResizeStd(m_x2 + 0.2*m_width2, y, "clear", true);
+    m_button_import.setResizeStd(m_x2 + 0.8*m_width2, y, "export", true);
     
     
     m_button_close.setResizeStd(m_x2 + 0.8*m_width2, 0.9*m_height2, "close", true);
@@ -42,6 +43,7 @@ void BalisesWidget::setSize(int width, int height){
     m_select_widget.setSize(width, height);
     setSizeClear(width, height);
     setSizeImport(width, height);
+    setSizeExport(width, height);
 }
 
 std::vector<std::string> split(const std::string& s, char delim) {
@@ -97,6 +99,8 @@ void BalisesWidget::draw(){
         drawImport();
     } else if(m_mode == 3){
         drawClear();
+    } else if(m_mode == 4){
+        drawExport();
     }
     
     if(!m_keypad_widget.m_close){
@@ -113,6 +117,8 @@ int BalisesWidget::onMouse(int x, int y){
         onMouseImport(x, y);
     } else if(m_mode == 3   ){
         onMouseClear(x, y);
+    } else if(m_mode == 4){
+        onMouseImport(x, y);
     }
     
     return 0;
@@ -159,6 +165,7 @@ void BalisesWidget::drawBalises(){
     
     drawButtonLabel2(m_button_close);
     drawButtonLabel2(m_button_import, COLOR_VALIDATE);
+    drawButtonLabel2(m_button_export, COLOR_VALIDATE);
     drawButtonLabel2(m_button_add, COLOR_VALIDATE);
     drawButtonLabel2(m_button_clear, COLOR_CANCEL);
 }
@@ -181,6 +188,9 @@ int BalisesWidget::onMouseBalises(int x, int y){
     }
     if(m_button_clear.isActive(x, y)){
         m_mode =3;
+    }
+    if(m_button_export.isActive(x, y)){
+        m_mode =4;
     }
     return 0;
 }
@@ -305,6 +315,51 @@ int BalisesWidget::onMouseImport(int x, int y){
     }
     return 0;
 }
+
+
+void BalisesWidget::setSizeExport(int width, int height){
+    m_file_select.setResize(m_x2+0.5*m_width2, 0.5*m_height2,"", true, 0.4*m_width2);
+}
+
+void BalisesWidget::drawExport(){
+    double y = 0.1*m_height2;
+    double inter = 0.05*m_height2;
+    drawText("Export", m_x2+0.5*m_width2, y, sizeText_medium, true);
+    y+=inter;
+    y+=inter;
+    drawText("Fichier export.csv dans la clef usb", m_x2+0.2*m_width2, y, sizeText_little);
+    y+=inter;
+    drawText("Format name;latitude;longitude;altitude (exemple test; 49.xx; 4.xx; 98.0)", m_x2+0.2*m_width2, y, sizeText_little);
+    
+    drawButtonLabel2(m_file_select.m_buttonOpen);
+    drawButtonLabel2(m_button_close);
+    if(!m_select_widget.m_close){
+        m_select_widget.draw();
+    }
+}
+int BalisesWidget::onMouseExport(int x, int y){
+    if(!m_select_widget.m_close){
+        if(m_select_widget.onMouseSelect(x, y)){
+            std::string s = "/media/lemca/"+m_file_select.getValueString()+"/export.csv";
+            Framework::instance().m_balises.exportFile(s);
+            open();
+        }
+        return 0;
+    }
+    if(m_file_select.m_buttonOpen.isActive(x, y)){
+        m_select_widget.open();
+        m_select_widget.setValueGuiKeyPad(&m_file_select);
+    }
+    if(m_button_close.isActive(x, y)){
+        m_close = true;
+    }
+    return 0;
+}
+
+
+
+
+
 
 
 
