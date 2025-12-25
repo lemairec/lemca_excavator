@@ -117,7 +117,7 @@ void Framework::setPh(double ph){
     double ph4 = m_config.m_soil_ph4;
     double ph7 = m_config.m_soil_ph7;
     
-    m_last_soil_ph_corr =  my_map(ph, 4, 7, ph4, ph7);
+    m_last_soil_ph_corr =  my_map(ph, ph4, ph7, 4, 7);
 }
 
 void Framework::addError(std::string s){
