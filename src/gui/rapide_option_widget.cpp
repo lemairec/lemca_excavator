@@ -219,21 +219,21 @@ void RapideOptionWidget::drawPage3(){
     drawQText("Balises", m_x+m_width2/2, m_y_title, sizeText_big, true);
     
     Framework & f = Framework::instance();
-    int y = m_y_begin;
+    int y = m_y_begin-m_y_inter;
     m_painter->setPen(m_pen_black_inv);
     y += m_y_inter;
     QString s = "nbr balises : "+QString::number(f.m_balises.m_balises.size());
-    drawQTexts(s, m_x+m_width2*0.2, y);
+    drawQText(s, m_x+m_width2*0.2, y, sizeText_medium);
     
     y += m_y_inter;
     size_t len = f.m_balises.m_balises_sort.size();
-    if(len > 10){
-        len = 10;
+    if(len > 5){
+        len = 5;
     }
     for(size_t i = 0; i < len; ++i){
         Balise * b = f.m_balises.m_balises_sort[i];
         std::string s1 = strprintf("%s : %.2f m", b->m_name.data(), b->m_distance);
-        drawText(s1, m_x+m_width2*0.2, y);
+        drawText(s1, m_x+m_width2*0.2, y, sizeText_medium);
         y += m_y_inter/4;
         
     }

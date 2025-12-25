@@ -25,7 +25,7 @@ void BalisesWidget::setSize(int width, int height){
     m_button_add.setResizeStd(m_x2 + 0.4*m_width2, y, "add", true);
     m_button_import.setResizeStd(m_x2 + 0.6*m_width2, y, "import", true);
     m_button_clear.setResizeStd(m_x2 + 0.2*m_width2, y, "clear", true);
-    m_button_import.setResizeStd(m_x2 + 0.8*m_width2, y, "export", true);
+    m_button_export.setResizeStd(m_x2 + 0.8*m_width2, y, "export", true);
     
     
     m_button_close.setResizeStd(m_x2 + 0.8*m_width2, 0.9*m_height2, "close", true);
@@ -134,7 +134,7 @@ void BalisesWidget::drawBalises(){
     drawText("Balises", m_x2+0.5*m_width2, y, sizeText_medium, true);
     
     QString s = "nbr balises : "+QString::number(f.m_balises.m_balises.size());
-    drawQTexts(s, x1, y);
+    drawQText(s, x1, y, sizeText_little);
     
     y += m_y_inter;
     y += m_y_inter;
