@@ -8,5 +8,6 @@
 #include <string>
 #include <QMutex>
 #include <memory>
+#include <vector>
 
 #endif //INCLUDE_HPP
