@@ -20,8 +20,6 @@ public :
     
     void importFile(const std::string & path);
     void exportFile(const std::string & path);
-    
-   
 };
 
 #endif

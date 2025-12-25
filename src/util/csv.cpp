@@ -21,7 +21,6 @@ void CSVLine::addWord(const std::string & s){
 void CSVFile::importFile(const std::string & path){
     std::ifstream file(path);
     std::string line;
-    //int count = 0;
     
     char sep = '\n';
     {
