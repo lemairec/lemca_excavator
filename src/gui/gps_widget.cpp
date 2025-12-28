@@ -1049,7 +1049,11 @@ void GpsWidget::drawBackgroundGps(){
 void GpsWidget::drawGpsWidget(){
     Framework & f = Framework::instance();
     
-    m_a = -3.14/2+f.m_cap_rad;
+    if(f.getEtat() == Etat_Arpentage){
+        m_a = 0;
+    } else {
+        m_a = -3.14/2+f.m_cap_rad;
+    }
     
     m_cosA = cos(m_a);
     m_sinA = sin(m_a);
