@@ -3,25 +3,23 @@
 
 
 bool CSVLine::empty(){
-    //return m_words.empty();
-    return true;
+    return m_words.empty();
 }
 
 
 double CSVLine::getDouble(size_t i){
-    /*std::string s1 = m_words[i];
+    std::string s1 = m_words[i];
     std::replace(s1.begin(), s1.end(), ',', '.');
     double out = std::stod(s1);
-    return out;*/
-    return 0;
+    return out;
 }
 
 void CSVLine::addWord(const std::string & s){
-    //m_words.push_back(s);
+    m_words.push_back(s);
 }
 
 void CSVFile::importFile(const std::string & path){
-    /*std::ifstream file(path);
+    std::ifstream file(path);
     std::string line;
     
     char sep = '\n';
@@ -50,12 +48,12 @@ void CSVFile::importFile(const std::string & path){
         if(line.empty()){
             m_lines.push_back(line);
         }
-    }*/
+    }
 }
 
 
 void CSVFile::exportFile(const std::string & path){
-    /*std::ofstream file(path);
+    std::ofstream file(path);
     
     for(auto line : m_lines){
         bool first = 0;
@@ -69,5 +67,5 @@ void CSVFile::exportFile(const std::string & path){
         }
             
         file << "\n";
-    }*/
+    }
 }
