@@ -106,7 +106,7 @@ void Framework::initOrLoadConfig(){
     m_qt_timer.init();
     
     if(m_config.m_etat == 1){
-        setEtat(Etat_Luc);
+        setEtat(Etat_Arpentage);
     } else if(m_config.m_etat == 2){
         setEtat(Etat_Soil);
     }
@@ -262,7 +262,7 @@ void Framework::onNewPoint(GpsPointCap_ptr p){
         m_listSurfaceToDraw.front()->m_lastPoint = p2;
     }
     
-    if(m_etat == Etat_Luc){
+    if(m_etat == Etat_Arpentage){
         m_balises.sort(p);
     }
     
@@ -451,7 +451,7 @@ void Framework::setEtat(Etat etat){
         //m_position_module.m_list.clear();
         m_curveAB.m_curves.clear();
         m_curveAB.m_listAB.clear();
-    } else if(etat == Etat_Luc){
+    } else if(etat == Etat_Arpentage){
         m_surface = 0;
         m_lastPoint = nullptr;
         //m_listSurfaceToDraw.clear();
@@ -487,7 +487,7 @@ void Framework::setAB(){
 
 void Framework::calculDeplacement(GpsPoint_ptr p){
     if(m_vitesse < 0.3){
-        if(m_etat != Etat_Luc){
+        if(m_etat != Etat_Arpentage){
             return;
         }
     }

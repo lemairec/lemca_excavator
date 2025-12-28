@@ -112,7 +112,7 @@ public:
     void drawInfosBasLeft();
     void drawRightLeftSoil();
     void drawInfosExcavator();
-    void drawInfosLuc();
+    void drawInfosArpentage();
     void drawAlertes();
     void drawLicence();
     

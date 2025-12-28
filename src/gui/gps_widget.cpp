@@ -314,14 +314,14 @@ void GpsWidget::drawInfosBasLeft(){
 
     m_painter->drawRoundedRect(10, y, 0.3*m_width+10, h, 10, 10);
     
-    if(f.getEtat() == Etat_Luc){
+    if(f.getEtat() == Etat_Arpentage){
         int x1 = 50;
         y+=inter;
-        std::string s = strprintf("luc");
-        drawText(s, x1, y, sizeText_little, false, true);
+        std::string s = strprintf("arpentage");
+        drawText(s, x1, y, sizeText_medium, false, true);
         y+=inter;
         s = strprintf("altitude : %+.1f m", f.m_hauteur_current);
-        drawText(s, x1, y, sizeText_little, false, true);
+        drawText(s, x1, y, sizeText_medium, false, true);
         y+=inter;
         double lat = 0, lon = 0;
         if(f.m_point_current){
@@ -330,10 +330,10 @@ void GpsWidget::drawInfosBasLeft(){
         }
         y+=inter;
         s = strprintf("lat : %+.8f", lat);
-        drawText(s, x1, y, sizeText_little, false, true);
+        drawText(s, x1, y, sizeText_medium, false, true);
         y+=inter;
         s = strprintf("long : %+.8f", lon);
-        drawText(s, x1, y, sizeText_little, false, true);
+        drawText(s, x1, y, sizeText_medium, false, true);
     } else if(f.getEtat() == Etat_Soil){
         int x1 = 50;
         int x2 = 250;
@@ -410,7 +410,7 @@ void GpsWidget::drawInfosBasLeft(){
     
 }
 
-void GpsWidget::drawInfosLuc(){
+void GpsWidget::drawInfosArpentage(){
     
 }
 
@@ -603,8 +603,8 @@ void GpsWidget::draw(){
     drawButtons();
     drawInfos();
     drawInfosBasLeft();
-    if(f.m_etat == Etat_Luc){
-        drawInfosLuc();
+    if(f.m_etat == Etat_Arpentage){
+        drawInfosArpentage();
     } else {
         drawInfosExcavator();
     }
@@ -1063,7 +1063,7 @@ void GpsWidget::drawGpsWidget(){
     //scene->clear();
 
     
-    if(f.getEtat() == Etat_Luc){
+    if(f.getEtat() == Etat_Arpentage){
         m_painter->setPen(m_pen_red); // personnaliser
         //double x_last = 0, y_last = 0;
         

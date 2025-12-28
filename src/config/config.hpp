@@ -87,7 +87,7 @@ public:
     int m_offset_auto = 0;
     int m_offset2_mm = 0;
     
-    int m_etat = 0; //0 excavator, 1 luc, 2 soil
+    int m_etat = 0; //0 excavator, 1 arpentage, 2 soil
     
     int m_soil_capteur = 0; //0 analogique, 1 numerique
     double m_soil_tp_down_s = 1;

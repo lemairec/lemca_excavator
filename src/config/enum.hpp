@@ -7,7 +7,7 @@ enum Etat {
     Etat_OK = 2,
     Etat_ParcelleAdd = 3,
     Etat_ParcellePause = 4,
-    Etat_Luc = 5,
+    Etat_Arpentage = 5,
     Etat_Soil = 6
 };
 
