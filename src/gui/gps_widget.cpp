@@ -1358,8 +1358,9 @@ void GpsWidget::drawMesures(){
         } else {
             m_painter->setBrush(m_brush_black);
         }
-        
         m_painter->drawEllipse(x1-l, y1-l, 2*l, 2*l);
+        std::string s = strprintf("%.1f", p.m_ph);
+        drawText(s, x1, y1, SizeText::sizeText_little, true);
     }
 }
 
