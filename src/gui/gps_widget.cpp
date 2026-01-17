@@ -335,17 +335,19 @@ void GpsWidget::drawInfosBasLeft(){
         s = strprintf("long : %+.8f", lon);
         drawText(s, x1, y, sizeText_medium, false, true);
     } else if(f.getEtat() == Etat_Soil){
+        std::string s;
         int x1 = 50;
         int x2 = 250;
-        y+=inter;
-        std::string s = strprintf("soil");
-        drawText(s, x1, y, sizeText_little, false, true);
         y+=inter;
         s = strprintf("ph : %.1f", f.m_last_soil_ph_corr);
         drawText(s, x1, y, sizeText_little, false, true);
         y+=inter;
         s = strprintf("ph orig : %.1f", f.m_last_soil_ph);
         drawText(s, x1, y, sizeText_little, false, true);
+        y+=inter;
+        s = strprintf("ph4 : %.1f; ph7 : %.1f;", f.m_config.m_soil_ph7);
+        drawText(s, x1, y, sizeText_little, false, true);
+        y+=inter;
         y+=inter;
         s = strprintf("temp : %.1f °C", f.m_last_soil_temp);
         drawText(s, x1, y, sizeText_little, false, true);
