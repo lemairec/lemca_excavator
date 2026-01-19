@@ -419,12 +419,7 @@ void NmeaParser::parseLemcaTranslatorV2(){
     
     Framework::instance().m_pilot_translator_module.setLemcaTrameV2(res, point_3, count);
     
-    if(Framework::instance().m_config.m_soil_capteur == 0)
-    {
-        double voltage = res * 3.3 / 4095.0;
-        //1.65v et 0.059mv = écart de 1 point de PH. A ajuster en fonction de la sonde
-        double ph = 7.0 + (1.65 - voltage) / 0.059;
-
-        Framework::instance().setPh(ph);
+    if(Framework::instance().m_config.m_soil_capteur == 0){
+        Framework::instance().setPh(res / 2400.0*14.0);
     }
 }
