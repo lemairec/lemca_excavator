@@ -419,7 +419,13 @@ void NmeaParser::parseLemcaTranslatorV2(){
     
     Framework::instance().m_pilot_translator_module.setLemcaTrameV2(res, point_3, count);
     
-    if(Framework::instance().m_config.m_soil_capteur == 0){
-        Framework::instance().setPh(res / 1152.0*14.0);
-    }
+    if (Framework::instance().m_config.m_soil_capteur == 0)
+	{
+    	double vadc = res * 3.3 / 4095.0;   // tension vue par l'ESP32
+    	double vcapteur = vadc * 2.0;      // correction pont diviseur
+
+    	double ph = 7.0 + (1.70 - vcapteur) / 0.059;
+
+    	Framework::instance().setPh(ph);
+	}
 }
