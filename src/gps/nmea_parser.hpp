@@ -185,7 +185,10 @@ protected:
     void parseLemca3();
     
     void parseLemca();
+    
     void parseLemcaTranslatorV2();
+public:
+    int m_last_res = 0;
 };
 
 #endif //GPS_H

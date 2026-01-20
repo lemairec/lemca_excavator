@@ -511,9 +511,15 @@ void OptionWidget::drawPage2(){
         std::string s = strprintf("ph_orig : %.1f", f.m_last_soil_ph);
         drawText(s, m_part_2_x+0.5*m_part_2_w,y, sizeText_medium);
     }
+    
+    
     {
         std::string s = strprintf("ph_cor : %.1f", f.m_last_soil_ph_corr);
         drawText(s, m_part_2_x+0.5*m_part_2_w,y-m_y_inter, sizeText_medium);
+    }
+    {
+        std::string s = strprintf("val : %i", f.m_nmea_parser_mcu.m_last_res);
+        drawText(s, m_part_2_x+0.75*m_part_2_w,y-m_y_inter, sizeText_medium);
     }
     
     drawButtonLabel2(m_button_ph4);

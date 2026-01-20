@@ -419,6 +419,7 @@ void NmeaParser::parseLemcaTranslatorV2(){
     
     Framework::instance().m_pilot_translator_module.setLemcaTrameV2(res, point_3, count);
     
+    m_last_res = res;
     if(Framework::instance().m_config.m_soil_capteur == 0){
         Framework::instance().setPh(14.0 - 7.0/1200.0*res);
     }
