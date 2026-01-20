@@ -421,6 +421,6 @@ void NmeaParser::parseLemcaTranslatorV2(){
     
     m_last_res = res;
     if(Framework::instance().m_config.m_soil_capteur == 0){
-        Framework::instance().setPh(14.0 - 7.0/600.0*res);
+        Framework::instance().setPh(14.0 - 7.0/568.0*res);
     }
 }
