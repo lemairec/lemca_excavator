@@ -419,14 +419,7 @@ void NmeaParser::parseLemcaTranslatorV2(){
     
     Framework::instance().m_pilot_translator_module.setLemcaTrameV2(res, point_3, count);
     
-    if (Framework::instance().m_config.m_soil_capteur == 0)
-	{
-    	// tension vue par l'ADC ESP32
-    	double vadc = res * 3.3 / 4095.0;
-
-    	// conversion pH (0V=14pH, 3V=0pH)
-	 double ph = 14.0 - (vadc * 9.333);
-
-    	Framework::instance().setPh(ph);
-	}
+    if(Framework::instance().m_config.m_soil_capteur == 0){
+        Framework::instance().setPh(14.0 - 7.0/1200.0*res);
+    }
 }
