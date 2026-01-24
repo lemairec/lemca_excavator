@@ -47,6 +47,8 @@ void Framework::initOrLoadConfig(){
     m_config.validate();
     m_config.save();
     
+    m_job_manager.init();
+    
     {
         std::string s = strprintf("INIT PH4 %.1f PH7 %.1f", m_config.m_soil_ph4, m_config.m_soil_ph7);
         m_job_manager.logJob(s);
@@ -58,7 +60,6 @@ void Framework::initOrLoadConfig(){
     m_qt_network.initOrLoad(m_config);
     m_qt_media_player.initOrLoad(m_config);
     m_pilot_translator_module.initOrLoad(m_config);
-    m_job_manager.init();
     
     m_job_module.onNewMessage("config");
     
