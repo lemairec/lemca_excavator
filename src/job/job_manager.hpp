@@ -20,7 +20,7 @@ public:
     std::string m_data_path;
     std::ofstream m_data_file;
     
-    void log(const std::string & string);
+    void logJob(const std::string & string);
     void addData(const std::string & string);
 };
 

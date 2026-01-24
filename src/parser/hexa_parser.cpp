@@ -78,6 +78,6 @@ void HexaParser::parseSoil(){
     
     //Framework & f = Framework::Instance();
     std::string s = strprintf("SOIL,%.1f,%.1f,%.1f,%.1f,%.1f,%.1f,%.1f", f.m_last_soil_hum, f.m_last_soil_temp, f.m_last_soil_cond , f.m_last_soil_ph_corr, f.m_last_soil_n, f.m_last_soil_p, f.m_last_soil_k);
-    f.m_job_manager.log(s);
+    f.m_job_manager.logJob(s);
     
 }

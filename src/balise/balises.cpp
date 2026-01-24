@@ -19,12 +19,12 @@
 
 void Balises::clear(){
     Framework & f = Framework::instance();
-    f.m_job_manager.log("remove");
+    f.m_job_manager.logJob("remove");
     for(auto b : m_balises){
         std::string s = strprintf("%s,%.7f,%.7f,%.2f", b->m_name.c_str(), b->m_latitude, b->m_longitude, b->m_altitude);
-        f.m_job_manager.log(s);
+        f.m_job_manager.logJob(s);
     }
-    f.m_job_manager.log("remove done");
+    f.m_job_manager.logJob("remove done");
     m_balises.clear();
     save();
 }
@@ -123,7 +123,7 @@ void Balises::addBalise(const std::string & name, double latitude, double longit
     b->m_is_synchro = false;
     m_balises.push_back(b);
     std::string s = strprintf("%s,%.7f,%.7f,%.2f", b->m_name.c_str(), b->m_latitude, b->m_longitude, b->m_altitude);
-    f.m_job_manager.log(s);
+    f.m_job_manager.logJob(s);
     f.m_position_module.setXY(*b);
     save();
 }
@@ -146,7 +146,7 @@ void Balises::newBalise(){
         m_balises_new.push_back(b);
         m_balises.push_back(b);
         std::string s = strprintf("%s,%.7f,%.7f,%.2f", b->m_name.c_str(), b->m_latitude, b->m_longitude, b->m_altitude);
-        f.m_job_manager.log(s);
+        f.m_job_manager.logJob(s);
         f.m_position_module.setXY(*b);
         save();
     }

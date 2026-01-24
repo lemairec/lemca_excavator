@@ -48,12 +48,8 @@ void Framework::initOrLoadConfig(){
     m_config.save();
     
     {
-        std::string s = strprintf("INIT_PH4 %.1f", m_config.m_soil_ph4);
-        m_job_manager.log(s);
-    }
-    {
-        std::string s = strprintf("INIT_PH7 %.1f", m_config.m_soil_ph7);
-        m_job_manager.log(s);
+        std::string s = strprintf("INIT PH4 %.1f PH7 %.1f", m_config.m_soil_ph4, m_config.m_soil_ph7);
+        m_job_manager.logJob(s);
     }
     
     m_serialModule.initOrLoad(m_config);
@@ -394,7 +390,7 @@ bool Framework::isTranslateurConnected(){
 
 
 void Framework::onFrame(const std::string &frame){
-    m_job_manager.log(frame);
+    m_job_manager.logJob(frame);
     m_job_module.onNewFrame(frame);
     m_auto_path_module.onNewFrame(frame);
 }
