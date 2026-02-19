@@ -19,6 +19,8 @@ struct Balise : public GpsPoint {
 class Balises {
     //int m_page = 0;
 public:
+    std::string m_balises_import_str;
+    
     std::vector<Balise *> m_balises;
     std::vector<Balise *> m_balises2;
     std::vector<Balise *> m_balises_sort;

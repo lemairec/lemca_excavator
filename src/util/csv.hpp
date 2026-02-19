@@ -1,11 +1,12 @@
-#ifndef CSV_H
-#define CSV_H
+#ifndef MY_CSV_H
+#define MY_CSV_H
 
 #include "include.hpp"
 
 class CSVLine {
 public :
     std::vector<std::string> m_words;
+    std::string m_string;
     
     bool empty();
     

@@ -1,5 +1,5 @@
 #include "csv.hpp"
-
+#include "../util/util.hpp"
 
 
 bool CSVLine::empty(){
@@ -22,21 +22,30 @@ void CSVFile::importFile(const std::string & path){
     std::ifstream file(path);
     std::string line;
     
-    char sep = '\n';
+    int count_n = 0;
+    int count_r = 0;
     {
         std::ifstream tmp(path);
         char c;
         while (tmp.get(c)) {
-            if (c == '\n') break;
-            if (c == '\r') { sep = '\r'; break; }
+            if (c == '\n'){
+                count_n++;
+            }
+            if (c == '\r') {
+                count_r++;
+            }
         }
     }
+    INFO("n " << count_n << " r " << count_r);
+    
+    char sep = '\r';
+    if(count_n > count_r){
+        sep = '\n';
+    }
+    
     
     while (std::getline(file, line, sep)) {
-        if (!line.empty() && (line.back() == '\n' || line.back() == '\r')){
-            line.pop_back();
-        }
-        
+        INFO("la " << line);
         std::stringstream ss(line);
         std::string cell;
 
@@ -44,8 +53,10 @@ void CSVFile::importFile(const std::string & path){
         while (std::getline(ss, cell, ';')) {
             line.m_words.push_back(cell);
         }
+        INFO("word " << line.m_words.size());
         
-        if(line.empty()){
+        if(!line.empty()){
+            INFO("add");
             m_lines.push_back(line);
         }
     }
