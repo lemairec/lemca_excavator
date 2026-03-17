@@ -311,7 +311,7 @@ int BalisesWidget::onMouseImport(int x, int y){
         if(m_select_widget.onMouseSelect(x, y)){
             std::string s = "/media/lemca/"+m_file_select.getValueString()+"/import.csv";
             Framework::instance().m_balises.beginImportFile(s);
-            open();
+            m_mode=2;
         }
         return 0;
     }
