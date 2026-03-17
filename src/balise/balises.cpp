@@ -154,6 +154,43 @@ void Balises::newBalise(){
 }
 
 
+CSVFile m_file_csv;
+
+void Balises::beginImportFile(const std::string & path){
+    m_import_i = 0;
+    m_file_csv.importFile(path);
+    
+    m_balises_import_str = "";
+    std::string s2 = strprintf("%s => %i", path.c_str(), m_file_csv.m_lines.size());
+    m_balises_import_str = m_balises_import_str + "\n" + s2;
+    INFO(s2);
+}
+
+    
+void Balises::workImportFile(){
+    INFO("work " << m_import_i);
+    for(int i = 0; i < 100; ++i){
+        if(m_import_i >= 0){
+            if(m_import_i < m_file_csv.m_lines.size()){
+                auto line = m_file_csv.m_lines[m_import_i];
+                if(line.m_words.size() > 2){
+                    std::string name = line.m_words[0];
+                    double latitude = line.getDouble(1);
+                    double longitude = line.getDouble(2);
+                    std::string s2 = strprintf("%s => %.7f, %.7f", name.c_str(), latitude, longitude);
+                    addBalise(name, latitude, longitude);
+                    
+                    INFO(s2);
+                    m_balises_import_str = m_balises_import_str + "\n" + s2;
+                }
+                m_import_i++;
+            } else {
+                m_import_i = -1;
+            }
+        }
+    }
+}
+
 void Balises::importFile(const std::string & path){
     CSVFile file;
     file.importFile(path);

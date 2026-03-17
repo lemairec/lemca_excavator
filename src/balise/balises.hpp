@@ -36,9 +36,16 @@ public:
     
     void newBalise();
     
-    void importFile(const std::string & path);
     void exportFile(const std::string & path);
     void sort(GpsPoint_ptr p);
+    
+    int m_import_i = -1;
+    
+    void beginImportFile(const std::string & path);
+    void workImportFile();
+    
+    void importFile(const std::string & path);
+    
 };
 
 #endif // LINE_AB_H

@@ -184,7 +184,8 @@ int BalisesWidget::onMouseBalises(int x, int y){
         m_mode =1;
     }
     if(m_button_import.isActive(x, y)){
-        m_mode =2;
+        //Framework::instance().m_balises.beginImportFile("/Users/lemairec/SynologyDrive/ferme/cadastre/import.csv");
+        m_mode = 2;
     }
     if(m_button_clear.isActive(x, y)){
         m_mode =3;
@@ -289,7 +290,15 @@ void BalisesWidget::drawImport(){
     drawText("Fichier import.csv dans la clef usb", m_x2+0.2*m_width2, y, sizeText_little);
     y+=inter;
     drawText("Format name;latitude;longitude (exemple test; 49.xx; 4.xx)", m_x2+0.2*m_width2, y, sizeText_little);
+    y+=inter;
     
+    Framework & f = Framework::instance();
+    if(f.m_balises.m_import_i >= 0){
+        f.m_balises.workImportFile();
+        std::string s = strprintf("import ... %i/%i", f.m_balises.m_import_i, 1000);
+        drawText(s, m_x2+0.2*m_width2, y, sizeText_little);
+        
+    }
     drawButtonLabel2(m_file_select.m_buttonOpen);
     drawButtonLabel2(m_button_close);
     if(!m_select_widget.m_close){
@@ -301,7 +310,7 @@ int BalisesWidget::onMouseImport(int x, int y){
     if(!m_select_widget.m_close){
         if(m_select_widget.onMouseSelect(x, y)){
             std::string s = "/media/lemca/"+m_file_select.getValueString()+"/import.csv";
-            Framework::instance().m_balises.importFile(s);
+            Framework::instance().m_balises.beginImportFile(s);
             open();
         }
         return 0;
