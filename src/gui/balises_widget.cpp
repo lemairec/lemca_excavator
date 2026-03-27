@@ -259,6 +259,7 @@ int BalisesWidget::onMouseAdd(int x, int y){
     
     if(m_button_save.isActive(x, y)){
         Framework::instance().m_balises.addBalise(m_name.m_text.c_str(), m_latitude.m_value, m_longitude.m_value);
+        Framework::instance().m_balises.save();
         m_page = 0;
         m_mode = 0;
     }

@@ -105,12 +105,7 @@ void Balises::sort(GpsPoint_ptr p){
     std::sort (m_balises_sort.begin(), m_balises_sort.end(), myfunction);
 }
 
-void Balises::addBalise(Balise *b){
-    m_balises.push_back(b);
-    save();
-}
-
-void Balises::addBalise(const std::string & name, double latitude, double longitude, double altitude){
+void Balises::addBalise(const std::string & name, double latitude, double longitude, double altitude, bool ){
     Framework & f = Framework::instance();
     
     Balise * b = new Balise();
@@ -125,7 +120,6 @@ void Balises::addBalise(const std::string & name, double latitude, double longit
     std::string s = strprintf("%s,%.7f,%.7f,%.2f", b->m_name.c_str(), b->m_latitude, b->m_longitude, b->m_altitude);
     f.m_job_manager.logJob(s);
     f.m_position_module.setXY(*b);
-    save();
 }
 
 
@@ -189,6 +183,7 @@ void Balises::workImportFile(){
             }
         }
     }
+    save();
 }
 
 void Balises::importFile(const std::string & path){
@@ -213,6 +208,7 @@ void Balises::importFile(const std::string & path){
             m_balises_import_str = m_balises_import_str + "\n" + s2;
         }
     }
+    save();
 }
 
 void Balises::exportFile(const std::string & path){
