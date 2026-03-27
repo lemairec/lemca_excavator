@@ -214,6 +214,7 @@ void GpsWidget::drawInfos(){
     double inter = 0.075*m_width;
     int x = 0.5*m_width+10;
     int x_q = -inter*1+x;
+    int x_3p = x;
     int x_v =  inter*1+x;
     
     m_painter->setBrush(m_brush_background_2);
@@ -278,7 +279,95 @@ void GpsWidget::drawInfos(){
         
         drawMyImage(*m_img_compteur,x_v, y_top-21, 1.5*0.3, true);
     }
+    
+    if(f.m_pilot_translator_module.m_point_3){
+        drawMyImage(*m_img_3_point_up,x_3p, y_top-10, 0.4, true);
+    } else {
+        drawMyImage(*m_img_3_point_down,x_3p, y_top-10, 0.4, true);
+    }
 }
+
+
+
+/*void MainWidget::drawInfos(){
+    FrameworkVision & f = FrameworkVision::instance();
+    Config & config = FrameworkVision::instance().m_config;
+    
+    int h = 0.15*m_height;
+    int y = m_height - h - 10;
+
+    if(!m_is_develop){
+        y = 0;
+    }
+    int y_top = y+h/2+10;
+    
+    double inter = 0.075*m_width;
+    int x = 0.5*m_width+10;
+    int x_d = -inter*1.5+x;
+    int x_q = -inter*0.5+x;
+    int x_m =  0.0*inter+x;
+    int x_v =  inter*0.5+x;
+    int x_3 =  inter*1.5+x;
+    int x_a = 0;
+    
+    if(config.m_tilt){
+        inter = 0.062*m_width;
+        x_a = -2.0*inter+x;
+        x_d = -1.0*inter+x;
+        x_q =  0.0*inter+x;
+        x_m =  0.0*inter+x;
+        x_v =  1.0*inter+x;
+        x_3 =  2.0*inter+x;
+        
+    }
+    
+    m_painter->setBrush(m_brush_background_2);
+    m_painter->setPen(m_pen_no);
+    m_painter->drawRoundedRect(0.35*m_width, y, 0.3*m_width+10, h, 10, 10);
+    
+    auto last_order = f.m_last_rorder;
+    auto last_image = f.m_lastImage;
+    if(last_image != NULL){
+        {
+            QString s = QString::number(std::round(f.m_pilot_module.m_pas_mesured_mm_liss)/10.0, 'f', 1);
+            drawQText(s, x_d, y_top-25, sizeText_medium, true, true);
+            drawQText("cm", x_d, y_top-10, sizeText_little, true, true);
+            drawMyImage(*m_img_metre, x_d, y_top+10, 0.3, true);
+        }
+        
+        if(config.m_tilt){
+            double tilt_deg = last_order.m_angle_rad_liss*180/M_PI;
+            QString s = QString::number(tilt_deg, 'f', 1) + " °";
+            drawQText(s, x_a, y_top-25, sizeText_little, true, true);
+            drawMyImage(*m_img_angle, x_a, y_top, 0.3, true);
+        }
+        
+        if(f.m_config.m_level >= 1){
+            QString s = QString::fromStdString(f.m_config.m_machine_label);
+            drawQText(s, x_m, y_top+35, sizeText_little, true, true);
+        }
+
+        {
+            QString s = QString::number(std::round(last_order.m_score*100)) + "%";
+            drawQText(s, x_q, y_top-20, sizeText_big, true, true);
+            drawMyImage(*m_img_plant_score, x_q, y_top+05, 0.25, true);
+            //drawText(Langage::getKey("QUALITY"), x_q, y_top+10, sizeText_little, true, true);
+            
+        }
+        
+        {
+            QString s = QString::number(f.m_current_vitesse, 'f', 1);
+            drawQText(s, x_v, y_top-10, sizeText_medium, true, true);
+            
+            drawText(Langage::getKey("KM_H"), x_v, y_top+10, sizeText_little, true, true);
+            
+            drawMyImage(*m_img_compteur,x_v, y_top-20, 0.5, true);
+        }
+        
+        
+    }
+}*/
+
 
 void GpsWidget::drawRightLeftSoil(){
     int h = 0.15*m_height;

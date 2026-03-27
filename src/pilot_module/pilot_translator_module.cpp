@@ -443,6 +443,10 @@ void PilotTranslatorModule::updateCycle(){
     
     int millis = getMillis() - m_begin_cycle;
     double s = millis*0.001;
+    if(f.m_pilot_translator_module.m_point_3){
+        m_cycle_m = strprintf("%.1f ---3p", s);
+        return;
+    }
     if( s < 0 || s > 100){
         m_cycle_m = strprintf("%.1f ---off", s);
         return;
