@@ -50,7 +50,7 @@ void Framework::initOrLoadConfig(){
     m_job_manager.init();
     
     {
-        std::string s = strprintf("INIT PH4 %.1f PH7 %.1f", m_config.m_soil_ph4, m_config.m_soil_ph7);
+        std::string s = strprintf("INIT PH_b %.1f m %.1f PH_h %.1f  %.1f", m_config.m_soil_ph_bas, m_config.m_soil_ph_bas_m, m_config.m_soil_ph_haut, m_config.m_soil_ph_haut_m);
         m_job_manager.logJob(s);
     }
     
@@ -111,10 +111,8 @@ void Framework::initOrLoadConfig(){
 
 void Framework::setPh(double ph){
     m_last_soil_ph = ph;
-    double ph4 = m_config.m_soil_ph4;
-    double ph7 = m_config.m_soil_ph7;
     
-    m_last_soil_ph_corr =  my_map(ph, ph4, ph7, 4, 7);
+    m_last_soil_ph_corr =  my_map(ph, m_config.m_soil_ph_bas_m, m_config.m_soil_ph_haut_m, m_config.m_soil_ph_bas, m_config.m_soil_ph_haut);
 }
 
 void Framework::addError(std::string s){

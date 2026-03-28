@@ -98,8 +98,10 @@ public:
     
     SelectButtonGui m_select_soil;
     
-    ButtonGui m_button_ph4;
-    ButtonGui m_button_ph7;
+    ButtonGui m_button_ph_haut;
+    ButtonGui m_button_ph_bas;
+    ValueGui m_value_ph_bas;
+    ValueGui m_value_ph_haut;
     
     
     

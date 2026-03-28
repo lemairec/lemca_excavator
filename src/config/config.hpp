@@ -95,8 +95,10 @@ public:
     double m_soil_tp_up_s = 0.5;
     double m_soil_tp_wait_s = 12;
     
-    double m_soil_ph4 = 4.0;
-    double m_soil_ph7 = 7.0;
+    double m_soil_ph_bas = 4.0;
+    double m_soil_ph_bas_m = 4.0;
+    double m_soil_ph_haut = 7.0;
+    double m_soil_ph_haut_m = 7.0;
     
     bool isDeveloppeur(){
         return true;//m_user_mode > 1;

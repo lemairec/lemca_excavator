@@ -78,8 +78,10 @@ void Config::work(QSettings & settings, bool save){
     saveLoadDouble(settings, "soil_tp_up_s", m_soil_tp_up_s, save);
     saveLoadDouble(settings, "soil_tp_wait_s", m_soil_tp_wait_s, save);
     
-    saveLoadDouble(settings, "m_soil_ph4", m_soil_ph4, save);
-    saveLoadDouble(settings, "m_soil_ph7", m_soil_ph7, save);
+    saveLoadDouble(settings, "m_soil_ph_bas", m_soil_ph_bas, save);
+    saveLoadDouble(settings, "m_soil_ph_bas_m", m_soil_ph_bas_m, save);
+    saveLoadDouble(settings, "m_soil_ph_haut", m_soil_ph_haut, save);
+    saveLoadDouble(settings, "m_soil_ph_haut_m", m_soil_ph_haut_m, save);
     
 }
 

@@ -437,8 +437,11 @@ void OptionWidget::setSizePage2(){
     y+= m_y_inter;
     y+= m_y_inter;
     y+= m_y_inter;
-    m_button_ph4.setResize(m_part_2_x+0.25*m_part_2_w, y,  QString::fromStdString(Langage::getKey("PH4")), true, 0.45*m_part_2_w);
-    m_button_ph7.setResize(m_part_2_x+0.75*m_part_2_w, y,  QString::fromStdString(Langage::getKey("PH7")), true, 0.45*m_part_2_w);
+    m_button_ph_bas.setResize(m_part_2_x+0.25*m_part_2_w, y,  QString::fromStdString(Langage::getKey("PHBAS")), true, 0.45*m_part_2_w);
+    m_button_ph_haut.setResize(m_part_2_x+0.75*m_part_2_w, y,  QString::fromStdString(Langage::getKey("PHHAUT")), true, 0.45*m_part_2_w);
+    y+= m_y_inter;
+    m_value_ph_bas.setResize(m_part_2_x+0.25*m_part_2_w, y, m_petit_button);
+    m_value_ph_haut.setResize(m_part_2_x+0.75*m_part_2_w, y, m_petit_button);
     
     
 }
@@ -497,13 +500,13 @@ void OptionWidget::drawPage2(){
         drawText(Langage::getKey("SOIL_TP_WAIT"), m_part_2_x2,m_soil_tp_wait.m_y, sizeText_medium);
         drawValueGuiKeyPad2(m_soil_tp_wait);
     }
-    int y = m_button_ph4.m_y - m_y_inter;
+    int y = m_button_ph_bas.m_y - m_y_inter;
     {
-        std::string s = strprintf("ph4 : %.1f", f.m_config.m_soil_ph4);
+        std::string s = strprintf("ph_bas_m : %.1f", f.m_config.m_soil_ph_bas_m);
         drawText(s, m_part_2_x+0.25*m_part_2_w,y, sizeText_medium);
     }
     {
-        std::string s = strprintf("ph7 : %.1f", f.m_config.m_soil_ph7);
+        std::string s = strprintf("ph_haut_m : %.1f", f.m_config.m_soil_ph_haut_m);
         drawText(s, m_part_2_x+0.75*m_part_2_w,y, sizeText_medium);
     }
     
@@ -522,8 +525,18 @@ void OptionWidget::drawPage2(){
         drawText(s, m_part_2_x+0.75*m_part_2_w,y-m_y_inter, sizeText_medium);
     }
     
-    drawButtonLabel2(m_button_ph4);
-    drawButtonLabel2(m_button_ph7);
+    drawButtonLabel2(m_button_ph_bas);
+    drawButtonLabel2(m_button_ph_haut);
+    
+    {
+        m_value_ph_bas.m_value = config.m_soil_ph_bas;
+        drawValueGuiKeyPad2(m_value_ph_bas);
+    }
+    
+    {
+        m_value_ph_haut.m_value = config.m_soil_ph_haut;
+        drawValueGuiKeyPad2(m_value_ph_haut);
+    }
 }
 void OptionWidget::onMousePage2(int x, int y){
     Framework & f = Framework::instance();
@@ -569,12 +582,21 @@ void OptionWidget::onMousePage2(int x, int y){
         loadConfig();
     };
     
-    if(m_button_ph4.isActive(x, y) != 0){
-        f.m_config.m_soil_ph4 = f.m_last_soil_ph;
+    if(onMouseKeyPad2(m_value_ph_bas, x, y, 0.1)){
+        config.m_soil_ph_bas = m_value_ph_bas.m_value;
+        loadConfig();
+    };
+    if(onMouseKeyPad2(m_value_ph_haut, x, y, 0.1)){
+        config.m_soil_ph_haut = m_value_ph_haut.m_value;
+        loadConfig();
+    };
+    
+    if(m_button_ph_bas.isActive(x, y) != 0){
+        f.m_config.m_soil_ph_bas_m = f.m_last_soil_ph;
         loadConfig();
     }
-    if(m_button_ph7.isActive(x, y) != 0){
-        f.m_config.m_soil_ph7 = f.m_last_soil_ph;
+    if(m_button_ph_haut.isActive(x, y) != 0){
+        f.m_config.m_soil_ph_haut_m = f.m_last_soil_ph;
         loadConfig();
     }
 }

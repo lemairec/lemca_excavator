@@ -434,7 +434,10 @@ void GpsWidget::drawInfosBasLeft(){
         s = strprintf("ph orig : %.1f", f.m_last_soil_ph);
         drawText(s, x1, y, sizeText_little, false, true);
         y+=inter;
-        s = strprintf("ph4 : %.1f; ph7 : %.1f;", f.m_config.m_soil_ph7);
+        s = strprintf("ph_bas : %.1f; m : %.1f;", f.m_config.m_soil_ph_bas, f.m_config.m_soil_ph_bas_m);
+        drawText(s, x1, y, sizeText_little, false, true);
+        y+=inter;
+        s = strprintf("ph_haut : %.1f; m : %.1f;", f.m_config.m_soil_ph_haut, f.m_config.m_soil_ph_haut_m);
         drawText(s, x1, y, sizeText_little, false, true);
         y+=inter;
         y+=inter;
