@@ -381,11 +381,11 @@ void GpsWidget::drawRightLeftSoil(){
     m_painter->drawRoundedRect(x, y, w, h, 10, 10);
     
     Framework & f = Framework::instance();
-    drawButtonImageCarre(m_button_right, m_img_right, 0.3, f.m_pilot_translator_module.m_cycle_up, "RIGHT");
+    drawButtonImageCarre(m_button_right, m_img_right, 0.3, f.m_pilot_translator_module.m_cycle_up, "Down");
     
-    drawButtonImageCarre(m_button_middle, m_img_middle, 0.3, f.m_pilot_translator_module.m_cycle_lamp, "LAMP");
-    drawButtonImageCarre(m_button_cycle, m_img_middle, 0.3, (f.m_pilot_translator_module.m_etat == SerialEtat_Cycle), "CYCLE");
-    drawButtonImageCarre(m_button_left, m_img_left, 0.3, f.m_pilot_translator_module.m_cycle_down, "LEFT");
+    drawButtonImageCarre(m_button_middle, m_img_middle, 0.3, f.m_pilot_translator_module.m_cycle_lamp, "Clean");
+    drawButtonImageCarre(m_button_cycle, m_img_middle, 0.3, (f.m_pilot_translator_module.m_etat == SerialEtat_Cycle), "Cycle");
+    drawButtonImageCarre(m_button_left, m_img_left, 0.3, f.m_pilot_translator_module.m_cycle_down, "Up");
     
     drawButtonCheck(m_soil_loop, f.m_config.m_soil_loop);
    
@@ -428,35 +428,19 @@ void GpsWidget::drawInfosBasLeft(){
         int x1 = 50;
         int x2 = 250;
         y+=inter;
-        s = strprintf("ph : %.1f", f.m_last_soil_ph_corr);
+        s = strprintf("Ph : %.1f", f.m_last_soil_ph_corr);
         drawText(s, x1, y, sizeText_little, false, true);
         y+=inter;
-        s = strprintf("ph orig : %.1f", f.m_last_soil_ph);
+        s = strprintf("Ph orig : %.1f", f.m_last_soil_ph);
         drawText(s, x1, y, sizeText_little, false, true);
         y+=inter;
-        s = strprintf("ph_bas : %.1f; m : %.1f;", f.m_config.m_soil_ph_bas, f.m_config.m_soil_ph_bas_m);
+        s = strprintf("Temp : %.1f °C", f.m_last_soil_temp);
         drawText(s, x1, y, sizeText_little, false, true);
         y+=inter;
-        s = strprintf("ph_haut : %.1f; m : %.1f;", f.m_config.m_soil_ph_haut, f.m_config.m_soil_ph_haut_m);
+        s = strprintf("Cond : %.1f us/cm", f.m_last_soil_cond);
         drawText(s, x1, y, sizeText_little, false, true);
         y+=inter;
-        y+=inter;
-        s = strprintf("temp : %.1f °C", f.m_last_soil_temp);
-        drawText(s, x1, y, sizeText_little, false, true);
-        y+=inter;
-        s = strprintf("cond : %.1f us/cm", f.m_last_soil_cond);
-        drawText(s, x1, y, sizeText_little, false, true);
-        y+=inter;
-        s = strprintf("hum : %.1f %", f.m_last_soil_hum);
-        drawText(s, x1, y, sizeText_little, false, true);
-        y+=inter;
-        s = strprintf("n : %.1f m", f.m_last_soil_n);
-        drawText(s, x1, y, sizeText_little, false, true);
-        y+=inter;
-        s = strprintf("p : %.1f m", f.m_last_soil_p);
-        drawText(s, x1, y, sizeText_little, false, true);
-        y+=inter;
-        s = strprintf("k : %.1f m", f.m_last_soil_k);
+        s = strprintf("Hum : %.1f %", f.m_last_soil_hum);
         drawText(s, x1, y, sizeText_little, false, true);
         y+=inter;
         double lat = 0, lon = 0;

@@ -97,6 +97,11 @@ Langage::Langage(){
     
     add("FR", "YES", "Oui");
     add("FR", "NO", "Non");
+
+    add("FR", "SOIL_TP_DOWN", "Bas");
+    add("FR", "SOIL_TP_DOWN_WAIT", "Bas attend");
+    add("FR", "SOIL_TP_UP", "Haut");
+    add("FR", "SOIL_TP_WAIT", "Haut attend");    
     
 }
 
