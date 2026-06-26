@@ -100,6 +100,8 @@ public:
     double m_last_soil_cond;
     double m_last_soil_ph;
     double m_last_soil_ph_corr;
+    double m_last_soil_volt;
+    double m_last_soil_pente;
     double m_last_soil_n;
     double m_last_soil_p;
     double m_last_soil_k;

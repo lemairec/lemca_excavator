@@ -1,0 +1,26 @@
+{
+    "version": 4,
+    "configurations": [
+        {
+            "name": "MSYS2-mingw64",
+            "compilerPath": "C:/msys64/mingw64/bin/g++.exe",
+            "compileCommands": "${workspaceFolder}/build/compile_commands.json",
+            "cStandard": "c11",
+            "cppStandard": "c++11",
+            "intelliSenseMode": "windows-gcc-x64",
+            "includePath": [
+                "${workspaceFolder}/src/**",
+                "${workspaceFolder}/build",
+                "C:/msys64/mingw64/include",
+                "C:/msys64/mingw64/include/QtCore",
+                "C:/msys64/mingw64/include/QtGui",
+                "C:/msys64/mingw64/include/QtWidgets",
+                "C:/msys64/mingw64/include/QtMultimedia",
+                "C:/msys64/mingw64/include/QtNetwork",
+                "C:/msys64/mingw64/include/QtSerialPort",
+                "C:/msys64/mingw64/include/opencv4"
+            ],
+            "defines": ["USE_ROBOT"]
+        }
+    ]
+}

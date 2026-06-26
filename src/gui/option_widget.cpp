@@ -502,16 +502,16 @@ void OptionWidget::drawPage2(){
     }
     int y = m_button_ph_bas.m_y - m_y_inter;
     {
-        std::string s = strprintf("ph_bas_m : %.1f", f.m_config.m_soil_ph_bas_m);
+        std::string s = strprintf("U_bas : %.0f mV", f.m_config.m_soil_ph_bas_m);
         drawText(s, m_part_2_x+0.25*m_part_2_w,y, sizeText_medium);
     }
     {
-        std::string s = strprintf("ph_haut_m : %.1f", f.m_config.m_soil_ph_haut_m);
+        std::string s = strprintf("U_haut : %.0f mV", f.m_config.m_soil_ph_haut_m);
         drawText(s, m_part_2_x+0.75*m_part_2_w,y, sizeText_medium);
     }
-    
+
     {
-        std::string s = strprintf("Ph_orig : %.1f", f.m_last_soil_ph);
+        std::string s = strprintf("U : %.0f mV", f.m_last_soil_volt);
         drawText(s, m_part_2_x+0.4*m_part_2_w,y, sizeText_medium);
     }
     
@@ -592,11 +592,11 @@ void OptionWidget::onMousePage2(int x, int y){
     };
     
     if(m_button_ph_bas.isActive(x, y) != 0){
-        f.m_config.m_soil_ph_bas_m = f.m_last_soil_ph;
+        f.m_config.m_soil_ph_bas_m = f.m_last_soil_volt;
         loadConfig();
     }
     if(m_button_ph_haut.isActive(x, y) != 0){
-        f.m_config.m_soil_ph_haut_m = f.m_last_soil_ph;
+        f.m_config.m_soil_ph_haut_m = f.m_last_soil_volt;
         loadConfig();
     }
 }

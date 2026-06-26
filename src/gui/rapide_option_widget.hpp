@@ -94,6 +94,18 @@ public:
     void onMousePage6(int x, int y);
     
     
+    //page7 (PH)
+    ButtonGui m_button_ph_bas;
+    ButtonGui m_button_ph_haut;
+    ValueGui m_value_ph_bas;
+    ValueGui m_value_ph_haut;
+    void setSizePage7(int width, int height);
     void drawPage7();
+    void onMousePage7(int x, int y);
+
+    //page8 (Temperature ambiante)
+    ValueGui m_value_temp;
+    void setSizePage8(int width, int height);
     void drawPage8();
+    void onMousePage8(int x, int y);
 };

@@ -32,7 +32,9 @@ void RapideOptionWidget::setSize(int width, int height){
     setSizePage4(width, height);
     setSizePage5(width, height);
     setSizePage6(width, height);
-    
+    setSizePage7(width, height);
+    setSizePage8(width, height);
+
     m_button_next.setResizeStd(m_x+0.85*m_width2, m_y+0.95*m_height2, "", true, 0.1*m_height);
 }
 
@@ -83,13 +85,17 @@ void RapideOptionWidget::draw(){
 }
 
 int RapideOptionWidget::onMouse(int x, int y){
+    if(!m_keypad_widget.m_close){
+        m_keypad_widget.onMouse(x, y);
+        return 0;
+    }
     if(m_button_close.isActive(x,y)){
         loadConfig();
         m_close = true;
         return 0;
     }
-    
-    
+
+
     if(m_page == 1){
         onMousePage1(x, y);
     } else if(m_page == 2){
@@ -102,6 +108,10 @@ int RapideOptionWidget::onMouse(int x, int y){
         onMousePage5(x, y);
     } else if(m_page == 6){
         onMousePage6(x, y);
+    } else if(m_page == 7){
+        onMousePage7(x, y);
+    } else if(m_page == 8){
+        onMousePage8(x, y);
     }
     if(m_button_next.isActive(x, y)){
         Config & config = Framework::instance().m_config;
@@ -118,6 +128,7 @@ int RapideOptionWidget::onMouse(int x, int y){
 
 void RapideOptionWidget::open(){
     m_close = false;
+    m_value_temp.m_value = Framework::instance().m_config.m_soil_temp_ambiante;
     //addSerials();
 }
 
@@ -398,13 +409,135 @@ void RapideOptionWidget::onMousePage6(int x, int y){
 }
 
 
-//Page7
+//Page7 (PH) - flat design
+void RapideOptionWidget::setSizePage7(int width, int height){
+    int sub = 0.075*m_height2;     // valeur -> bouton (vertical)
+    int y_bas  = 0.49*m_height2;
+    int y_haut = 0.73*m_height2;
+    m_value_ph_bas.setResize(m_x_middle, y_bas, m_petit_button);
+    m_button_ph_bas.setResizeStd(m_x_middle, y_bas+sub, "regler bas", true);
+    m_value_ph_haut.setResize(m_x_middle, y_haut, m_petit_button);
+    m_button_ph_haut.setResizeStd(m_x_middle, y_haut+sub, "regler haut", true);
+}
+
 void RapideOptionWidget::drawPage7(){
-   
+    Framework & f = Framework::instance();
+    Config & config = f.m_config;
+
+    int cardx = m_x + m_width2*0.08;
+    int cardw = m_width2*0.84;
+
+    drawQText("pH", m_x+m_width2/2, m_y_title, sizeText_big, true);
+
+    // ---- carte lecture pH (valeur colore semantique) ----
+    int ry = 0.14*m_height2;
+    int rh = 0.16*m_height2;
+    m_painter->setPen(m_pen_no);
+    m_painter->setBrush(m_brush_background_3);
+    m_painter->drawRoundedRect(cardx, ry, cardw, rh, 10, 10);
+
+    double ph = f.m_last_soil_ph_corr;
+    QColor phcol;
+    if(ph < 6.5)      phcol = QColor(0xE8,0x8A,0x2E);   // acide  -> orange
+    else if(ph > 7.5) phcol = QColor(0x3D,0x8B,0xCD);   // basique-> bleu
+    else              phcol = QColor(0x3C,0xB0,0x4B);   // neutre -> vert
+
+    m_painter->setPen(m_pen_black_inv);
+    drawText("pH corrige", m_x+m_width2/2, ry + rh*0.27, sizeText_little, true);
+    m_painter->setPen(QPen(phcol));
+    drawText(strprintf("%.1f", ph), m_x+m_width2/2, ry + rh*0.66, sizeText_bigbig, true);
+    m_painter->setPen(m_pen_gray);
+    drawText(strprintf("%.0f mV", f.m_last_soil_volt), m_x+m_width2/2, ry + rh*0.92, sizeText_logo, true);
+
+    // ---- carte calibration point bas ----
+    int b1y = 0.39*m_height2;
+    int b1h = 0.22*m_height2;
+    m_painter->setPen(m_pen_no);
+    m_painter->setBrush(m_brush_background_3);
+    m_painter->drawRoundedRect(cardx, b1y, cardw, b1h, 10, 10);
+    m_painter->setPen(m_pen_black_inv);
+    drawText(strprintf("Point bas  (%.0f mV)", config.m_soil_ph_bas_m), cardx + cardw*0.07, b1y + b1h*0.18, sizeText_little);
+    m_value_ph_bas.m_value = config.m_soil_ph_bas;
+    drawValueGuiKeyPad2(m_value_ph_bas);
+    drawButtonLabel2(m_button_ph_bas, COLOR_VALIDATE);
+
+    // ---- carte calibration point haut ----
+    int b2y = 0.63*m_height2;
+    int b2h = 0.22*m_height2;
+    m_painter->setPen(m_pen_no);
+    m_painter->setBrush(m_brush_background_3);
+    m_painter->drawRoundedRect(cardx, b2y, cardw, b2h, 10, 10);
+    m_painter->setPen(m_pen_black_inv);
+    drawText(strprintf("Point haut  (%.0f mV)", config.m_soil_ph_haut_m), cardx + cardw*0.07, b2y + b2h*0.18, sizeText_little);
+    m_value_ph_haut.m_value = config.m_soil_ph_haut;
+    drawValueGuiKeyPad2(m_value_ph_haut);
+    drawButtonLabel2(m_button_ph_haut, COLOR_VALIDATE);
+
+    if(!m_keypad_widget.m_close){
+        m_keypad_widget.draw();
+    }
+}
+
+void RapideOptionWidget::onMousePage7(int x, int y){
+    Framework & f = Framework::instance();
+    Config & config = f.m_config;
+
+    onMouse(m_value_ph_bas, x, y, 0.1);
+    config.m_soil_ph_bas = m_value_ph_bas.m_value;
+
+    onMouse(m_value_ph_haut, x, y, 0.1);
+    config.m_soil_ph_haut = m_value_ph_haut.m_value;
+
+    if(m_button_ph_bas.isActive(x, y) != 0){
+        config.m_soil_ph_bas_m = f.m_last_soil_volt;
+    }
+    if(m_button_ph_haut.isActive(x, y) != 0){
+        config.m_soil_ph_haut_m = f.m_last_soil_volt;
+    }
+    loadConfig();
+}
+
+//Page8 (Temperature ambiante)
+void RapideOptionWidget::setSizePage8(int width, int height){
+    m_value_temp.setResize(m_x_middle, 0.50*m_height2, m_petit_button);
 }
 
 void RapideOptionWidget::drawPage8(){
-    
+    Framework & f = Framework::instance();
+    Config & config = f.m_config;
+
+    drawQText("Temperature", m_x+m_width2/2, m_y_title, sizeText_big, true);
+
+    int cardx = m_x + m_width2*0.08;
+    int cardw = m_width2*0.84;
+    int cy = 0.32*m_height2;
+    int ch = 0.30*m_height2;
+    m_painter->setPen(m_pen_no);
+    m_painter->setBrush(m_brush_background_3);
+    m_painter->drawRoundedRect(cardx, cy, cardw, ch, 10, 10);
+
+    m_painter->setPen(m_pen_black_inv);
+    drawText("Temperature ambiante", m_x+m_width2/2, cy + ch*0.22, sizeText_little, true);
+    drawText("(degC)", m_x+m_width2/2, cy + ch*0.40, sizeText_logo, true);
+
+    drawValueGuiKeyPad2(m_value_temp);
+
+    // sync valeur -> config (valeur = source quand keypad ferme)
+    if(m_keypad_widget.m_close){
+        config.m_soil_temp_ambiante = m_value_temp.m_value;
+    }
+
+    if(!m_keypad_widget.m_close){
+        m_keypad_widget.draw();
+    }
+}
+
+void RapideOptionWidget::onMousePage8(int x, int y){
+    Framework & f = Framework::instance();
+    Config & config = f.m_config;
+    onMouse(m_value_temp, x, y, 0.5);
+    config.m_soil_temp_ambiante = m_value_temp.m_value;
+    loadConfig();
 }
 
 

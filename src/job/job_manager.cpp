@@ -3,6 +3,8 @@
 #include "../util/log.hpp"
 #include "../framework.hpp"
 
+#include <QDir>
+
 JobManager::JobManager(){
     
 }
@@ -10,11 +12,18 @@ JobManager::JobManager(){
 void JobManager::init(){
     if(m_begin.empty()){
         std::string dir = DirectoryManager::instance().getHome()+"/lemca_data/job";
+#ifdef WIN32
+        INFO("mkpath " << dir);
+        if(!QDir().mkpath(QString::fromStdString(dir))){
+            std::cerr << "*** can not create dir : " << dir << std::endl;
+        }
+#else
         std::string s2 = "mkdir -p "+ dir + ";";
         INFO(s2);
         if(system( s2.c_str() )){
             std::cerr << "*** can not execute : " << s2 << std::endl;;
         };
+#endif
         
         
         time_t     now = time(0);
@@ -28,11 +37,18 @@ void JobManager::init(){
         m_begin = buf;
         
         dir = DirectoryManager::instance().getHome()+"/lemca_data/job/"+m_begin;
+#ifdef WIN32
+        INFO("mkpath " << dir);
+        if(!QDir().mkpath(QString::fromStdString(dir))){
+            std::cerr << "*** can not create dir : " << dir << std::endl;
+        }
+#else
         s2 = "mkdir -p "+ dir + ";";
         INFO(s2);
         if(system( s2.c_str() )){
             std::cerr << "*** can not execute : " << s2 << std::endl;;
         };
+#endif
         
         m_file = DirectoryManager::instance().getHome()+"/lemca_data/job/"+m_begin+"/job.txt";
         handle60s();

@@ -109,10 +109,29 @@ void Framework::initOrLoadConfig(){
     }
 }
 
-void Framework::setPh(double ph){
-    m_last_soil_ph = ph;
-    
-    m_last_soil_ph_corr =  my_map(ph, m_config.m_soil_ph_bas_m, m_config.m_soil_ph_haut_m, m_config.m_soil_ph_bas, m_config.m_soil_ph_haut);
+void Framework::setPh(double res){
+    // res = valeur analogique ESP32 (ADC 12 bits, Vref 3300 mV)
+    double volt = res * 3300.0 / 4095.0;            // tension mesuree (mV)
+    m_last_soil_volt = volt;
+    m_last_soil_ph = volt;                           // "brut" affiche = tension mV
+
+    // 1) pente = valeur CONSTRUCTEUR (table mV/pH selon temperature) :
+    //    K(T) = 59.16 * (273.15+T)/298.15  -> colle la table (25degC=59.16, 30degC=60.15)
+    const double K25 = 59.16;                        // mV/pH a 25 degC
+    double T = m_config.m_soil_temp_ambiante;
+    double pente = K25 * (273.15 + T) / (273.15 + 25.0);
+    m_last_soil_pente = pente;
+    if(pente == 0.0){ pente = K25; }
+
+    // 2) offset (tension a pH du tampon haut) calcule a partir des 2 points de
+    //    calibrage 4 et 7 (moyenne, pente constructeur a 25 degC) :
+    //    volt(pH) = U_ref - K25*(pH - pH_haut)
+    double U_ref_from_haut = m_config.m_soil_ph_haut_m;
+    double U_ref_from_bas  = m_config.m_soil_ph_bas_m + K25 * (m_config.m_soil_ph_bas - m_config.m_soil_ph_haut);
+    double U_ref = (U_ref_from_haut + U_ref_from_bas) / 2.0;
+
+    // 3) pH corrige (compensation temperature via la pente constructeur K(T))
+    m_last_soil_ph_corr = m_config.m_soil_ph_haut + (U_ref - volt) / pente;
 }
 
 void Framework::addError(std::string s){

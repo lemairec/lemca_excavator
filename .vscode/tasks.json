@@ -1,0 +1,43 @@
+{
+    "version": "2.0.0",
+    "options": {
+        "env": {
+            "PATH": "C:\\msys64\\mingw64\\bin;${env:PATH}"
+        }
+    },
+    "tasks": [
+        {
+            "label": "CMake configure (Ninja/mingw64)",
+            "type": "shell",
+            "command": "C:\\msys64\\mingw64\\bin\\cmake.exe",
+            "args": [
+                "-G", "Ninja",
+                "-B", "build",
+                "-S", ".",
+                "-DCMAKE_BUILD_TYPE=Release",
+                "-DCMAKE_EXPORT_COMPILE_COMMANDS=ON"
+            ],
+            "problemMatcher": [],
+            "detail": "Genere le projet avec Ninja + toolchain MSYS2 mingw64"
+        },
+        {
+            "label": "Build",
+            "type": "shell",
+            "command": "C:\\msys64\\mingw64\\bin\\cmake.exe",
+            "args": ["--build", "build"],
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+            "problemMatcher": ["$gcc"],
+            "detail": "Compile (Ctrl+Shift+B). Lance d'abord 'CMake configure' une fois."
+        },
+        {
+            "label": "Rebuild (clean)",
+            "type": "shell",
+            "command": "C:\\msys64\\mingw64\\bin\\cmake.exe",
+            "args": ["--build", "build", "--clean-first"],
+            "problemMatcher": ["$gcc"]
+        }
+    ]
+}

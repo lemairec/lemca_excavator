@@ -1,13 +1,22 @@
 #include "gps_widget.hpp"
 
+#include <QPainterPath>
+#include <QTransform>
+#include <QPolygonF>
+#include <cmath>
 #include <sstream>
 #include <fstream>
 #include "../util/log.hpp"
 #include "../framework.hpp"
+#include "../gps/projection_module.hpp"
 #include <string>
 #include "environnement.hpp"
 
 #include "../config/langage.hpp"
+
+#ifndef M_PI
+#define M_PI 3.14159265358979323846
+#endif
 
 
 GpsWidget::GpsWidget(){
@@ -71,7 +80,8 @@ void GpsWidget::loadImages(){
     
     m_img_check_on = loadImage("/gui/check_on.png");
     m_img_check_off = loadImage("/gui/check_off.png");
-    
+
+    m_map_tiles.init();
 }
     
 void GpsWidget::setPainter(QPainter * p){
@@ -120,8 +130,10 @@ void GpsWidget::setSize(int width, int height){
     
     y += inter*1.5;
     m_button_offset.setResize(x_right, y, m_gros_button);
+    m_button_ph.setResize(x_right, y, m_gros_button);
     y += inter;
     m_button_balise.setResize(x_right, y, m_gros_button);
+    m_button_temp.setResize(x_right, y, m_gros_button);
     y += inter;
     m_button_balise2.setResize(x_right, y, m_gros_button);
     y += inter;
@@ -164,10 +176,15 @@ void GpsWidget::drawButtons(){
         }
         
         drawButtonImageCarre(m_button_option, m_img_option, 0.4);
-        drawButtonImageCarre(m_button_offset, m_img_offset, 0.3, (!m_rapide_option_widget.m_close && m_rapide_option_widget.m_page == 4), "recherche");
-        if(f.m_config.isBaliseEnable()){
-            drawButtonImageCarre(m_button_balise, m_img_balise, 0.3,  !m_rapide_option_widget.m_close && m_rapide_option_widget.m_page == 3, "arpentage");
-            drawButtonImageCarre(m_button_balise2, m_img_balise, 0.3,  false, "list");
+        if(f.getEtat() == Etat_Soil){
+            drawButtonPh(m_button_ph, (!m_rapide_option_widget.m_close && m_rapide_option_widget.m_page == 7));
+            drawButtonTemp(m_button_temp, (!m_rapide_option_widget.m_close && m_rapide_option_widget.m_page == 8));
+        } else {
+            drawButtonImageCarre(m_button_offset, m_img_offset, 0.3, (!m_rapide_option_widget.m_close && m_rapide_option_widget.m_page == 4), "recherche");
+            if(f.m_config.isBaliseEnable()){
+                drawButtonImageCarre(m_button_balise, m_img_balise, 0.3,  !m_rapide_option_widget.m_close && m_rapide_option_widget.m_page == 3, "arpentage");
+                drawButtonImageCarre(m_button_balise2, m_img_balise, 0.3,  false, "list");
+            }
         }
         drawButtonImageCarre(m_button_diag, m_img_infos, 0.3,  !m_rapide_option_widget.m_close && m_rapide_option_widget.m_page == 6, Langage::getKey("LOGO_INFOS"));
         
@@ -200,9 +217,101 @@ void GpsWidget::drawButtons(){
     }
 }
 
+void GpsWidget::drawButtonPh(ButtonGui & button, bool open){
+    int bx = button.m_x - button.m_width/2;
+    int by = button.m_y - button.m_height/2;
+
+    // fond du bouton (meme langage que les autres boutons carre)
+    m_painter->setPen(m_pen_no);
+    m_painter->setBrush(open ? m_brush_button_validate : m_brush_background_3);
+    m_painter->drawRoundedRect(bx, by, button.m_width, button.m_height, 5, 5);
+
+    // line-art : pH-metre (boitier + ecran + sonde)
+    QColor line = (m_black_mode || open) ? QColor(255,255,255) : QColor(20,20,20);
+    QPen pen(line); pen.setWidth(2); pen.setJoinStyle(Qt::RoundJoin); pen.setCapStyle(Qt::RoundCap);
+    m_painter->setPen(pen);
+    m_painter->setBrush(Qt::NoBrush);
+
+    double cx = button.m_x;
+    double cy = button.m_y - button.m_height*0.05;
+    double bw = button.m_width*0.42;
+    double bh = button.m_height*0.50;
+    double left = cx - bw/2, top = cy - bh/2;
+
+    // boitier
+    m_painter->drawRoundedRect(QRectF(left, top, bw, bh), 4, 4);
+    // ecran
+    QRectF screen(left+bw*0.16, top+bh*0.12, bw*0.68, bh*0.40);
+    m_painter->drawRoundedRect(screen, 2, 2);
+    // connecteur + sonde
+    m_painter->drawLine(QPointF(cx, top), QPointF(cx, top - button.m_height*0.12));
+    m_painter->drawLine(QPointF(left+bw*0.5, top+bh*0.66), QPointF(left+bw*0.5, top+bh*0.92));
+
+    // "pH" dans l'ecran
+    QFont font("Latin", 1, 1, false); font.setBold(true);
+    font.setPixelSize((int)(bh*0.30));
+    m_painter->setFont(font);
+    {
+        QString t = "pH";
+        auto fm = m_painter->fontMetrics();
+        auto rr = fm.boundingRect(t);
+        m_painter->drawText(QPointF(screen.center().x()-rr.width()/2.0, screen.center().y()+rr.height()/3.0), t);
+    }
+}
+
+void GpsWidget::drawButtonTemp(ButtonGui & button, bool open){
+    int bx = button.m_x - button.m_width/2;
+    int by = button.m_y - button.m_height/2;
+
+    m_painter->setPen(m_pen_no);
+    m_painter->setBrush(open ? m_brush_button_validate : m_brush_background_3);
+    m_painter->drawRoundedRect(bx, by, button.m_width, button.m_height, 5, 5);
+
+    // line-art : thermometre
+    QColor line = (m_black_mode || open) ? QColor(255,255,255) : QColor(20,20,20);
+    QPen pen(line); pen.setWidth(2); pen.setCapStyle(Qt::RoundCap); pen.setJoinStyle(Qt::RoundJoin);
+    m_painter->setPen(pen);
+    m_painter->setBrush(Qt::NoBrush);
+
+    double cx   = button.m_x - button.m_width*0.05;
+    double topY = button.m_y - button.m_height*0.24;
+    double bulbY= button.m_y + button.m_height*0.16;
+    double tubeW= button.m_height*0.13;
+    double bulbR= button.m_height*0.12;
+
+    // tube (U inverse) + raccord au bulbe
+    QPainterPath path;
+    path.moveTo(cx - tubeW/2, bulbY);
+    path.lineTo(cx - tubeW/2, topY);
+    path.arcTo(cx - tubeW/2, topY - tubeW/2, tubeW, tubeW, 180, -180);
+    path.lineTo(cx + tubeW/2, bulbY);
+    m_painter->drawPath(path);
+    // bulbe
+    m_painter->drawEllipse(QPointF(cx, bulbY), bulbR, bulbR);
+    // mercure (rempli, rouge flat)
+    m_painter->setPen(m_pen_no);
+    m_painter->setBrush(QBrush(open ? QColor(255,255,255) : QColor(0xD9,0x4A,0x3A)));
+    m_painter->drawEllipse(QPointF(cx, bulbY), bulbR*0.60, bulbR*0.60);
+    m_painter->drawRoundedRect(QRectF(cx - tubeW*0.20, bulbY - bulbR*2.2, tubeW*0.40, bulbR*2.2), tubeW*0.2, tubeW*0.2);
+    // graduations
+    m_painter->setPen(pen);
+    for(int i=0;i<3;i++){
+        double yy = topY + tubeW*0.8 + i*((bulbY - bulbR) - (topY + tubeW*0.8))/3.0;
+        m_painter->drawLine(QPointF(cx+tubeW/2+2, yy), QPointF(cx+tubeW/2+button.m_width*0.11, yy));
+    }
+
+    // label sous l'icone
+    if(m_black_mode || (open && !m_black_mode)){
+        m_painter->setPen(m_pen_white);
+    } else {
+        m_painter->setPen(m_pen_black);
+    }
+    drawQTexts(QString("temp"), button.m_x, button.m_y + button.m_height/4+5, sizeText_logo, true, false, true);
+}
+
 void GpsWidget::drawInfos(){
     Framework & f = Framework::instance();
-    
+
     int h = 0.15*m_height;
     int y = m_height - h - 10;
 
@@ -678,7 +787,14 @@ void GpsWidget::draw(){
         m_xref = f.m_tracteur.m_pt_antenne_corrige->m_x;
         m_yref = f.m_tracteur.m_pt_antenne_corrige->m_y;
     }
-    
+    if(m_map_tiles.m_enable && m_xref == 0 && m_yref == 0){
+        // pas de position reelle (pas de fix GPS) : centrer sur Maransart pour voir la carte (test)
+        double e, n;
+        lat_lon_to_utm(50.6986, 4.4636, NULL, &e, &n);
+        m_xref = e;
+        m_yref = n;
+    }
+
     drawGpsWidget();
     
     drawButtons();
@@ -686,7 +802,7 @@ void GpsWidget::draw(){
     drawInfosBasLeft();
     if(f.m_etat == Etat_Arpentage){
         drawInfosArpentage();
-    } else {
+    } else if(f.m_etat != Etat_Soil){
         drawInfosExcavator();
     }
     
@@ -826,13 +942,17 @@ int GpsWidget::onMouse(int x, int y){
         }
     } else if(m_button3d.isActive(x2, y2)){
         Framework::instance().m_config.m_3d = !Framework::instance().m_config.m_3d;
-    } else if(m_button_offset.isActive(x, y)){
+    } else if(f.getEtat() == Etat_Soil && m_button_ph.isActive(x, y)){
+        openRapideWidget(7);
+    } else if(f.getEtat() == Etat_Soil && m_button_temp.isActive(x, y)){
+        openRapideWidget(8);
+    } else if(f.getEtat() != Etat_Soil && m_button_offset.isActive(x, y)){
         openRapideWidget(3);
-    } else if(m_button_balise.isActive(x, y)){
+    } else if(f.getEtat() != Etat_Soil && m_button_balise.isActive(x, y)){
         if(f.m_config.isBaliseEnable()){
             openRapideWidget(1);
         }
-    } else if(m_button_balise2.isActive(x, y)){
+    } else if(f.getEtat() != Etat_Soil && m_button_balise2.isActive(x, y)){
         m_balises_widget.open();
     }
     
@@ -1125,6 +1245,78 @@ void GpsWidget::drawBackgroundGps(){
             m_painter->drawPolygon(points, 4);
         }
     }
+
+    if(m_map_tiles.m_enable){
+        drawMapTiles();
+    }
+}
+
+void GpsWidget::drawMapTiles(){
+    Framework & f = Framework::instance();
+
+    // centre : position GPS si dispo, sinon Maransart (test)
+    double clat = 50.6986, clon = 4.4636;       // Maransart (Lasne, BE)
+    auto gga = f.m_position_module.m_last_gga;
+    if(f.isGpsConnected() && gga){
+        clat = gga->m_latitude;
+        clon = gga->m_longitude;
+    }
+    m_map_tiles.ensurePrefetch(clat, clon);
+
+    int z = m_map_tiles.zoom();
+    double xtf, ytf;
+    MapTiles::lonlatToTileFrac(clon, clat, z, xtf, ytf);
+    int xc = (int)std::floor(xtf);
+    int yc = (int)std::floor(ytf);
+
+    double res = 156543.03392 * std::cos(clat * M_PI / 180.0) / std::pow(2.0, z); // m/px
+    double tile_m = res * 256.0;
+    double visible_m = (m_width * 0.66) / m_zoom;
+    int r = (int)std::ceil(visible_m / tile_m / 2.0) + 2;
+    if(r > 8){ r = 8; } // garde-fou perf
+
+    // projection coin (lat,lon) -> ecran, meme repere UTM que le tracteur
+    auto proj = [&](double lat, double lon, double & sx, double & sy){
+        double e, n;
+        lat_lon_to_utm(lat, lon, NULL, &e, &n);
+        myProjete2(e, n, sx, sy);
+    };
+
+    m_painter->setRenderHint(QPainter::SmoothPixmapTransform, true);
+
+    QPolygonF srcQuad;
+    srcQuad << QPointF(0, 0) << QPointF(256, 0) << QPointF(256, 256) << QPointF(0, 256);
+
+    for(int dx = -r; dx <= r; ++dx){
+        for(int dy = -r; dy <= r; ++dy){
+            int x = xc + dx, y = yc + dy;
+            QPixmap * pix = m_map_tiles.getTile(x, y);
+            if(!pix || pix->isNull()){
+                continue;
+            }
+            double lonW, latN, lonE, latS;
+            MapTiles::tileToLonLat(x,     y,     z, lonW, latN); // coin NO
+            MapTiles::tileToLonLat(x + 1, y + 1, z, lonE, latS); // coin SE
+
+            double aNW[2], aNE[2], aSE[2], aSW[2];
+            proj(latN, lonW, aNW[0], aNW[1]);
+            proj(latN, lonE, aNE[0], aNE[1]);
+            proj(latS, lonE, aSE[0], aSE[1]);
+            proj(latS, lonW, aSW[0], aSW[1]);
+
+            QPolygonF dstQuad;
+            dstQuad << QPointF(aNW[0], aNW[1]) << QPointF(aNE[0], aNE[1])
+                    << QPointF(aSE[0], aSE[1]) << QPointF(aSW[0], aSW[1]);
+
+            QTransform t;
+            if(QTransform::quadToQuad(srcQuad, dstQuad, t)){
+                m_painter->save();
+                m_painter->setWorldTransform(t, false);
+                m_painter->drawPixmap(0, 0, *pix);
+                m_painter->restore();
+            }
+        }
+    }
 }
 
 void GpsWidget::drawGpsWidget(){
@@ -1389,7 +1581,7 @@ void GpsWidget::drawExcavator(){
 void GpsWidget::drawTracteur(){
     Framework & f = Framework::instance();
     
-    double x_tracteur = m_width/2, y_tracteur = m_height/2;
+    double x_tracteur = m_width/2, y_tracteur = m_height/1.5;
     if(f.m_tracteur.m_pt_antenne_corrige){
         myProjete2(f.m_tracteur.m_pt_antenne_corrige->m_x, f.m_tracteur.m_pt_antenne_corrige->m_y, x_tracteur, y_tracteur);
     }

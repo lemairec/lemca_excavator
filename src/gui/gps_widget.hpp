@@ -11,6 +11,7 @@
 #include "param_translateur_widget.hpp"
 #include "first_widget.hpp"
 #include "base/keyboard_widget.hpp"
+#include "../gps/map_tiles.hpp"
 
 enum EtatDraw {
     GuidageAutosteer,
@@ -79,6 +80,8 @@ public:
     ButtonGui m_button_moins;
     ButtonGui m_button_option;
     ButtonGui m_button_offset;
+    ButtonGui m_button_ph;
+    ButtonGui m_button_temp;
     ButtonGui m_button_balise;
     ButtonGui m_button_balise2;
     ButtonGui m_button_diag;
@@ -105,7 +108,12 @@ public:
     void setSize(int width, int height);
     void setPainter(QPainter * s);
     
+    MapTiles m_map_tiles;
+
     void drawButtons();
+    void drawButtonPh(ButtonGui & button, bool open);
+    void drawButtonTemp(ButtonGui & button, bool open);
+    void drawMapTiles();
     void drawTracteur();
     void drawExcavator();
     void drawInfos();

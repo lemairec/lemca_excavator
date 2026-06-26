@@ -3,6 +3,8 @@
 #include <fstream>
 #include <string>
 
+#include <QDir>
+
 #include <environnement.hpp>
 #include "util.hpp"
 using namespace std;
@@ -35,15 +37,25 @@ void DirectoryManager::readFile(){
 
 void DirectoryManager::init(){
     std::string dir = m_home+"/lemca_data/lemca_excavator";
+#ifdef WIN32
+    if(!QDir().mkpath(QString::fromStdString(dir))){
+        std::cerr << "*** can not create dir : " << dir << std::endl;
+    }
+#else
     std::string s2 = "mkdir -p "+ dir + ";";
     std::cout << s2 << std::endl;;
     if(system( s2.c_str() )){
         std::cerr << "*** can not execute : " << s2 << std::endl;;
     };
+#endif
 }
 
 DirectoryManager::DirectoryManager(){
+#ifdef WIN32
+    m_home = QDir::homePath().toStdString();
+#else
     m_home = std::getenv("HOME");
+#endif
     m_file_path = m_home + "/lemca_data/lemca_excavator.txt";
     init();
     readFile();
@@ -82,29 +94,50 @@ const std::string & DirectoryManager::getSourceDirectory(){
 
 void DirectoryManager::makeRelativeDir(std::string dir2){
     std::string dir = DirectoryManager::instance().getDataDirectory() + dir2;
+#ifdef WIN32
+    INFO("mkpath " << dir);
+    if(!QDir().mkpath(QString::fromStdString(dir))){
+        WARN("can not create dir : " << dir);
+    }
+#else
     std::string s2 = "mkdir -p "+ dir + ";";
     INFO(s2);
     if(system( s2.c_str() )){
         WARN("can not execute : " << s2);
     };
+#endif
 }
 
 void DirectoryManager::removeRelativeDir(std::string dir2){
     std::string dir = DirectoryManager::instance().getDataDirectory() + dir2;
+#ifdef WIN32
+    INFO("remove " << dir);
+    if(!QDir(QString::fromStdString(dir)).removeRecursively()){
+        WARN("can not remove dir : " << dir);
+    }
+#else
     std::string s2 = "rm -rf "+ dir + ";";
     INFO(s2);
     if(system( s2.c_str() )){
         WARN("can not execute : " << s2);
     };
+#endif
 }
 
 void DirectoryManager::clearAll(){
     std::string dir = m_home+"/lemca_excavator";
+#ifdef WIN32
+    INFO("remove " << dir);
+    if(!QDir(QString::fromStdString(dir)).removeRecursively()){
+        WARN("can not remove dir : " << dir);
+    }
+#else
     std::string s2 = "rm -rf "+ dir + ";";
     INFO(s2);
     if(system( s2.c_str() )){
         WARN("can not execute : " << s2);
     };
+#endif
 }
 
 DirectoryManager::~DirectoryManager(){

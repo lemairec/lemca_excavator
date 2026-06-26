@@ -14,12 +14,17 @@
 
 
 void AutoPath::init(){
+#ifdef WIN32
+    QDateTime dt = QDateTime::fromString(QString::fromStdString(m_datetime), "yyyy-MM-ddThh:mm:ss");
+    m_datetime_fr = dt.toString("dd/MM/yyyy HH:mm").toStdString();
+#else
     struct tm tm;
     strptime(m_datetime.c_str(), "%Y-%m-%dT%H:%M:%S", &tm);
-    
+
     char buf[255];
     m_datetime_fr =  strftime(buf, sizeof(buf), "%d/%m/%Y %H:%M", &tm);
     m_datetime_fr = std::string(buf);
+#endif
 }
 
 AutoPathModule::AutoPathModule(){
