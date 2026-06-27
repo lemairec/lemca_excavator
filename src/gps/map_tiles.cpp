@@ -24,6 +24,8 @@
 #define M_PI 3.14159265358979323846
 #endif
 
+static const int NB_WORKERS = 8; // telechargements paralleles
+
 static long long tileKey(int x, int y){
     return ((long long)x << 32) | (unsigned int)y;
 }
@@ -40,6 +42,12 @@ void MapTiles::tileToLonLat(int x, int y, int z, double & lon, double & lat){
     lon = (double)x / n * 360.0 - 180.0;
     double k = M_PI * (1.0 - 2.0 * (double)y / n);
     lat = std::atan(std::sinh(k)) * 180.0 / M_PI;
+}
+
+double MapTiles::distanceKm(double lat1, double lon1, double lat2, double lon2){
+    double x = (lon2 - lon1) * std::cos((lat1 + lat2) * 0.5 * M_PI / 180.0);
+    double y = (lat2 - lat1);
+    return std::sqrt(x * x + y * y) * 111.32;
 }
 
 void MapTiles::init(){
@@ -68,18 +76,26 @@ QPixmap * MapTiles::getTile(int x, int y){
     return pix;
 }
 
-void MapTiles::ensurePrefetch(double lat, double lon){
-    if(m_started || !m_enable){
+void MapTiles::ensureArea(double lat, double lon){
+    if(!m_enable){
         return;
     }
-    m_started = true;
-    std::thread([this, lat, lon](){ this->downloadThread(lat, lon); }).detach();
+    if(m_downloading){
+        return; // un download en cours
+    }
+    // pas encore telecharge, ou la position a assez bouge -> (re)prefetch
+    if(m_has_dl && distanceKm(lat, lon, m_last_dl_lat, m_last_dl_lon) < m_half_km * 0.5){
+        return;
+    }
+    m_has_dl = true;
+    m_last_dl_lat = lat;
+    m_last_dl_lon = lon;
+    std::thread([this, lat, lon](){ this->coordinator(lat, lon); }).detach();
 }
 
-void MapTiles::downloadThread(double lat, double lon){
+void MapTiles::coordinator(double lat, double lon){
     m_downloading = true;
 
-    // etendue tuiles pour un carre 2*m_half_km de cote
     double res = 156543.03392 * std::cos(lat * M_PI / 180.0) / std::pow(2.0, m_zoom); // m/px
     double tile_m = res * 256.0;
     int rad = (int)std::ceil(m_half_km * 1000.0 / tile_m);
@@ -89,33 +105,54 @@ void MapTiles::downloadThread(double lat, double lon){
     int xc = (int)std::floor(xtf);
     int yc = (int)std::floor(ytf);
 
-    // liste des tuiles manquantes
-    std::vector<std::pair<int,int>> todo;
-    QString base = QString::fromStdString(m_dir) + "/" + QString::number(m_zoom);
-    QDir().mkpath(base);
+    m_base = m_dir + "/" + std::to_string(m_zoom);
+    QDir().mkpath(QString::fromStdString(m_base));
+
+    m_todo.clear();
     for(int dx = -rad; dx <= rad; ++dx){
         for(int dy = -rad; dy <= rad; ++dy){
             int x = xc + dx, y = yc + dy;
-            QString path = base + "/" + QString::number(x) + "_" + QString::number(y) + ".jpg";
+            QString path = QString::fromStdString(m_base) + "/" + QString::number(x) + "_" + QString::number(y) + ".jpg";
             if(!QFile::exists(path)){
-                todo.push_back({x, y});
+                m_todo.push_back({x, y});
             }
         }
     }
-    // telecharger du centre vers l'exterieur (les tuiles visibles d'abord)
-    std::sort(todo.begin(), todo.end(), [xc, yc](const std::pair<int,int> & a, const std::pair<int,int> & b){
+    // telecharger du centre vers l'exterieur (tuiles visibles d'abord)
+    std::sort(m_todo.begin(), m_todo.end(), [xc, yc](const std::pair<int,int> & a, const std::pair<int,int> & b){
         long da = (long)(a.first-xc)*(a.first-xc) + (long)(a.second-yc)*(a.second-yc);
         long db = (long)(b.first-xc)*(b.first-xc) + (long)(b.second-yc)*(b.second-yc);
         return da < db;
     });
 
-    m_dl_total = (int)todo.size();
+    m_dl_total = (int)m_todo.size();
     m_dl_done = 0;
-    INFO("map prefetch z" << m_zoom << " rad " << rad << " a telecharger " << (int)todo.size());
+    m_next = 0;
+    INFO("map prefetch z" << m_zoom << " rad " << rad << " a telecharger " << (int)m_todo.size() << " (x" << NB_WORKERS << ")");
 
-    QNetworkAccessManager mgr;
-    for(auto & t : todo){
-        int x = t.first, y = t.second;
+    std::vector<std::thread> pool;
+    for(int i = 0; i < NB_WORKERS; ++i){
+        pool.emplace_back([this](){ this->worker(); });
+    }
+    for(auto & t : pool){
+        t.join();
+    }
+
+    m_downloading = false;
+    INFO("map prefetch fini " << (int)m_dl_done << "/" << (int)m_dl_total);
+}
+
+void MapTiles::worker(){
+    QNetworkAccessManager mgr; // un manager par thread
+
+    while(true){
+        size_t idx = m_next.fetch_add(1);
+        if(idx >= m_todo.size()){
+            break;
+        }
+        int x = m_todo[idx].first;
+        int y = m_todo[idx].second;
+
         QString url = QString("https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/%1/%2/%3")
                           .arg(m_zoom).arg(y).arg(x); // Esri = z/y/x
         QNetworkRequest req((QUrl(url)));
@@ -126,30 +163,22 @@ void MapTiles::downloadThread(double lat, double lon){
         QTimer timer; timer.setSingleShot(true);
         QObject::connect(&timer, &QTimer::timeout, &loop, &QEventLoop::quit);
         QObject::connect(reply, &QNetworkReply::finished, &loop, &QEventLoop::quit);
-        timer.start(15000); // timeout 15s
+        timer.start(15000);
         loop.exec();
 
         if(reply->error() == QNetworkReply::NoError){
             QByteArray data = reply->readAll();
             if(data.size() > 0){
-                QString path = base + "/" + QString::number(x) + "_" + QString::number(y) + ".jpg";
+                QString path = QString::fromStdString(m_base) + "/" + QString::number(x) + "_" + QString::number(y) + ".jpg";
                 QFile f(path);
                 if(f.open(QIODevice::WriteOnly)){
                     f.write(data);
                     f.close();
                 }
             }
-        } else {
-            WARN("map tile fail " << x << "," << y << " : " << reply->errorString().toStdString());
         }
         reply->deleteLater();
 
-        m_dl_done = m_dl_done + 1;
-        if(m_dl_done % 100 == 0){
-            INFO("map prefetch " << (int)m_dl_done << "/" << (int)m_dl_total);
-        }
+        m_dl_done.fetch_add(1);
     }
-
-    m_downloading = false;
-    INFO("map prefetch fini " << (int)m_dl_done << "/" << (int)m_dl_total);
 }

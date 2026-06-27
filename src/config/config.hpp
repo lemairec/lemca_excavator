@@ -100,6 +100,7 @@ public:
     double m_soil_ph_haut = 7.0;       // pH du tampon haut (reference, isopotentiel)
     double m_soil_ph_haut_m = 1650.0;  // tension mesuree au tampon haut = offset (mV)
     double m_soil_temp_ambiante = 20.0;
+    bool m_map_enable = true;
 
     bool isDeveloppeur(){
         return true;//m_user_mode > 1;

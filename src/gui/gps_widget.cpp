@@ -779,6 +779,7 @@ void GpsWidget::draw(){
     
     m_debug = f.m_config.isTechnicien();
     m_vue_3D = false;//f.m_config.m_3d;
+    m_map_tiles.m_enable = f.m_config.m_map_enable;
     
     m_widthMax = m_width/2+f.m_config.m_outil_largeur*m_zoom/2;
     m_heightMax = m_height/2+f.m_config.m_outil_largeur*m_zoom/2;
@@ -786,13 +787,6 @@ void GpsWidget::draw(){
     if(f.m_tracteur.m_pt_antenne_corrige){
         m_xref = f.m_tracteur.m_pt_antenne_corrige->m_x;
         m_yref = f.m_tracteur.m_pt_antenne_corrige->m_y;
-    }
-    if(m_map_tiles.m_enable && m_xref == 0 && m_yref == 0){
-        // pas de position reelle (pas de fix GPS) : centrer sur Maransart pour voir la carte (test)
-        double e, n;
-        lat_lon_to_utm(50.6986, 4.4636, NULL, &e, &n);
-        m_xref = e;
-        m_yref = n;
     }
 
     drawGpsWidget();
@@ -1254,14 +1248,22 @@ void GpsWidget::drawBackgroundGps(){
 void GpsWidget::drawMapTiles(){
     Framework & f = Framework::instance();
 
-    // centre : position GPS si dispo, sinon Maransart (test)
+    // ancre carte : position GPS si dispo, sinon Maransart (test sans GPS)
     double clat = 50.6986, clon = 4.4636;       // Maransart (Lasne, BE)
     auto gga = f.m_position_module.m_last_gga;
     if(f.isGpsConnected() && gga){
         clat = gga->m_latitude;
         clon = gga->m_longitude;
     }
-    m_map_tiles.ensurePrefetch(clat, clon);
+    m_map_tiles.ensureArea(clat, clon);
+
+    // decalage UTM : on aligne l'ancre (clat/clon) sur la position du tracteur (m_xref/m_yref).
+    // En GPS reel m_xref == ancre -> decalage ~0. Sans GPS (tracteur a l'origine) -> la carte
+    // se dessine quand meme autour du tracteur.
+    double anchorE, anchorN;
+    lat_lon_to_utm(clat, clon, NULL, &anchorE, &anchorN);
+    double shiftX = m_xref - anchorE;
+    double shiftY = m_yref - anchorN;
 
     int z = m_map_tiles.zoom();
     double xtf, ytf;
@@ -1275,11 +1277,11 @@ void GpsWidget::drawMapTiles(){
     int r = (int)std::ceil(visible_m / tile_m / 2.0) + 2;
     if(r > 8){ r = 8; } // garde-fou perf
 
-    // projection coin (lat,lon) -> ecran, meme repere UTM que le tracteur
+    // projection coin (lat,lon) -> ecran, ancree sur le tracteur
     auto proj = [&](double lat, double lon, double & sx, double & sy){
         double e, n;
         lat_lon_to_utm(lat, lon, NULL, &e, &n);
-        myProjete2(e, n, sx, sy);
+        myProjete2(e + shiftX, n + shiftY, sx, sy);
     };
 
     m_painter->setRenderHint(QPainter::SmoothPixmapTransform, true);

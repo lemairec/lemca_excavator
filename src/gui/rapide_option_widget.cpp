@@ -341,6 +341,7 @@ void RapideOptionWidget::onMousePage5(int x, int y){
 // Page 6
 void RapideOptionWidget::setSizePage6(int width, int height){
     //m_button_reset.setResizeStd(m_x_middle, 0.6*m_height2, Langage::getKey("RAPIDE_RESET"), true);
+    m_button_map.setResizeStd(m_x_middle, 0.45*m_height2, "Carte sat", true);
     m_button_diag.setResizeStd(m_x_middle, 0.7*m_height2, Langage::getKey("DIAGNOSTIC"), true);
 }
 
@@ -395,14 +396,18 @@ void RapideOptionWidget::drawPage6(){
     }*/
     
     //drawButtonLabel2(m_button_reset);
+    Config & config = Framework::instance().m_config;
+    m_button_map.m_label = config.m_map_enable ? "Carte sat : ON" : "Carte sat : OFF";
+    drawButtonLabel2(m_button_map, config.m_map_enable ? COLOR_VALIDATE : COLOR_FAIL);
     drawButtonLabel2(m_button_diag);
 }
 
 void RapideOptionWidget::onMousePage6(int x, int y){
-    /*FrameworkVision & f = FrameworkVision::instance();
-    if(m_button_reset.isActive(x, y) != 0){
-        f.m_qt_compteur_heure.resetPartiel();
-    }*/
+    Framework & f = Framework::instance();
+    if(m_button_map.isActive(x, y) != 0){
+        f.m_config.m_map_enable = !f.m_config.m_map_enable;
+        loadConfig();
+    }
     if(m_button_diag.isActive(x, y) != 0){
         GpsWidget::instance()->m_diagnostic_widget.open();
     }

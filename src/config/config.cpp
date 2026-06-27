@@ -83,6 +83,7 @@ void Config::work(QSettings & settings, bool save){
     saveLoadDouble(settings, "m_soil_ph_haut", m_soil_ph_haut, save);
     saveLoadDouble(settings, "m_soil_ph_haut_m", m_soil_ph_haut_m, save);
     saveLoadDouble(settings, "m_soil_temp_ambiante", m_soil_temp_ambiante, save);
+    saveLoadBool(settings, "m_map_enable", m_map_enable, save);
 
 }
 

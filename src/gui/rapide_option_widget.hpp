@@ -88,6 +88,7 @@ public:
     //page5
     ButtonGui m_button_reset;
     ButtonGui m_button_diag;
+    ButtonGui m_button_map;
     ValueGui m_largeur;
     void setSizePage6(int width, int height);
     void drawPage6();

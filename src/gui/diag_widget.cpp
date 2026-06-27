@@ -2,6 +2,7 @@
 
 #include "../framework.hpp"
 #include "qt/main_window.hpp"
+#include "gps_widget.hpp"
 
 #include "../config/langage.hpp"
 
@@ -316,8 +317,26 @@ void DiagnosticWidget::draw(){
     //colonne 3
     y = 0.1*m_height2;
     y+=3*inter;
-    
-    
+
+    drawText("Carte sat", x3, y, sizeText_medium);
+    y+=1.2*inter;
+    {
+        MapTiles & mt = GpsWidget::instance()->m_map_tiles;
+        std::string s;
+        if(!f.m_config.m_map_enable){
+            s = "desactivee";
+        } else if(mt.m_downloading){
+            int d = (int)mt.m_dl_done, t = (int)mt.m_dl_total;
+            int pct = (t > 0) ? d*100/t : 0;
+            s = strprintf("telechargement %d/%d (%d%%)", d, t, pct);
+        } else if((int)mt.m_dl_total > 0){
+            s = strprintf("a jour (%d tuiles)", (int)mt.m_dl_total);
+        } else {
+            s = "en attente position";
+        }
+        drawText(s, x3, y, sizeText_little);
+    }
+
     y+=2*inter;
     drawText("times", x3, y, sizeText_medium);
     y+=1.2*inter;
