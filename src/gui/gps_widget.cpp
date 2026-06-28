@@ -124,13 +124,12 @@ void GpsWidget::setSize(int width, int height){
     int inter = m_gros_button*1.8;
     int y = m_gros_button*1.2+10;
     m_button_option.setResize(x_right, y, m_gros_button);
-    y += inter*1.2;
+    y += inter;
     m_button_plus.setResize(x_right, y, m_gros_button);
     y += inter;
     m_button_moins.setResize(x_right, y, m_gros_button);
-    //y += inter;
 
-    y += inter*1.2;
+    y += inter;
     m_button_offset.setResize(x_right, y, m_gros_button);
     m_button_ph.setResize(x_right, y, m_gros_button);
     y += inter;
@@ -307,14 +306,7 @@ void GpsWidget::drawButtonTemp(ButtonGui & button, bool open){
         double yy = topY + tubeW*0.8 + i*((bulbY - bulbR) - (topY + tubeW*0.8))/3.0;
         m_painter->drawLine(QPointF(cx+tubeW/2+2, yy), QPointF(cx+tubeW/2+button.m_width*0.11, yy));
     }
-
-    // label sous l'icone
-    if(m_black_mode || (open && !m_black_mode)){
-        m_painter->setPen(m_pen_white);
-    } else {
-        m_painter->setPen(m_pen_black);
-    }
-    drawQTexts(QString("temp"), button.m_x, button.m_y + button.m_height/4+5, sizeText_logo, true, false, true);
+    // pas de label : icone seule
 }
 
 void GpsWidget::drawButtonCycle(ButtonGui & button, bool active){
@@ -665,47 +657,42 @@ void GpsWidget::drawInfosBasLeft(){
         s = strprintf("long : %+.8f", lon);
         drawText(s, x1, y, sizeText_medium, false, true);
     } else if(f.getEtat() == Etat_Soil){
-        std::string s;
-        int x1 = 50;
-        int x2 = 250;
-        y+=inter;
-        s = strprintf("Ph : %.1f", f.m_last_soil_ph_corr);
-        drawText(s, x1, y, sizeText_little, false, true);
-        y+=inter;
-        s = strprintf("Ph orig : %.1f", f.m_last_soil_ph);
-        drawText(s, x1, y, sizeText_little, false, true);
-        y+=inter;
-        s = strprintf("Temp : %.1f °C", f.m_last_soil_temp);
-        drawText(s, x1, y, sizeText_little, false, true);
-        y+=inter;
-        s = strprintf("Cond : %.1f us/cm", f.m_last_soil_cond);
-        drawText(s, x1, y, sizeText_little, false, true);
-        y+=inter;
-        s = strprintf("Hum : %.1f %", f.m_last_soil_hum);
-        drawText(s, x1, y, sizeText_little, false, true);
-        y+=inter;
+        int cardx = 10;
+        int cardw = 0.3*m_width+10;
+        int top = m_height*0.66+15;
+
+        // titre de la carte
+        drawText("Analyse sol", cardx+cardw/2, top+inter*0.95, sizeText_medium, true, true);
+
+        // deux colonnes label/valeur alignees
+        int g1lab = cardx + cardw*0.07;
+        int g1val = cardx + cardw*0.30;
+        int g2lab = cardx + cardw*0.54;
+        int g2val = cardx + cardw*0.78;
+
+        auto kv = [&](int lx, int vx, int yy, const std::string & k, const std::string & v){
+            drawText(k, lx, yy, sizeText_little, false, true);
+            drawText(v, vx, yy, sizeText_little, false, true);
+        };
+
         double lat = 0, lon = 0;
         if(f.m_point_current){
             lat = f.m_point_current->m_latitude;
             lon = f.m_point_current->m_longitude;
         }
-        y = m_height*0.66+15;
-        y+=inter;
-        y+=inter;
-        s = strprintf("lat : %.8f", lat);
-        drawText(s, x2, y, sizeText_little, false, true);
-        y+=inter;
-        s = strprintf("long : %.8f", lon);
-        drawText(s, x2, y, sizeText_little, false, true);
-        y+=inter;
-        s = strprintf("altitude : %.1f m", f.m_hauteur_current);
-        drawText(s, x2, y, sizeText_little, false, true);
-        
-        y+=inter;
-        y+=inter;
-        drawText(f.m_pilot_translator_module.m_cycle_m, x2, y, sizeText_little, false, true);
-        
-        
+
+        int yy = top + inter*2.3;
+        kv(g1lab, g1val, yy, "pH",      strprintf("%.1f", f.m_last_soil_ph_corr));
+        kv(g2lab, g2val, yy, "lat",     strprintf("%.7f", lat));   yy += inter;
+        kv(g1lab, g1val, yy, "pH brut", strprintf("%.1f", f.m_last_soil_ph));
+        kv(g2lab, g2val, yy, "long",    strprintf("%.7f", lon));   yy += inter;
+        kv(g1lab, g1val, yy, "Temp",    strprintf("%.1f °C", f.m_last_soil_temp));
+        kv(g2lab, g2val, yy, "alt",     strprintf("%.1f m", f.m_hauteur_current)); yy += inter;
+        kv(g1lab, g1val, yy, "Cond",    strprintf("%.0f µS", f.m_last_soil_cond)); yy += inter;
+        kv(g1lab, g1val, yy, "Hum",     strprintf("%.0f %%", f.m_last_soil_hum));
+
+        yy += inter*1.6;
+        drawText(f.m_pilot_translator_module.m_cycle_m, cardx+cardw/2, yy, sizeText_little, true, true);
     } else {
         int x1 = 50;
         y+=inter;
