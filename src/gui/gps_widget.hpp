@@ -7,6 +7,7 @@
 #include "diag_widget.hpp"
 #include "debug_widget.hpp"
 #include "balises_widget.hpp"
+#include "job_widget.hpp"
 #include "rapide_option_widget.hpp"
 #include "param_translateur_widget.hpp"
 #include "first_widget.hpp"
@@ -29,7 +30,8 @@ public:
     DiagnosticWidget m_diagnostic_widget;
     DebugWidget m_debug_widget;
     BalisesWidget m_balises_widget;
-    
+    JobWidget m_job_widget;
+
     OptionWidget m_option_widget;
     ParamTranslateurWidget m_param_translateur_widget;
     std::vector<BaseWidget *> m_widgets;
@@ -84,6 +86,7 @@ public:
     ButtonGui m_button_temp;
     ButtonGui m_button_balise;
     ButtonGui m_button_balise2;
+    ButtonGui m_button_job;
     ButtonGui m_button_diag;
     
     ButtonGui m_buttonErrorOk;
@@ -97,6 +100,7 @@ public:
     ButtonGui m_button_cycle;
     ButtonGui m_button_right;
     ButtonGui m_soil_loop;
+    ButtonGui m_button_auto;
     
     
     //ButtonGui m_button_volant;
@@ -113,6 +117,9 @@ public:
     void drawButtons();
     void drawButtonPh(ButtonGui & button, bool open);
     void drawButtonTemp(ButtonGui & button, bool open);
+    void drawButtonCycle(ButtonGui & button, bool active);
+    void drawButtonAuto(ButtonGui & button, bool active);
+    void drawButtonJob(ButtonGui & button, bool active);
     void drawMapTiles();
     void drawTracteur();
     void drawExcavator();

@@ -64,6 +64,13 @@ void Config::work(QSettings & settings, bool save){
     
     saveLoadString(settings, "company", m_company, save);
 
+    saveLoadString(settings, "landmanager_url", m_landmanager_url, save);
+    saveLoadString(settings, "landmanager_user", m_landmanager_user, save);
+    saveLoadString(settings, "landmanager_password", m_landmanager_password, save);
+    saveLoadString(settings, "landmanager_token", m_landmanager_token, save);
+    saveLoadString(settings, "landmanager_client", m_landmanager_client, save);
+    saveLoadString(settings, "landmanager_field", m_landmanager_field, save);
+
     saveLoadBool(settings, "proportionnal", m_proportionnal, save);
     saveLoadInt(settings, "offset_mm", m_offset_mm, save);
     saveLoadBool(settings, "inverse_relai", m_inverse_relai, save);

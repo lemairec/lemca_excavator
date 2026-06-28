@@ -21,7 +21,7 @@
 
 GpsWidget::GpsWidget(){
     //m_firspage = false;
-    m_zoom = 50;
+    m_zoom = 6;
     
     //m_widgets.push_back(&m_satWidget);
      m_widgets.push_back(&m_option_widget);
@@ -92,8 +92,9 @@ void GpsWidget::setPainter(QPainter * p){
     m_rapide_option_widget.setPainter(p);
     m_debug_widget.setPainter(p);
     m_balises_widget.setPainter(p);
+    m_job_widget.setPainter(p);
     m_key_board_widget.setPainter(p);
-    
+
     m_first_widget.setPainter(p);
     m_diagnostic_widget.setPainter(p);
 }
@@ -115,20 +116,21 @@ void GpsWidget::setSize(int width, int height){
     m_diagnostic_widget.setSize(m_width, m_height);
     m_debug_widget.setSize(m_width, m_height);
     m_balises_widget.setSize(m_width, m_height);
-   
+    m_job_widget.setSize(m_width, m_height);
+
 
     m_button_debug.setResize(40, 20, m_gros_button);
     int x_right = width-m_gros_button-20;
-    int inter = m_gros_button*2.1;
+    int inter = m_gros_button*1.8;
     int y = m_gros_button*1.2+10;
     m_button_option.setResize(x_right, y, m_gros_button);
-    y += inter*1.5;
+    y += inter*1.2;
     m_button_plus.setResize(x_right, y, m_gros_button);
     y += inter;
     m_button_moins.setResize(x_right, y, m_gros_button);
     //y += inter;
-    
-    y += inter*1.5;
+
+    y += inter*1.2;
     m_button_offset.setResize(x_right, y, m_gros_button);
     m_button_ph.setResize(x_right, y, m_gros_button);
     y += inter;
@@ -137,8 +139,13 @@ void GpsWidget::setSize(int width, int height){
     y += inter;
     m_button_balise2.setResize(x_right, y, m_gros_button);
     y += inter;
+    m_button_job.setResize(x_right, y, m_gros_button);
+    y += inter;
     m_button_diag.setResize(x_right, y, m_gros_button);
-    
+
+    y += inter;
+    m_button_auto.setResize(x_right, y, m_gros_button);
+
     y += inter;
     //m_button_volant.setResize(x_right, height-m_gros_button*1.2-10, m_gros_button);
     
@@ -186,22 +193,23 @@ void GpsWidget::drawButtons(){
                 drawButtonImageCarre(m_button_balise2, m_img_balise, 0.3,  false, "list");
             }
         }
+        drawButtonJob(m_button_job, !m_job_widget.m_close);
         drawButtonImageCarre(m_button_diag, m_img_infos, 0.3,  !m_rapide_option_widget.m_close && m_rapide_option_widget.m_page == 6, Langage::getKey("LOGO_INFOS"));
-        
+        if(f.getEtat() == Etat_Soil){
+            drawButtonAuto(m_button_auto, f.m_config.m_soil_loop);
+        }
+
     }
     int y_bas2 = m_height*0.92;
     {
+        // rangee unique de 4 boutons : Cycle | Up | Clean | Down
         int x = 0.65*m_width+20;
         int w = 0.24*m_width;
-        int x2 = x+w/2-0.08*m_width;
-        m_button_left.setResize(x2, y_bas2, m_gros_button);
-        x2 = x+w/2;
-        m_button_middle.setResize(x2, y_bas2, "", true, m_gros_button*2*1.4,m_gros_button*2);
-        m_soil_loop.setResize(x+w/2-0.08*m_width, y_bas2-100, m_petit_button);
-        
-        m_button_cycle.setResize(x2, y_bas2-100, "", true, m_gros_button*2*1.4,m_gros_button*2);
-        x2 = x+w/2+0.08*m_width;
-        m_button_right.setResize(x2, y_bas2, m_gros_button);
+        int rayon = std::min(m_gros_button, (int)(w/4*0.42));
+        m_button_cycle.setResize (x + w*1/8, y_bas2, rayon);
+        m_button_left.setResize  (x + w*3/8, y_bas2, rayon);
+        m_button_middle.setResize(x + w*5/8, y_bas2, rayon);
+        m_button_right.setResize (x + w*7/8, y_bas2, rayon);
     }
     drawButtonImageCarre(m_button_plus, m_img_plus, 0.4);
     drawButtonImageCarre(m_button_moins, m_img_moins, 0.4);
@@ -307,6 +315,134 @@ void GpsWidget::drawButtonTemp(ButtonGui & button, bool open){
         m_painter->setPen(m_pen_black);
     }
     drawQTexts(QString("temp"), button.m_x, button.m_y + button.m_height/4+5, sizeText_logo, true, false, true);
+}
+
+void GpsWidget::drawButtonCycle(ButtonGui & button, bool active){
+    int bx = button.m_x - button.m_width/2;
+    int by = button.m_y - button.m_height/2;
+
+    // fond du bouton (meme langage que les autres boutons carre)
+    m_painter->setPen(m_pen_no);
+    m_painter->setBrush(active ? m_brush_button_validate : m_brush_background_3);
+    m_painter->drawRoundedRect(bx, by, button.m_width, button.m_height, 5, 5);
+
+    QColor line = (m_black_mode || active) ? QColor(255,255,255) : QColor(20,20,20);
+    QPen pen(line); pen.setWidth(2); pen.setJoinStyle(Qt::RoundJoin); pen.setCapStyle(Qt::RoundCap);
+
+    double cx = button.m_x;
+    double cy = button.m_y - button.m_height*0.08;
+    double r  = button.m_height*0.20;
+    QRectF rect(cx-r, cy-r, 2*r, 2*r);
+
+    // deux arcs (boucle de cycle)
+    m_painter->setPen(pen);
+    m_painter->setBrush(Qt::NoBrush);
+    m_painter->drawArc(rect, 165*16, 170*16);
+    m_painter->drawArc(rect, 345*16, 170*16);
+
+    // tetes de fleche tangentes au bout de chaque arc
+    m_painter->setPen(m_pen_no);
+    m_painter->setBrush(QBrush(line));
+    double s = button.m_height*0.13;
+    auto arrowAt = [&](double deg){
+        double a  = deg*M_PI/180.0;
+        double px = cx + r*cos(a);
+        double py = cy - r*sin(a);
+        double tx = -sin(a), ty = -cos(a);   // tangente sens trigo (ecran)
+        double nx =  cos(a), ny = -sin(a);   // radial sortant (ecran)
+        QPointF tip(px + tx*s*0.5, py + ty*s*0.5);
+        QPointF b1(px - tx*s*0.5 + nx*s*0.5, py - ty*s*0.5 + ny*s*0.5);
+        QPointF b2(px - tx*s*0.5 - nx*s*0.5, py - ty*s*0.5 - ny*s*0.5);
+        QPointF tri[3] = {tip, b1, b2};
+        m_painter->drawPolygon(tri, 3);
+    };
+    arrowAt(335);
+    arrowAt(155);
+
+    // label sous l'icone
+    if(m_black_mode || active){
+        m_painter->setPen(m_pen_white);
+    } else {
+        m_painter->setPen(m_pen_black);
+    }
+    drawQTexts(QString("Cycle"), button.m_x, button.m_y + button.m_height/4+5, sizeText_logo, true, false, true);
+}
+
+void GpsWidget::drawButtonAuto(ButtonGui & button, bool active){
+    int bx = button.m_x - button.m_width/2;
+    int by = button.m_y - button.m_height/2;
+
+    // fond : vert quand l'automatique est actif
+    m_painter->setPen(m_pen_no);
+    m_painter->setBrush(active ? m_brush_button_validate : m_brush_background_3);
+    m_painter->drawRoundedRect(bx, by, button.m_width, button.m_height, 5, 5);
+
+    QColor line = (m_black_mode || active) ? QColor(255,255,255) : QColor(20,20,20);
+    QPen pen(line); pen.setWidth(2); pen.setJoinStyle(Qt::RoundJoin); pen.setCapStyle(Qt::RoundCap);
+
+    double cx = button.m_x;
+    double cy = button.m_y - button.m_height*0.08;
+    double r  = button.m_height*0.24;
+
+    // cercle + lettre A (automatique)
+    m_painter->setPen(pen);
+    m_painter->setBrush(Qt::NoBrush);
+    m_painter->drawEllipse(QPointF(cx, cy), r, r);
+
+    double aw = r*0.7;   // demi-largeur du A
+    double ah = r*1.1;   // hauteur du A
+    QPointF apex(cx, cy - ah/2);
+    QPointF left(cx - aw/2, cy + ah/2);
+    QPointF right(cx + aw/2, cy + ah/2);
+    m_painter->drawLine(apex, left);
+    m_painter->drawLine(apex, right);
+    m_painter->drawLine(QPointF(cx - aw/4, cy + ah*0.10), QPointF(cx + aw/4, cy + ah*0.10));
+
+    // label sous l'icone
+    if(m_black_mode || active){
+        m_painter->setPen(m_pen_white);
+    } else {
+        m_painter->setPen(m_pen_black);
+    }
+    drawQTexts(QString("Auto"), button.m_x, button.m_y + button.m_height/4+5, sizeText_logo, true, false, true);
+}
+
+void GpsWidget::drawButtonJob(ButtonGui & button, bool active){
+    int bx = button.m_x - button.m_width/2;
+    int by = button.m_y - button.m_height/2;
+
+    m_painter->setPen(m_pen_no);
+    m_painter->setBrush(active ? m_brush_button_validate : m_brush_background_3);
+    m_painter->drawRoundedRect(bx, by, button.m_width, button.m_height, 5, 5);
+
+    QColor line = (m_black_mode || active) ? QColor(255,255,255) : QColor(20,20,20);
+    QPen pen(line); pen.setWidth(2); pen.setJoinStyle(Qt::RoundJoin); pen.setCapStyle(Qt::RoundCap);
+    m_painter->setPen(pen);
+    m_painter->setBrush(Qt::NoBrush);
+
+    // icone mallette (briefcase)
+    double cx = button.m_x;
+    double cy = button.m_y - button.m_height*0.06;
+    double bw = button.m_width*0.46;
+    double bh = button.m_height*0.34;
+    double left = cx - bw/2, top = cy - bh/2;
+
+    m_painter->drawRoundedRect(QRectF(left, top, bw, bh), 3, 3);
+    // poignee
+    double hw = bw*0.34, hh = bh*0.30;
+    m_painter->drawRoundedRect(QRectF(cx-hw/2, top-hh*0.8, hw, hh*0.8), 2, 2);
+    // fermoir central
+    m_painter->drawLine(QPointF(left, top+bh*0.42), QPointF(left+bw, top+bh*0.42));
+    m_painter->setBrush(QBrush(line));
+    m_painter->setPen(m_pen_no);
+    m_painter->drawRoundedRect(QRectF(cx-bw*0.06, top+bh*0.30, bw*0.12, bh*0.24), 1, 1);
+
+    if(m_black_mode || active){
+        m_painter->setPen(m_pen_white);
+    } else {
+        m_painter->setPen(m_pen_black);
+    }
+    drawQTexts(QString("Job"), button.m_x, button.m_y + button.m_height/4+5, sizeText_logo, true, false, true);
 }
 
 void GpsWidget::drawInfos(){
@@ -490,14 +626,10 @@ void GpsWidget::drawRightLeftSoil(){
     m_painter->drawRoundedRect(x, y, w, h, 10, 10);
     
     Framework & f = Framework::instance();
-    drawButtonImageCarre(m_button_right, m_img_right, 0.3, f.m_pilot_translator_module.m_cycle_up, "Down");
-    
-    drawButtonImageCarre(m_button_middle, m_img_middle, 0.3, f.m_pilot_translator_module.m_cycle_lamp, "Clean");
-    drawButtonImageCarre(m_button_cycle, m_img_middle, 0.3, (f.m_pilot_translator_module.m_etat == SerialEtat_Cycle), "Cycle");
+    drawButtonCycle(m_button_cycle, (f.m_pilot_translator_module.m_etat == SerialEtat_Cycle));
     drawButtonImageCarre(m_button_left, m_img_left, 0.3, f.m_pilot_translator_module.m_cycle_down, "Up");
-    
-    drawButtonCheck(m_soil_loop, f.m_config.m_soil_loop);
-   
+    drawButtonImageCarre(m_button_middle, m_img_middle, 0.3, f.m_pilot_translator_module.m_cycle_lamp, "Clean");
+    drawButtonImageCarre(m_button_right, m_img_right, 0.3, f.m_pilot_translator_module.m_cycle_up, "Down");
 }
 
 void GpsWidget::drawInfosBasLeft(){
@@ -827,6 +959,9 @@ void GpsWidget::draw(){
     if(!m_balises_widget.m_close){
         m_balises_widget.draw();
     }
+    if(!m_job_widget.m_close){
+        m_job_widget.draw();
+    }
     if(false){
         drawLicence();
     }
@@ -893,7 +1028,11 @@ int GpsWidget::onMouse(int x, int y){
     if(!m_balises_widget.m_close){
         m_balises_widget.onMouse(x, y);
     }
-    
+    if(!m_job_widget.m_close){
+        m_job_widget.onMouse(x, y);
+        return 0;
+    }
+
     double x2 = x;
     double y2 = y;
     
@@ -912,12 +1051,14 @@ int GpsWidget::onMouse(int x, int y){
         Framework::instance().m_pilot_translator_module.openRelayLeft(2000);
     } else if(m_button_middle.isActive(x2, y2)){
         Framework::instance().m_pilot_translator_module.inverseLamp();
-    } else if(m_soil_loop.isActive(x2, y2)){
+    } else if(f.getEtat() == Etat_Soil && m_button_auto.isActive(x2, y2)){
         Framework::instance().m_config.m_soil_loop = !Framework::instance().m_config.m_soil_loop;
     } else if(m_button_cycle.isActive(x2, y2)){
         Framework::instance().m_pilot_translator_module.startCycle();
     } else if(m_button_right.isActive(x2, y2)){
         Framework::instance().m_pilot_translator_module.openRelayRight(2000);
+    } else if(m_button_job.isActive(x2, y2)){
+        m_job_widget.open();
     } else if(m_button_diag.isActive(x2, y2)){
         openRapideWidget(6);
     } else if(m_button_debug.isActive(x2, y2)){
@@ -1574,9 +1715,9 @@ void GpsWidget::drawExcavator(){
         myProjete2(f.m_tracteur.m_pt_antenne_corrige->m_x, f.m_tracteur.m_pt_antenne_corrige->m_y, x_tracteur, y_tracteur);
     }
     
-    int h = 4*m_zoom;
-    int w = 2*m_zoom;
-    
+    int h = 12*m_zoom;
+    int w = 6*m_zoom;
+
     m_painter->drawPixmap(x_tracteur-w/2, y_tracteur-h*0.55, w, h, *m_excavator_2d);
 }
 
@@ -1588,9 +1729,9 @@ void GpsWidget::drawTracteur(){
         myProjete2(f.m_tracteur.m_pt_antenne_corrige->m_x, f.m_tracteur.m_pt_antenne_corrige->m_y, x_tracteur, y_tracteur);
     }
     
-    int h = 4*m_zoom;
-    int w = 4*m_zoom;
-    
+    int h = 12*m_zoom;
+    int w = 12*m_zoom;
+
     m_painter->drawPixmap(x_tracteur-w/2, y_tracteur-h*0.55, w, h, *m_tracteur_2d);
 }
 

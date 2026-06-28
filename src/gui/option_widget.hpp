@@ -79,6 +79,12 @@ public:
     SelectButtonGui m_select_etat;
     
     ValueGuiKeyBoard m_company;
+
+    // Land Manager : login + mot de passe (clavier integre)
+    ValueGuiKeyBoard m_lm_user;
+    ValueGuiKeyBoard m_lm_pass;
+    ButtonGui m_button_lm_login;
+
     void setSizePage1();
     void drawPage1();
     void onMousePage1(int x, int y);

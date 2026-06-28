@@ -28,8 +28,19 @@ public:
     void saveParcelle(const std::string & name, const std::string & json);
     
     void postBalises(const std::string & json);
+
+    // Envoi du fichier soil.txt du job courant a Land Manager
+    bool uploadSoil(Config & config, const std::string & file_path);
+
+    // Verification du login Land Manager (sans envoi)
+    void checkLogin(Config & config);
+    bool m_lm_connected = false;
+    bool m_lm_checking = false;
+    std::string m_lm_status;   // texte affiche (connecte / erreur)
 private slots:
     void handleNetwork(QNetworkReply *reply);
+    void handleSoilUpload(QNetworkReply *reply);
+    void handleLoginCheck(QNetworkReply *reply);
     void handleErrorGps(QSerialPort::SerialPortError error);
 };
 

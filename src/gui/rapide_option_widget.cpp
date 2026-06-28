@@ -341,8 +341,8 @@ void RapideOptionWidget::onMousePage5(int x, int y){
 // Page 6
 void RapideOptionWidget::setSizePage6(int width, int height){
     //m_button_reset.setResizeStd(m_x_middle, 0.6*m_height2, Langage::getKey("RAPIDE_RESET"), true);
-    m_button_map.setResizeStd(m_x_middle, 0.45*m_height2, "Carte sat", true);
-    m_button_diag.setResizeStd(m_x_middle, 0.7*m_height2, Langage::getKey("DIAGNOSTIC"), true);
+    m_button_map.setResizeStd(m_x_middle, 0.45*m_height2, "Carte sat", true, 200, 50);
+    m_button_diag.setResizeStd(m_x_middle, 0.7*m_height2, Langage::getKey("DIAGNOSTIC"), true, 200, 50);
 }
 
 void RapideOptionWidget::drawPage6(){

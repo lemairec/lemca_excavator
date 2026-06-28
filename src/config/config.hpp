@@ -80,7 +80,15 @@ public:
     bool m_soil_loop = false;
     
     std::string m_company = "test";
-    
+
+    // Land Manager (envoi des analyses de sol)
+    std::string m_landmanager_url = "https://landmanager.be";
+    std::string m_landmanager_user;      // login Land Manager
+    std::string m_landmanager_password;  // mot de passe Land Manager
+    std::string m_landmanager_token;     // alternative au login/mdp
+    std::string m_landmanager_client;
+    std::string m_landmanager_field;
+
     
     
     int m_offset_auto_enable = 0;

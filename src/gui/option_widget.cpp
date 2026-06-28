@@ -242,9 +242,15 @@ void OptionWidget::setSizePage1(){
     m_lum3.setResize(m_width3*(0.04+0.8*0.44), y, m_petit_button);
     
     y += m_y_inter;
-   
-    
-    
+
+    // Land Manager login (carte de gauche, sous la luminosite)
+    int xl = m_part_1_x+m_part_1_w*0.60;
+    int wl = m_part_1_w*0.34;
+    m_lm_user.setResize(xl, m_y_begin + 3.0*m_y_inter, wl);
+    m_lm_pass.setResize(xl, m_y_begin + 4.3*m_y_inter, wl);
+    m_button_lm_login.setResizeStd(m_part_1_x+m_part_1_w*0.5, m_y_begin + 5.8*m_y_inter, "Se connecter", true, m_part_1_w*0.5);
+
+
     y = m_y_begin;
     m_son0.setResize(m_width3*(0.52+0.44*0.2), y, m_petit_button);
     m_son1.setResize(m_width3*(0.52+0.44*0.4), y, m_petit_button);
@@ -296,9 +302,6 @@ void OptionWidget::drawPage1(){
     }
     
     m_painter->setPen(m_pen_black_inv);
-    
-    
-    
 
     drawPart2Title(m_son1.m_y-2*m_y_inter, m_y_inter*6, Langage::getKey("OPT_SON"));
     m_painter->setBrush(QBrush(QColor(115, 115, 115)));
@@ -335,10 +338,30 @@ void OptionWidget::drawPage1(){
     }
     
     drawValueGuiKeyBoard(m_company);
-    
-    
-    
-    
+
+    // ---- Land Manager : login / mot de passe (dessine en dernier = au-dessus) ----
+    {
+        MyQTNetwork & net = f.m_qt_network;
+        drawPart1Title(m_lm_user.m_y-1.6*m_y_inter, m_y_inter*5.8, "Land Manager");
+
+        m_lm_user.m_text = config.m_landmanager_user;
+        m_lm_pass.m_text = config.m_landmanager_password;
+
+        m_painter->setPen(m_pen_black_inv);
+        drawText("Login", m_part_1_x2, m_lm_user.m_y, sizeText_medium);
+        drawValueGuiKeyBoard(m_lm_user);
+        drawText("Mot de passe", m_part_1_x2, m_lm_pass.m_y, sizeText_medium);
+        drawValueGuiKeyBoard(m_lm_pass);
+
+        drawButtonLabel2(m_button_lm_login, net.m_lm_connected ? COLOR_VALIDATE : COLOR_OTHER);
+
+        QColor c = net.m_lm_connected ? QColor(0x35,0xB8,0x56) : QColor(0xFF,0x37,0x4B);
+        if(net.m_lm_checking){ c = QColor(0x88,0x88,0x88); }
+        m_painter->setPen(QPen(c));
+        std::string st = net.m_lm_status.empty() ? "non connecte" : net.m_lm_status;
+        drawText(st, m_part_1_x+m_part_1_w/2, m_button_lm_login.m_y+0.9*m_y_inter, sizeText_medium, true);
+        m_painter->setPen(m_pen_black_inv);
+    }
 }
 
 void OptionWidget::onMousePage1(int x, int y){
@@ -361,6 +384,8 @@ void OptionWidget::onMousePage1(int x, int y){
     if(!m_key_board_widget->m_close){
         if(m_key_board_widget->onMouse(x, y)){
             f.m_config.m_company = m_company.m_text;
+            f.m_config.m_landmanager_user = m_lm_user.m_text;
+            f.m_config.m_landmanager_password = m_lm_pass.m_text;
             f.initOrLoadConfig();
         };
     }
@@ -403,7 +428,22 @@ void OptionWidget::onMousePage1(int x, int y){
         m_key_board_widget->m_close = false;
         m_key_board_widget->setValueGuiKeyBoard(&m_company);
     }
-    
+
+    if(isActiveValueGuiKeyBoard(m_lm_user,x,y)){
+        m_key_board_widget->m_close = false;
+        m_key_board_widget->setValueGuiKeyBoard(&m_lm_user);
+    }
+    if(isActiveValueGuiKeyBoard(m_lm_pass,x,y)){
+        m_key_board_widget->m_close = false;
+        m_key_board_widget->setValueGuiKeyBoard(&m_lm_pass);
+    }
+    if(m_button_lm_login.isActive(x, y)){
+        f.m_config.m_landmanager_user = m_lm_user.m_text;
+        f.m_config.m_landmanager_password = m_lm_pass.m_text;
+        f.m_config.save();
+        f.m_qt_network.checkLogin(f.m_config);
+    }
+
 }
 
 /**
