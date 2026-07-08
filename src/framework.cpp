@@ -111,7 +111,57 @@ void Framework::initOrLoadConfig(){
 
 void Framework::setPh(double res){
     // res = valeur analogique ESP32 (ADC 12 bits, Vref 3300 mV)
-    double volt = res * 3300.0 / 4095.0;            // tension mesuree (mV)
+    double volt_raw = res * 3300.0 / 4095.0;         // tension instantanee (mV)
+    m_last_soil_volt_raw = volt_raw;
+
+    // ============================================================
+    // 0) FILTRE DE STABILISATION (amont de la conversion Nernst)
+    //    Inspire de la chaine Veris : lissage + pente glissante ("Slope10")
+    //    + detection "Settled Reading". L'electrode antimoine est lente et
+    //    bruitee : on n'exploite la lecture que lorsqu'elle s'est stabilisee.
+    // ============================================================
+    int win = m_config.m_soil_filter_window;
+    if(win < 3){ win = 3; }                           // garde-fou fenetre mini
+
+    int t_ms = getMillis();                           // horodatage (ms, cf. getMillis)
+    m_soil_volt_window.push_back(volt_raw);
+    m_soil_time_window.push_back(t_ms);
+    while((int)m_soil_volt_window.size() > win){
+        m_soil_volt_window.pop_front();
+        m_soil_time_window.pop_front();
+    }
+    int n = (int)m_soil_volt_window.size();
+
+    // moyenne glissante -> tension lissee (lissage simple, suffisant et lisible)
+    double sum = 0.0;
+    for(double v : m_soil_volt_window){ sum += v; }
+    double volt = sum / n;                            // tension LISSEE (mV)
+
+    // pente en mV/s par regression lineaire (moindres carres) sur la fenetre.
+    // On recentre les temps sur t0 en soustrayant en int : la soustraction est
+    // correcte modulo 2^32 meme si getMillis() a deborde (bug latent connu).
+    double slope = 0.0;
+    if(n >= 2){
+        int t0 = m_soil_time_window.front();
+        double st = 0, sv = 0, stt = 0, stv = 0;
+        for(int i = 0; i < n; i++){
+            double t = (double)(m_soil_time_window[i] - t0) * 0.001;  // s, recentre
+            double v = m_soil_volt_window[i];
+            st += t; sv += v; stt += t * t; stv += t * v;
+        }
+        double denom = n * stt - st * st;             // > 0 si les temps different
+        if(fabs(denom) > 1e-9){
+            slope = (n * stv - st * sv) / denom;      // mV/s
+        }
+    }
+    m_last_soil_slope_mv_s = slope;
+
+    // "stabilise" : fenetre pleine, span temporel reel > 0, et pente sous le seuil.
+    bool time_ok = (n >= 2) && (m_soil_time_window.back() - m_soil_time_window.front() > 0);
+    m_soil_settled = (n >= win) && time_ok
+                     && (fabs(slope) <= m_config.m_soil_slope_max_mv_s);
+
+    // A partir d'ici, tout le calcul Nernst travaille sur la tension LISSEE.
     m_last_soil_volt = volt;
     m_last_soil_ph = volt;                           // "brut" affiche = tension mV
 
@@ -120,8 +170,18 @@ void Framework::setPh(double res){
     const double K25 = 59.16;                        // mV/pH a 25 degC
     double T = m_config.m_soil_temp_ambiante;
     double pente = K25 * (273.15 + T) / (273.15 + 25.0);
+
+    // 1bis) option : pente 2 points EMPIRIQUE (mesuree sur les tampons, facon Veris)
+    //       plutot que la pente theorique. Corrige le vieillissement d'electrode.
+    if(m_config.m_soil_pente_empirique != 0){
+        double dpH = m_config.m_soil_ph_bas - m_config.m_soil_ph_haut;   // ex: 4-7 = -3
+        if(fabs(dpH) > 1e-6){
+            double pente_emp = (m_config.m_soil_ph_bas_m - m_config.m_soil_ph_haut_m) / dpH;
+            if(fabs(pente_emp) > 1e-6){ pente = pente_emp; }             // mV/pH
+        }
+    }
     m_last_soil_pente = pente;
-    if(pente == 0.0){ pente = K25; }
+    if(fabs(pente) < 1e-9){ pente = K25; }           // garde-fou division
 
     // 2) offset (tension a pH du tampon haut) calcule a partir des 2 points de
     //    calibrage 4 et 7 (moyenne, pente constructeur a 25 degC) :

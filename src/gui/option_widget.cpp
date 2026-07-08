@@ -554,8 +554,20 @@ void OptionWidget::drawPage2(){
         std::string s = strprintf("U : %.0f mV", f.m_last_soil_volt);
         drawText(s, m_part_2_x+0.4*m_part_2_w,y, sizeText_medium);
     }
-    
-    
+
+    {
+        // indicateur d'etat de stabilisation (fiabilite de la lecture pH)
+        QColor c = f.m_soil_settled ? QColor(0x35,0xB8,0x56)    // vert  -> OK
+                                    : QColor(0xE8,0x8A,0x2E);   // orange-> en cours
+        m_painter->setPen(QPen(c));
+        std::string s = f.m_soil_settled
+            ? strprintf("STABLE  (%.1f mV/s)", f.m_last_soil_slope_mv_s)
+            : strprintf("stabilisation...  (%.1f mV/s)", f.m_last_soil_slope_mv_s);
+        drawText(s, m_part_2_x+0.4*m_part_2_w, y+0.5*m_y_inter, sizeText_little);
+        m_painter->setPen(m_pen_black_inv);
+    }
+
+
     {
         std::string s = strprintf("Ph_cor : %.1f", f.m_last_soil_ph_corr);
         drawText(s, m_part_2_x+0.4*m_part_2_w,y-m_y_inter, sizeText_medium);
@@ -632,12 +644,17 @@ void OptionWidget::onMousePage2(int x, int y){
     };
     
     if(m_button_ph_bas.isActive(x, y) != 0){
-        f.m_config.m_soil_ph_bas_m = f.m_last_soil_volt;
-        loadConfig();
+        // capture interdite tant que la lecture n'est pas stabilisee
+        if(f.m_soil_settled){
+            f.m_config.m_soil_ph_bas_m = f.m_last_soil_volt;   // tension lissee
+            loadConfig();
+        }
     }
     if(m_button_ph_haut.isActive(x, y) != 0){
-        f.m_config.m_soil_ph_haut_m = f.m_last_soil_volt;
-        loadConfig();
+        if(f.m_soil_settled){
+            f.m_config.m_soil_ph_haut_m = f.m_last_soil_volt;  // tension lissee
+            loadConfig();
+        }
     }
 }
 

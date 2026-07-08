@@ -15,6 +15,7 @@
 #include "auto_path.hpp"
 
 #include <chrono>
+#include <deque>
 #include <QThread>
 #include <time.h>
 #include <math.h>
@@ -100,8 +101,15 @@ public:
     double m_last_soil_cond;
     double m_last_soil_ph;
     double m_last_soil_ph_corr;
-    double m_last_soil_volt;
+    double m_last_soil_volt;      // tension LISSEE (mV) apres filtre de stabilisation
+    double m_last_soil_volt_raw = 0.0;   // tension instantanee (mV), pour debug/diag
     double m_last_soil_pente;
+
+    // --- filtre de stabilisation (cf. Veris Slope10 / Settled Reading) ---
+    std::deque<double> m_soil_volt_window;   // echantillons de tension bruts (mV)
+    std::deque<int>    m_soil_time_window;   // horodatages (ms, getMillis)
+    double m_last_soil_slope_mv_s = 0.0;     // pente glissante (mV/s)
+    bool   m_soil_settled = false;           // vrai si fenetre pleine + pente faible
     double m_last_soil_n;
     double m_last_soil_p;
     double m_last_soil_k;

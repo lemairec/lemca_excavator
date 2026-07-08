@@ -108,6 +108,14 @@ public:
     double m_soil_ph_haut = 7.0;       // pH du tampon haut (reference, isopotentiel)
     double m_soil_ph_haut_m = 1650.0;  // tension mesuree au tampon haut = offset (mV)
     double m_soil_temp_ambiante = 20.0;
+
+    // --- stabilisation du signal pH (electrode antimoine, lente/bruitee) ---
+    int    m_soil_filter_window  = 10;   // taille fenetre glissante (echantillons)
+    double m_soil_slope_max_mv_s = 2.0;  // seuil de pente pour "stabilise" (mV/s)
+    // pente 2 points empirique (Veris) au lieu de la pente constructeur K(T).
+    // 0 = comportement historique (pente theorique), 1 = pente mesuree tampons.
+    int    m_soil_pente_empirique = 0;
+
     bool m_map_enable = true;
 
     bool isDeveloppeur(){
