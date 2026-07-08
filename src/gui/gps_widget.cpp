@@ -437,6 +437,86 @@ void GpsWidget::drawButtonJob(ButtonGui & button, bool active){
     drawQTexts(QString("Job"), button.m_x, button.m_y + button.m_height/4+5, sizeText_logo, true, false, true);
 }
 
+// fleche pleine haut/bas (Up = monter, Down = descendre) avec barre a l'extremite base
+void GpsWidget::drawButtonArrow(ButtonGui & button, bool active, bool up, const QString & label){
+    int bx = button.m_x - button.m_width/2;
+    int by = button.m_y - button.m_height/2;
+
+    m_painter->setPen(m_pen_no);
+    m_painter->setBrush(active ? m_brush_button_validate : m_brush_background_3);
+    m_painter->drawRoundedRect(bx, by, button.m_width, button.m_height, 5, 5);
+
+    QColor line = (m_black_mode || active) ? QColor(255,255,255) : QColor(20,20,20);
+    QPen pen(line); pen.setWidth(3); pen.setJoinStyle(Qt::RoundJoin); pen.setCapStyle(Qt::RoundCap);
+
+    double cx  = button.m_x;
+    double cy  = button.m_y - button.m_height*0.08;
+    double H   = button.m_height*0.20;   // demi-hauteur de la fleche
+    double w   = button.m_height*0.15;   // demi-largeur de la tete
+    double dir = up ? -1.0 : 1.0;        // ecran : monter = y negatif
+
+    double tipY  = cy + dir*H;           // pointe
+    double baseY = cy - dir*H;           // base (cote barre)
+
+    // tige
+    m_painter->setPen(pen);
+    m_painter->drawLine(QPointF(cx, baseY), QPointF(cx, tipY - dir*w*0.6));
+    // barre au niveau de la base (sol pour Up, plafond pour Down)
+    m_painter->drawLine(QPointF(cx-w, baseY), QPointF(cx+w, baseY));
+
+    // tete pleine
+    m_painter->setPen(m_pen_no);
+    m_painter->setBrush(QBrush(line));
+    QPointF tri[3] = {
+        QPointF(cx,   tipY),
+        QPointF(cx-w, tipY - dir*w*1.2),
+        QPointF(cx+w, tipY - dir*w*1.2)
+    };
+    m_painter->drawPolygon(tri, 3);
+
+    m_painter->setPen((m_black_mode || active) ? m_pen_white : m_pen_black);
+    drawQTexts(label, button.m_x, button.m_y + button.m_height/4+5, sizeText_logo, true, false, true);
+}
+
+// icone "Clean" : etincelles (sparkles) a 4 branches
+void GpsWidget::drawButtonClean(ButtonGui & button, bool active){
+    int bx = button.m_x - button.m_width/2;
+    int by = button.m_y - button.m_height/2;
+
+    m_painter->setPen(m_pen_no);
+    m_painter->setBrush(active ? m_brush_button_validate : m_brush_background_3);
+    m_painter->drawRoundedRect(bx, by, button.m_width, button.m_height, 5, 5);
+
+    QColor line = (m_black_mode || active) ? QColor(255,255,255) : QColor(20,20,20);
+
+    double cx = button.m_x;
+    double cy = button.m_y - button.m_height*0.08;
+
+    m_painter->setPen(m_pen_no);
+    m_painter->setBrush(QBrush(line));
+
+    // etoile a 4 branches concaves (4 tips + 4 creux)
+    auto sparkle = [&](double sx, double sy, double R){
+        double r = R*0.30;               // rayon interne (creux)
+        QPointF p[8];
+        for(int i=0;i<4;i++){
+            double ao = i*M_PI/2.0;       // pointe
+            p[i*2]   = QPointF(sx + R*cos(ao), sy + R*sin(ao));
+            double ai = ao + M_PI/4.0;    // creux
+            p[i*2+1] = QPointF(sx + r*cos(ai), sy + r*sin(ai));
+        }
+        m_painter->drawPolygon(p, 8);
+    };
+
+    double R = button.m_height*0.20;
+    sparkle(cx - R*0.15, cy - R*0.15, R);          // grande etincelle
+    sparkle(cx + R*1.05, cy + R*0.55, R*0.45);     // petite en bas-droite
+    sparkle(cx - R*0.95, cy + R*0.85, R*0.35);     // petite en bas-gauche
+
+    m_painter->setPen((m_black_mode || active) ? m_pen_white : m_pen_black);
+    drawQTexts(QString("Clean"), button.m_x, button.m_y + button.m_height/4+5, sizeText_logo, true, false, true);
+}
+
 void GpsWidget::drawInfos(){
     Framework & f = Framework::instance();
 
@@ -619,9 +699,9 @@ void GpsWidget::drawRightLeftSoil(){
     
     Framework & f = Framework::instance();
     drawButtonCycle(m_button_cycle, (f.m_pilot_translator_module.m_etat == SerialEtat_Cycle));
-    drawButtonImageCarre(m_button_left, m_img_left, 0.3, f.m_pilot_translator_module.m_cycle_down, "Up");
-    drawButtonImageCarre(m_button_middle, m_img_middle, 0.3, f.m_pilot_translator_module.m_cycle_lamp, "Clean");
-    drawButtonImageCarre(m_button_right, m_img_right, 0.3, f.m_pilot_translator_module.m_cycle_up, "Down");
+    drawButtonArrow(m_button_left, f.m_pilot_translator_module.m_cycle_down, true, "Up");
+    drawButtonClean(m_button_middle, f.m_pilot_translator_module.m_cycle_lamp);
+    drawButtonArrow(m_button_right, f.m_pilot_translator_module.m_cycle_up, false, "Down");
 }
 
 void GpsWidget::drawInfosBasLeft(){

@@ -120,6 +120,8 @@ public:
     void drawButtonCycle(ButtonGui & button, bool active);
     void drawButtonAuto(ButtonGui & button, bool active);
     void drawButtonJob(ButtonGui & button, bool active);
+    void drawButtonArrow(ButtonGui & button, bool active, bool up, const QString & label);
+    void drawButtonClean(ButtonGui & button, bool active);
     void drawMapTiles();
     void drawTracteur();
     void drawExcavator();
