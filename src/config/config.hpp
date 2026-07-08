@@ -115,6 +115,12 @@ public:
     // pente 2 points empirique (Veris) au lieu de la pente constructeur K(T).
     // 0 = comportement historique (pente theorique), 1 = pente mesuree tampons.
     int    m_soil_pente_empirique = 0;
+    // temperature des tampons AU MOMENT de la capture (ref de la pente empirique).
+    // Ecrite en meme temps que bas_m/haut_m ; defaut = m_soil_temp_ambiante.
+    double m_soil_temp_cal = 20.0;
+    // timeout de "staleness" : si le dernier echantillon date de plus de N ms,
+    // la lecture n'est plus consideree comme stabilisee (capteur mort/debranche).
+    int    m_soil_stale_ms = 2000;
 
     bool m_map_enable = true;
 

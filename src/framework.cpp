@@ -123,7 +123,19 @@ void Framework::setPh(double res){
     int win = m_config.m_soil_filter_window;
     if(win < 3){ win = 3; }                           // garde-fou fenetre mini
 
+    // [R7] Contamination inter-points : au FRONT de relevage (travail -> releve),
+    // on purge la fenetre pour ne pas melanger le sol precedent avec le suivant.
+    // On teste la transition (front), pas l'etat continu, sinon purge en boucle.
+    bool point_3 = m_pilot_translator_module.m_point_3;   // true = outil releve
+    if(point_3 && !m_soil_prev_point_3){
+        m_soil_volt_window.clear();
+        m_soil_time_window.clear();
+        m_soil_settled = false;
+    }
+    m_soil_prev_point_3 = point_3;
+
     int t_ms = getMillis();                           // horodatage (ms, cf. getMillis)
+    m_soil_last_sample_ms = t_ms;                     // pour le timeout de staleness
     m_soil_volt_window.push_back(volt_raw);
     m_soil_time_window.push_back(t_ms);
     while((int)m_soil_volt_window.size() > win){
@@ -173,11 +185,17 @@ void Framework::setPh(double res){
 
     // 1bis) option : pente 2 points EMPIRIQUE (mesuree sur les tampons, facon Veris)
     //       plutot que la pente theorique. Corrige le vieillissement d'electrode.
+    //       [R1] La pente empirique a ete mesuree a T_cal (temperature des tampons
+    //       au moment de la capture) : la compensation Nernst doit repartir de T_cal,
+    //       pas de 25 degC, sinon double compensation / biais thermique.
     if(m_config.m_soil_pente_empirique != 0){
         double dpH = m_config.m_soil_ph_bas - m_config.m_soil_ph_haut;   // ex: 4-7 = -3
         if(fabs(dpH) > 1e-6){
             double pente_emp = (m_config.m_soil_ph_bas_m - m_config.m_soil_ph_haut_m) / dpH;
-            if(fabs(pente_emp) > 1e-6){ pente = pente_emp; }             // mV/pH
+            if(fabs(pente_emp) > 1e-6){
+                // compensation temperature relative a T_cal
+                pente = pente_emp * (273.15 + T) / (273.15 + m_config.m_soil_temp_cal);
+            }
         }
     }
     m_last_soil_pente = pente;
@@ -192,6 +210,23 @@ void Framework::setPh(double res){
 
     // 3) pH corrige (compensation temperature via la pente constructeur K(T))
     m_last_soil_ph_corr = m_config.m_soil_ph_haut + (U_ref - volt) / pente;
+}
+
+// Etat stabilise reel : filtre stabilise ET echantillon recent. Si les trames se
+// sont arretees (cable/reboot ESP32), la fenetre reste figee : on invalide alors la
+// stabilisation ("Timeout and Redo" facon Veris) pour ne pas capturer sur du fige.
+// [R2] Le delta est calcule en int (two's complement) pour rester correct malgre
+// l'overflow de getMillis() ; on borne dt<0 par securite.
+bool Framework::isSoilSettled(){
+    if(!m_soil_settled){ return false; }
+    if(m_soil_volt_window.empty()){ return false; }
+    int dt = (int)(getMillis() - m_soil_last_sample_ms);   // ms
+    if(dt < 0){ dt = 0; }
+    if(dt > m_config.m_soil_stale_ms){
+        m_soil_settled = false;                            // "force false" demande
+        return false;
+    }
+    return true;
 }
 
 void Framework::addError(std::string s){

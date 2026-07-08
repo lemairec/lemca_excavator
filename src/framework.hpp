@@ -110,6 +110,12 @@ public:
     std::deque<int>    m_soil_time_window;   // horodatages (ms, getMillis)
     double m_last_soil_slope_mv_s = 0.0;     // pente glissante (mV/s)
     bool   m_soil_settled = false;           // vrai si fenetre pleine + pente faible
+    bool   m_soil_prev_point_3 = false;      // etat relevage precedent (detection de front)
+    int    m_soil_last_sample_ms = 0;        // horodatage du dernier echantillon (staleness)
+
+    // Etat stabilise REEL a l'affichage/capture : combine m_soil_settled et le
+    // timeout de staleness (trames arretees => plus fiable). A utiliser en GUI.
+    bool isSoilSettled();
     double m_last_soil_n;
     double m_last_soil_p;
     double m_last_soil_k;

@@ -459,7 +459,14 @@ void OptionWidget::setSizePage2(){
     m_outil_record_h.setResize(m_part_1_x3, y, m_petit_button);
     y+= m_y_inter;
     m_outil_replay_h.setResize(m_part_1_x3, y, m_petit_button);
-    
+    y+= m_y_inter;
+    y+= m_y_inter;
+    m_soil_filter_window.setResize(m_part_1_x3, y, m_petit_button);
+    y+= m_y_inter;
+    m_soil_slope_max.setResize(m_part_1_x3, y, m_petit_button);
+    y+= m_y_inter;
+    m_soil_stale.setResize(m_part_1_x3, y, m_petit_button);
+
     m_select_soil.clear();
     m_select_soil.addValue("analogique");
     m_select_soil.addValue("numerique");
@@ -512,8 +519,25 @@ void OptionWidget::drawPage2(){
         drawText(Langage::getKey("OPT_OUTIL_REPLAY_H"), m_part_1_x2,m_outil_replay_h.m_y, sizeText_medium);
         drawValueGuiKeyPad2(m_outil_replay_h);
     }
-    
-    
+
+    // ---- reglages du filtre de stabilisation pH ----
+    drawPart1Title(m_soil_filter_window.m_y-m_y_inter, m_y_inter*4, "Stabilisation pH");
+    {
+        m_soil_filter_window.m_value = config.m_soil_filter_window;
+        drawText("Fenetre (ech.)", m_part_1_x2, m_soil_filter_window.m_y, sizeText_medium);
+        drawValueGuiKeyPad2(m_soil_filter_window);
+    }
+    {
+        m_soil_slope_max.m_value = config.m_soil_slope_max_mv_s;
+        drawText("Pente max (mV/s)", m_part_1_x2, m_soil_slope_max.m_y, sizeText_medium);
+        drawValueGuiKeyPad2(m_soil_slope_max);
+    }
+    {
+        m_soil_stale.m_value = config.m_soil_stale_ms;
+        drawText("Timeout (ms)", m_part_1_x2, m_soil_stale.m_y, sizeText_medium);
+        drawValueGuiKeyPad2(m_soil_stale);
+    }
+
     drawButtonLabel2(m_select_soil.m_buttonOpen);
     
     if(m_select_widget.m_close){
@@ -557,10 +581,11 @@ void OptionWidget::drawPage2(){
 
     {
         // indicateur d'etat de stabilisation (fiabilite de la lecture pH)
-        QColor c = f.m_soil_settled ? QColor(0x35,0xB8,0x56)    // vert  -> OK
-                                    : QColor(0xE8,0x8A,0x2E);   // orange-> en cours
+        bool settled = f.isSoilSettled();
+        QColor c = settled ? QColor(0x35,0xB8,0x56)    // vert  -> OK
+                           : QColor(0xE8,0x8A,0x2E);   // orange-> en cours
         m_painter->setPen(QPen(c));
-        std::string s = f.m_soil_settled
+        std::string s = settled
             ? strprintf("STABLE  (%.1f mV/s)", f.m_last_soil_slope_mv_s)
             : strprintf("stabilisation...  (%.1f mV/s)", f.m_last_soil_slope_mv_s);
         drawText(s, m_part_2_x+0.4*m_part_2_w, y+0.5*m_y_inter, sizeText_little);
@@ -617,6 +642,21 @@ void OptionWidget::onMousePage2(int x, int y){
         config.m_outil_replay_h = m_outil_replay_h.m_value;
         loadConfig();
     };
+    if(onMouseKeyPad2(m_soil_filter_window, x, y, 1)){
+        if(m_soil_filter_window.m_value < 3){ m_soil_filter_window.m_value = 3; }
+        config.m_soil_filter_window = (int)m_soil_filter_window.m_value;
+        loadConfig();
+    };
+    if(onMouseKeyPad2(m_soil_slope_max, x, y, 0.5)){
+        if(m_soil_slope_max.m_value < 0){ m_soil_slope_max.m_value = 0; }
+        config.m_soil_slope_max_mv_s = m_soil_slope_max.m_value;
+        loadConfig();
+    };
+    if(onMouseKeyPad2(m_soil_stale, x, y, 250)){
+        if(m_soil_stale.m_value < 0){ m_soil_stale.m_value = 0; }
+        config.m_soil_stale_ms = (int)m_soil_stale.m_value;
+        loadConfig();
+    };
     if(onMouseKeyPad2(m_soil_tp_down, x, y, 0.1)){
         config.m_soil_tp_down_s = m_soil_tp_down.m_value;
         loadConfig();
@@ -645,14 +685,16 @@ void OptionWidget::onMousePage2(int x, int y){
     
     if(m_button_ph_bas.isActive(x, y) != 0){
         // capture interdite tant que la lecture n'est pas stabilisee
-        if(f.m_soil_settled){
+        if(f.isSoilSettled()){
             f.m_config.m_soil_ph_bas_m = f.m_last_soil_volt;   // tension lissee
+            f.m_config.m_soil_temp_cal = f.m_config.m_soil_temp_ambiante; // [R1] T de calib
             loadConfig();
         }
     }
     if(m_button_ph_haut.isActive(x, y) != 0){
-        if(f.m_soil_settled){
+        if(f.isSoilSettled()){
             f.m_config.m_soil_ph_haut_m = f.m_last_soil_volt;  // tension lissee
+            f.m_config.m_soil_temp_cal = f.m_config.m_soil_temp_ambiante; // [R1] T de calib
             loadConfig();
         }
     }

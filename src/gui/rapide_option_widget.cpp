@@ -455,11 +455,12 @@ void RapideOptionWidget::drawPage7(){
     drawText(strprintf("%.0f mV", f.m_last_soil_volt), m_x+m_width2/2, ry + rh*0.92, sizeText_logo, true);
 
     // ---- badge etat de stabilisation (fiabilite de la lecture pH) ----
+    bool soil_settled = f.isSoilSettled();
     {
-        QColor c = f.m_soil_settled ? QColor(0x35,0xB8,0x56)    // vert
-                                    : QColor(0xE8,0x8A,0x2E);   // orange
+        QColor c = soil_settled ? QColor(0x35,0xB8,0x56)    // vert
+                                : QColor(0xE8,0x8A,0x2E);   // orange
         m_painter->setPen(QPen(c));
-        std::string s = f.m_soil_settled ? "STABLE" : "stabilisation...";
+        std::string s = soil_settled ? "STABLE" : "stabilisation...";
         drawText(s, cardx + cardw*0.80, ry + rh*0.27, sizeText_little, true, false);
     }
 
@@ -474,7 +475,7 @@ void RapideOptionWidget::drawPage7(){
     m_value_ph_bas.m_value = config.m_soil_ph_bas;
     drawValueGuiKeyPad2(m_value_ph_bas);
     // bouton actif (vert) seulement si la lecture est stabilisee
-    drawButtonLabel2(m_button_ph_bas, f.m_soil_settled ? COLOR_VALIDATE : COLOR_OTHER);
+    drawButtonLabel2(m_button_ph_bas, soil_settled ? COLOR_VALIDATE : COLOR_OTHER);
 
     // ---- carte calibration point haut ----
     int b2y = 0.63*m_height2;
@@ -486,7 +487,7 @@ void RapideOptionWidget::drawPage7(){
     drawText(strprintf("Point haut  (%.0f mV)", config.m_soil_ph_haut_m), cardx + cardw*0.07, b2y + b2h*0.18, sizeText_little);
     m_value_ph_haut.m_value = config.m_soil_ph_haut;
     drawValueGuiKeyPad2(m_value_ph_haut);
-    drawButtonLabel2(m_button_ph_haut, f.m_soil_settled ? COLOR_VALIDATE : COLOR_OTHER);
+    drawButtonLabel2(m_button_ph_haut, soil_settled ? COLOR_VALIDATE : COLOR_OTHER);
 
     if(!m_keypad_widget.m_close){
         m_keypad_widget.draw();
@@ -504,13 +505,15 @@ void RapideOptionWidget::onMousePage7(int x, int y){
     config.m_soil_ph_haut = m_value_ph_haut.m_value;
 
     if(m_button_ph_bas.isActive(x, y) != 0){
-        if(f.m_soil_settled){                              // lecture stabilisee requise
+        if(f.isSoilSettled()){                             // lecture stabilisee requise
             config.m_soil_ph_bas_m = f.m_last_soil_volt;   // tension lissee
+            config.m_soil_temp_cal = config.m_soil_temp_ambiante; // [R1] T de calib
         }
     }
     if(m_button_ph_haut.isActive(x, y) != 0){
-        if(f.m_soil_settled){
+        if(f.isSoilSettled()){
             config.m_soil_ph_haut_m = f.m_last_soil_volt;  // tension lissee
+            config.m_soil_temp_cal = config.m_soil_temp_ambiante; // [R1] T de calib
         }
     }
     loadConfig();

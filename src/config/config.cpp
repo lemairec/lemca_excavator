@@ -93,6 +93,8 @@ void Config::work(QSettings & settings, bool save){
     saveLoadInt(settings, "m_soil_filter_window", m_soil_filter_window, save);
     saveLoadDouble(settings, "m_soil_slope_max_mv_s", m_soil_slope_max_mv_s, save);
     saveLoadInt(settings, "m_soil_pente_empirique", m_soil_pente_empirique, save);
+    saveLoadDouble(settings, "m_soil_temp_cal", m_soil_temp_cal, save);
+    saveLoadInt(settings, "m_soil_stale_ms", m_soil_stale_ms, save);
     saveLoadBool(settings, "m_map_enable", m_map_enable, save);
 
 }
