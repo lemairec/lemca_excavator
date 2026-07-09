@@ -565,18 +565,18 @@ void OptionWidget::drawPage2(){
         drawValueGuiKeyPad2(m_soil_tp_wait);
     }
     int y = m_button_ph_bas.m_y - m_y_inter;
+    // 3 colonnes centrees et regulierement espacees pour eviter le chevauchement
     {
         std::string s = strprintf("U_bas : %.0f mV", f.m_config.m_soil_ph_bas_m);
-        drawText(s, m_part_2_x+0.25*m_part_2_w,y, sizeText_medium);
+        drawText(s, m_part_2_x+0.17*m_part_2_w,y, sizeText_medium, true);
+    }
+    {
+        std::string s = strprintf("U : %.0f mV", f.m_last_soil_volt);
+        drawText(s, m_part_2_x+0.5*m_part_2_w,y, sizeText_medium, true);
     }
     {
         std::string s = strprintf("U_haut : %.0f mV", f.m_config.m_soil_ph_haut_m);
-        drawText(s, m_part_2_x+0.75*m_part_2_w,y, sizeText_medium);
-    }
-
-    {
-        std::string s = strprintf("U : %.0f mV", f.m_last_soil_volt);
-        drawText(s, m_part_2_x+0.4*m_part_2_w,y, sizeText_medium);
+        drawText(s, m_part_2_x+0.83*m_part_2_w,y, sizeText_medium, true);
     }
 
     {
