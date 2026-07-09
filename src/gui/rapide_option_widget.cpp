@@ -449,19 +449,27 @@ void RapideOptionWidget::drawPage7(){
 
     m_painter->setPen(m_pen_black_inv);
     drawText("pH corrige", m_x+m_width2/2, ry + rh*0.27, sizeText_little, true);
-    m_painter->setPen(QPen(phcol));
-    drawText(strprintf("%.1f", ph), m_x+m_width2/2, ry + rh*0.66, sizeText_bigbig, true);
+    if(f.m_soil_calibrated){
+        m_painter->setPen(QPen(phcol));
+        drawText(strprintf("%.1f", ph), m_x+m_width2/2, ry + rh*0.66, sizeText_bigbig, true);
+    } else {
+        // [P5] pas de 2 tampons distincts -> aucun pH valide a afficher
+        m_painter->setPen(QPen(QColor(0xE8,0x8A,0x2E)));
+        drawText("NON CALIBRE", m_x+m_width2/2, ry + rh*0.66, sizeText_medium, true);
+    }
     m_painter->setPen(m_pen_gray);
     drawText(strprintf("%.0f mV", f.m_last_soil_volt), m_x+m_width2/2, ry + rh*0.92, sizeText_logo, true);
 
     // ---- badge etat de stabilisation (fiabilite de la lecture pH) ----
+    // [P4] centre horizontalement (comme titre et valeur pH) et place verticalement
+    // ENTRE le titre "pH corrige" (0.27) et la grande valeur (0.66), donc ~0.46.
     bool soil_settled = f.isSoilSettled();
     {
         QColor c = soil_settled ? QColor(0x35,0xB8,0x56)    // vert
                                 : QColor(0xE8,0x8A,0x2E);   // orange
         m_painter->setPen(QPen(c));
         std::string s = soil_settled ? "STABLE" : "stabilisation...";
-        drawText(s, cardx + cardw*0.80, ry + rh*0.27, sizeText_little, true, false);
+        drawText(s, m_x+m_width2/2, ry + rh*0.46, sizeText_little, true);
     }
 
     // ---- carte calibration point bas ----

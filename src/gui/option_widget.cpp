@@ -594,7 +594,9 @@ void OptionWidget::drawPage2(){
 
 
     {
-        std::string s = strprintf("Ph_cor : %.1f", f.m_last_soil_ph_corr);
+        std::string s = f.m_soil_calibrated
+            ? strprintf("Ph_cor : %.1f", f.m_last_soil_ph_corr)
+            : std::string("Ph_cor : NON CALIBRE");
         drawText(s, m_part_2_x+0.4*m_part_2_w,y-m_y_inter, sizeText_medium);
     }
     {

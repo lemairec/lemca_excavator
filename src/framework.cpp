@@ -182,16 +182,13 @@ void Framework::setPh(double res){
     // ============================================================
     if(m_config.m_soil_pente_empirique != 0){
         // ---- CHEMIN EMPIRIQUE 2 POINTS (DEFAUT) --------------------------
-        // [P1] La DFRobot Gravity pH Pro V2 (electrode de verre) a une pente
-        // REELLE NEGATIVE (~-64.7 mV/pH), proche de Nernst. On utilise donc la
-        // pente EMPIRIQUE SIGNEE calculee depuis les 2 tampons reels, JAMAIS la
-        // pente theorique positive K25 (cassee pour ce capteur) :
+        // Sonde GENERIQUE : le code ne presuppose aucun type d'electrode ni signe
+        // de pente. La pente est ENTIEREMENT determinee par la calibration terrain
+        // sur 2 tampons, en valeur SIGNEE :
         //     pente_ref = (bas_m - haut_m) / (bas - haut)
-        //               = (1713-1519)/(4-7) = -64.7 mV/pH
         //     pH = ph_haut + (volt - ph_haut_m) / pente_ref
-        // L'offset est directement ph_haut_m : PAS de blend K25 (cause du bug
-        // de signe historique qui donnait pH 9.9 au lieu de 4.0 a 1713 mV).
-        double dpH = m_config.m_soil_ph_bas - m_config.m_soil_ph_haut;   // ex: 4-7 = -3
+        // L'offset est directement ph_haut_m (pas de pente theorique impliquee).
+        double dpH = m_config.m_soil_ph_bas - m_config.m_soil_ph_haut;
         double pente_ref = 0.0;
         if(fabs(dpH) > 1e-6){
             pente_ref = (m_config.m_soil_ph_bas_m - m_config.m_soil_ph_haut_m) / dpH;
@@ -199,16 +196,18 @@ void Framework::setPh(double res){
         // [R1] Compensation temperature RELATIVE a T_cal (temperature des tampons
         // au moment de la capture), pas a 25 degC -> pas de double compensation.
         // Source de T = m_soil_temp_ambiante (saisie manuelle). Par defaut T == T_cal
-        // (20 == 20) -> ratio = 1 -> pente empirique utilisee TELLE QUELLE.
+        // (20 == 20) -> ratio = 1 -> pente utilisee TELLE QUELLE.
         double Tcal = m_config.m_soil_temp_cal;
         if(fabs(273.15 + Tcal) > 1e-6){
             pente_ref *= (273.15 + m_config.m_soil_temp_ambiante) / (273.15 + Tcal);
         }
         m_last_soil_pente = pente_ref;
         if(fabs(pente_ref) < 1e-9){
-            // garde-fou : points confondus ou pente nulle -> pas de division
-            m_last_soil_ph_corr = m_config.m_soil_ph_haut;
+            // [P2] pente indefinie : ph_bas_m == ph_haut_m (defaut 0.0/0.0) => sonde
+            // NON CALIBREE. On n'ecrit AUCUN pH ; la GUI affiche "NON CALIBRE".
+            m_soil_calibrated = false;
         } else {
+            m_soil_calibrated = true;
             m_last_soil_ph_corr = m_config.m_soil_ph_haut
                                 + (volt - m_config.m_soil_ph_haut_m) / pente_ref;
         }
@@ -221,10 +220,17 @@ void Framework::setPh(double res){
         double pente = K25 * (273.15 + T) / (273.15 + 25.0);
         m_last_soil_pente = pente;
         if(fabs(pente) < 1e-9){ pente = K25; }           // garde-fou division
-        double U_ref_from_haut = m_config.m_soil_ph_haut_m;
-        double U_ref_from_bas  = m_config.m_soil_ph_bas_m + K25 * (m_config.m_soil_ph_bas - m_config.m_soil_ph_haut);
-        double U_ref = (U_ref_from_haut + U_ref_from_bas) / 2.0;
-        m_last_soil_ph_corr = m_config.m_soil_ph_haut + (U_ref - volt) / pente;
+        // [P2] deux tensions de tampon identiques (defaut 0.0/0.0) => non calibre :
+        // l'offset serait indefini, on n'ecrit aucun pH.
+        if(fabs(m_config.m_soil_ph_bas_m - m_config.m_soil_ph_haut_m) < 1e-9){
+            m_soil_calibrated = false;
+        } else {
+            m_soil_calibrated = true;
+            double U_ref_from_haut = m_config.m_soil_ph_haut_m;
+            double U_ref_from_bas  = m_config.m_soil_ph_bas_m + K25 * (m_config.m_soil_ph_bas - m_config.m_soil_ph_haut);
+            double U_ref = (U_ref_from_haut + U_ref_from_bas) / 2.0;
+            m_last_soil_ph_corr = m_config.m_soil_ph_haut + (U_ref - volt) / pente;
+        }
     }
 }
 

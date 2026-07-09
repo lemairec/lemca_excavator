@@ -103,10 +103,10 @@ public:
     double m_soil_tp_up_s = 0.5;
     double m_soil_tp_wait_s = 12;
     
-    double m_soil_ph_bas = 4.0;        // pH du tampon bas (reference)
-    double m_soil_ph_bas_m = 1713.0;   // tension mesuree au tampon bas (mV) - DFRobot pH Pro V2
-    double m_soil_ph_haut = 7.0;       // pH du tampon haut (reference, isopotentiel)
-    double m_soil_ph_haut_m = 1519.0;  // tension mesuree au tampon haut = offset (mV) - DFRobot pH Pro V2
+    double m_soil_ph_bas = 4.0;        // consigne tampon standard (independante de la sonde)
+    double m_soil_ph_bas_m = 0.0;      // 0.0 = non calibre ; l'operateur calibre sur tampons pour chaque sonde
+    double m_soil_ph_haut = 7.0;       // consigne tampon standard (independante de la sonde)
+    double m_soil_ph_haut_m = 0.0;     // 0.0 = non calibre ; l'operateur calibre sur tampons pour chaque sonde
     double m_soil_temp_ambiante = 20.0;
 
     // --- stabilisation du signal pH (electrode antimoine, lente/bruitee) ---

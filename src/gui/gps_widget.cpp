@@ -762,9 +762,9 @@ void GpsWidget::drawInfosBasLeft(){
         }
 
         int yy = top + inter*2.3;
-        kv(g1lab, g1val, yy, "pH",      strprintf("%.1f", f.m_last_soil_ph_corr));
+        kv(g1lab, g1val, yy, "pH",      f.m_soil_calibrated ? strprintf("%.1f", f.m_last_soil_ph_corr) : std::string("NON CALIBRE"));
         kv(g2lab, g2val, yy, "lat",     strprintf("%.7f", lat));   yy += inter;
-        kv(g1lab, g1val, yy, "pH brut", strprintf("%.1f", f.m_last_soil_ph));
+        kv(g1lab, g1val, yy, "U (mV)",  strprintf("%.1f", f.m_last_soil_ph));
         kv(g2lab, g2val, yy, "long",    strprintf("%.7f", lon));   yy += inter;
         kv(g1lab, g1val, yy, "Temp",    strprintf("%.1f °C", f.m_last_soil_temp));
         kv(g2lab, g2val, yy, "alt",     strprintf("%.1f m", f.m_hauteur_current)); yy += inter;

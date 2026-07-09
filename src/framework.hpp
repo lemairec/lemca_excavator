@@ -104,6 +104,7 @@ public:
     double m_last_soil_volt;      // tension LISSEE (mV) apres filtre de stabilisation
     double m_last_soil_volt_raw = 0.0;   // tension instantanee (mV), pour debug/diag
     double m_last_soil_pente;
+    bool   m_soil_calibrated = false;    // false = pas de 2 tampons distincts => pente indefinie, aucun pH valide
 
     // --- filtre de stabilisation (cf. Veris Slope10 / Settled Reading) ---
     std::deque<double> m_soil_volt_window;   // echantillons de tension bruts (mV)
