@@ -598,7 +598,10 @@ void OptionWidget::drawPage2(){
         drawText(s, m_part_2_x+0.4*m_part_2_w,y-m_y_inter, sizeText_medium);
     }
     {
-        std::string s = strprintf("Val : %i", f.m_nmea_parser_mcu.m_last_res);
+        // [P4] DEBUG terrain : count ADC brut recu + mV reconstruits (res*3300/4095).
+        // Trempe pH4 -> le count doit valoir ~2126 (=1713mV). Permet de verifier la
+        // coherence counts<->mV au champ ; si l'ecart est grand, calibrer en counts.
+        std::string s = strprintf("cnt %i (%.0f mV)", f.m_nmea_parser_mcu.m_last_res, f.m_last_soil_volt_raw);
         drawText(s, m_part_2_x+0.75*m_part_2_w,y-m_y_inter, sizeText_medium);
     }
     

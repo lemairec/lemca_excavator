@@ -177,39 +177,55 @@ void Framework::setPh(double res){
     m_last_soil_volt = volt;
     m_last_soil_ph = volt;                           // "brut" affiche = tension mV
 
-    // 1) pente = valeur CONSTRUCTEUR (table mV/pH selon temperature) :
-    //    K(T) = 59.16 * (273.15+T)/298.15  -> colle la table (25degC=59.16, 30degC=60.15)
-    const double K25 = 59.16;                        // mV/pH a 25 degC
-    double T = m_config.m_soil_temp_ambiante;
-    double pente = K25 * (273.15 + T) / (273.15 + 25.0);
-
-    // 1bis) option : pente 2 points EMPIRIQUE (mesuree sur les tampons, facon Veris)
-    //       plutot que la pente theorique. Corrige le vieillissement d'electrode.
-    //       [R1] La pente empirique a ete mesuree a T_cal (temperature des tampons
-    //       au moment de la capture) : la compensation Nernst doit repartir de T_cal,
-    //       pas de 25 degC, sinon double compensation / biais thermique.
+    // ============================================================
+    // 1) CONVERSION tension -> pH
+    // ============================================================
     if(m_config.m_soil_pente_empirique != 0){
+        // ---- CHEMIN EMPIRIQUE 2 POINTS (DEFAUT) --------------------------
+        // [P1] La DFRobot Gravity pH Pro V2 (electrode de verre) a une pente
+        // REELLE NEGATIVE (~-64.7 mV/pH), proche de Nernst. On utilise donc la
+        // pente EMPIRIQUE SIGNEE calculee depuis les 2 tampons reels, JAMAIS la
+        // pente theorique positive K25 (cassee pour ce capteur) :
+        //     pente_ref = (bas_m - haut_m) / (bas - haut)
+        //               = (1713-1519)/(4-7) = -64.7 mV/pH
+        //     pH = ph_haut + (volt - ph_haut_m) / pente_ref
+        // L'offset est directement ph_haut_m : PAS de blend K25 (cause du bug
+        // de signe historique qui donnait pH 9.9 au lieu de 4.0 a 1713 mV).
         double dpH = m_config.m_soil_ph_bas - m_config.m_soil_ph_haut;   // ex: 4-7 = -3
+        double pente_ref = 0.0;
         if(fabs(dpH) > 1e-6){
-            double pente_emp = (m_config.m_soil_ph_bas_m - m_config.m_soil_ph_haut_m) / dpH;
-            if(fabs(pente_emp) > 1e-6){
-                // compensation temperature relative a T_cal
-                pente = pente_emp * (273.15 + T) / (273.15 + m_config.m_soil_temp_cal);
-            }
+            pente_ref = (m_config.m_soil_ph_bas_m - m_config.m_soil_ph_haut_m) / dpH;
         }
+        // [R1] Compensation temperature RELATIVE a T_cal (temperature des tampons
+        // au moment de la capture), pas a 25 degC -> pas de double compensation.
+        // Source de T = m_soil_temp_ambiante (saisie manuelle). Par defaut T == T_cal
+        // (20 == 20) -> ratio = 1 -> pente empirique utilisee TELLE QUELLE.
+        double Tcal = m_config.m_soil_temp_cal;
+        if(fabs(273.15 + Tcal) > 1e-6){
+            pente_ref *= (273.15 + m_config.m_soil_temp_ambiante) / (273.15 + Tcal);
+        }
+        m_last_soil_pente = pente_ref;
+        if(fabs(pente_ref) < 1e-9){
+            // garde-fou : points confondus ou pente nulle -> pas de division
+            m_last_soil_ph_corr = m_config.m_soil_ph_haut;
+        } else {
+            m_last_soil_ph_corr = m_config.m_soil_ph_haut
+                                + (volt - m_config.m_soil_ph_haut_m) / pente_ref;
+        }
+    } else {
+        // ---- CHEMIN THEORIQUE HISTORIQUE (compat, plus le defaut) ---------
+        // Pente constructeur K(T) POSITIVE, offset moyenne des 2 points via K25.
+        // Conserve a l'identique pour ne pas casser les installs existantes.
+        const double K25 = 59.16;                        // mV/pH a 25 degC
+        double T = m_config.m_soil_temp_ambiante;
+        double pente = K25 * (273.15 + T) / (273.15 + 25.0);
+        m_last_soil_pente = pente;
+        if(fabs(pente) < 1e-9){ pente = K25; }           // garde-fou division
+        double U_ref_from_haut = m_config.m_soil_ph_haut_m;
+        double U_ref_from_bas  = m_config.m_soil_ph_bas_m + K25 * (m_config.m_soil_ph_bas - m_config.m_soil_ph_haut);
+        double U_ref = (U_ref_from_haut + U_ref_from_bas) / 2.0;
+        m_last_soil_ph_corr = m_config.m_soil_ph_haut + (U_ref - volt) / pente;
     }
-    m_last_soil_pente = pente;
-    if(fabs(pente) < 1e-9){ pente = K25; }           // garde-fou division
-
-    // 2) offset (tension a pH du tampon haut) calcule a partir des 2 points de
-    //    calibrage 4 et 7 (moyenne, pente constructeur a 25 degC) :
-    //    volt(pH) = U_ref - K25*(pH - pH_haut)
-    double U_ref_from_haut = m_config.m_soil_ph_haut_m;
-    double U_ref_from_bas  = m_config.m_soil_ph_bas_m + K25 * (m_config.m_soil_ph_bas - m_config.m_soil_ph_haut);
-    double U_ref = (U_ref_from_haut + U_ref_from_bas) / 2.0;
-
-    // 3) pH corrige (compensation temperature via la pente constructeur K(T))
-    m_last_soil_ph_corr = m_config.m_soil_ph_haut + (U_ref - volt) / pente;
 }
 
 // Etat stabilise reel : filtre stabilise ET echantillon recent. Si les trames se

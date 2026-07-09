@@ -104,17 +104,18 @@ public:
     double m_soil_tp_wait_s = 12;
     
     double m_soil_ph_bas = 4.0;        // pH du tampon bas (reference)
-    double m_soil_ph_bas_m = 1827.0;   // tension mesuree au tampon bas (mV)
+    double m_soil_ph_bas_m = 1713.0;   // tension mesuree au tampon bas (mV) - DFRobot pH Pro V2
     double m_soil_ph_haut = 7.0;       // pH du tampon haut (reference, isopotentiel)
-    double m_soil_ph_haut_m = 1650.0;  // tension mesuree au tampon haut = offset (mV)
+    double m_soil_ph_haut_m = 1519.0;  // tension mesuree au tampon haut = offset (mV) - DFRobot pH Pro V2
     double m_soil_temp_ambiante = 20.0;
 
     // --- stabilisation du signal pH (electrode antimoine, lente/bruitee) ---
-    int    m_soil_filter_window  = 10;   // taille fenetre glissante (echantillons)
+    int    m_soil_filter_window  = 12;   // taille fenetre glissante (echantillons) - divise le bruit blanc ~+/-15 counts par ~3.5
     double m_soil_slope_max_mv_s = 2.0;  // seuil de pente pour "stabilise" (mV/s)
-    // pente 2 points empirique (Veris) au lieu de la pente constructeur K(T).
-    // 0 = comportement historique (pente theorique), 1 = pente mesuree tampons.
-    int    m_soil_pente_empirique = 0;
+    // pente 2 points empirique (mesuree sur tampons) au lieu de la pente constructeur K(T).
+    // 1 = DEFAUT : pente empirique SIGNEE (electrode de verre reelle, pente negative).
+    // 0 = comportement historique (pente theorique positive) - CASSE pour DFRobot pH Pro V2.
+    int    m_soil_pente_empirique = 1;
     // temperature des tampons AU MOMENT de la capture (ref de la pente empirique).
     // Ecrite en meme temps que bas_m/haut_m ; defaut = m_soil_temp_ambiante.
     double m_soil_temp_cal = 20.0;
