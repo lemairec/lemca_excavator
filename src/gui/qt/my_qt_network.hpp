@@ -31,6 +31,8 @@ public:
 
     // Envoi du fichier soil.txt du job courant a Land Manager
     bool uploadSoil(Config & config, const std::string & file_path);
+    bool m_soil_uploading = false;
+    std::string m_soil_status;   // "" / "envoi..." / "carte envoyee" / "echec ..."
 
     // Verification du login Land Manager (sans envoi)
     void checkLogin(Config & config);

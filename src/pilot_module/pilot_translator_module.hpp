@@ -168,6 +168,7 @@ public:
     int m_cycle_lamp = 0;
     void updateCycle();
     int m_begin_cycle = 0;
+    int m_last_cycle_millis = 0; //tick precedent, pour geler l'horloge du cycle
     std::string m_cycle_m = "";
     void startCycle();
     void resetCycle();

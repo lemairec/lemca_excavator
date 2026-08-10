@@ -429,7 +429,8 @@ void PilotTranslatorModule::startCycle(){
     if(m_etat != SerialEtat_Cycle){
         m_etat = SerialEtat_Cycle;
         m_begin_cycle = getMillis();
-        
+        m_last_cycle_millis = m_begin_cycle;
+
         resetCycle();
     }
 }
@@ -441,17 +442,30 @@ void PilotTranslatorModule::updateCycle(){
     m_cycle_lamp = 0;
     Framework & f = Framework::instance();
     
-    int millis = getMillis() - m_begin_cycle;
+    int now = getMillis();
+    int dt = now - m_last_cycle_millis;
+    m_last_cycle_millis = now;
+
+    int millis = now - m_begin_cycle;
     double s = millis*0.001;
-    if(f.m_pilot_translator_module.m_point_3){
-        m_cycle_m = strprintf("%.1f ---3p", s);
-        return;
-    }
-    if( s < 0 || s > 100){
+    if(m_etat != SerialEtat_Cycle || s < 0 || s > 100){
         m_cycle_m = strprintf("%.1f ---off", s);
         return;
     }
-    
+
+    //Securite : pendant les phases mecaniques (down / down wait / up) on n'agit
+    //que si le 3P est baisse ET qu'on avance. Sinon relais coupes et horloge
+    //gelee -> la phase reprend sa course complete quand tout revient ok.
+    //Passe la remontee (data wait / record data), plus rien n'interrompt :
+    //la mesure doit etre enregistree.
+    double t_fin_meca = m_soil_tp_down_s + m_soil_tp_down_wait_s + m_soil_tp_down_s + m_soil_tp_up_s;
+    if(s < t_fin_meca && (m_point_3 || f.m_vitesse <= 0.5)){
+        m_begin_cycle += dt;
+        m_cycle_m = strprintf("%.1f %s", s, m_point_3 ? "---3p" : "---vitesse");
+        return;
+    }
+
+
     if(s < m_soil_tp_down_s){
         m_cycle_down = 1;
         m_cycle_lamp = 1;

@@ -33,9 +33,13 @@ void JobWidget::setSize(int width, int height){
 
 void JobWidget::open(){
     BaseWidget::open();
-    Config & config = Framework::instance().m_config;
+    Framework & f = Framework::instance();
+    Config & config = f.m_config;
     m_client.m_text = config.m_landmanager_client;
     m_field.m_text  = config.m_landmanager_field;
+    if(!f.m_qt_network.m_soil_uploading){
+        f.m_qt_network.m_soil_status.clear(); // pas de statut perime a la reouverture
+    }
 }
 
 void JobWidget::draw(){
@@ -63,8 +67,21 @@ void JobWidget::draw(){
     drawText(st, m_x2+0.5*m_width2, m_y2+0.62*m_height2, sizeText_medium, true);
     m_painter->setPen(m_pen_black);
 
-    drawButtonLabel2(m_button_send, net.m_lm_connected ? COLOR_VALIDATE : COLOR_FAIL);
+    drawButtonLabel2(m_button_send, net.m_soil_uploading ? COLOR_OTHER
+                                  : (net.m_lm_connected ? COLOR_VALIDATE : COLOR_FAIL));
     drawButtonLabel2(m_button_close);
+
+    // statut de l'envoi de la carte
+    if(!net.m_soil_status.empty()){
+        QColor cs = QColor(0x88,0x88,0x88); // en cours
+        if(!net.m_soil_uploading){
+            cs = net.m_soil_status == "carte envoyee" ? QColor(0x35,0xB8,0x56)
+                                                      : QColor(0xFF,0x37,0x4B);
+        }
+        m_painter->setPen(QPen(cs));
+        drawText(net.m_soil_status, m_x2+0.5*m_width2, m_y2+0.82*m_height2, sizeText_medium, true);
+        m_painter->setPen(m_pen_black);
+    }
 
     if(!m_keyboard_widget.m_close){
         m_keyboard_widget.draw();
@@ -93,12 +110,13 @@ int JobWidget::onMouse(int x, int y){
         m_keyboard_widget.setValueGuiKeyBoard(&m_field);
     }
 
-    if(m_button_send.isActive(x, y)){
+    if(m_button_send.isActive(x, y) && !f.m_qt_network.m_soil_uploading){
         config.m_landmanager_client = m_client.m_text;
         config.m_landmanager_field  = m_field.m_text;
         config.save();
         const std::string & path = f.m_job_manager.m_data_path;
         if(path.empty()){
+            f.m_qt_network.m_soil_status = "aucun job actif";
             WARN("envoi sol: aucun job actif");
         } else {
             f.m_qt_network.uploadSoil(config, path);

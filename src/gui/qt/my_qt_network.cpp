@@ -115,16 +115,20 @@ void MyQTNetwork::saveParcelle(const std::string & name, const std::string & jso
 static QNetworkAccessManager * soil_manager = nullptr;
 
 bool MyQTNetwork::uploadSoil(Config & config, const std::string & file_path){
+    if(m_soil_uploading){ return false; }
+
     QString token = QString::fromStdString(config.m_landmanager_token);
     QString user  = QString::fromStdString(config.m_landmanager_user);
     QString pass  = QString::fromStdString(config.m_landmanager_password);
     if(token.isEmpty() && (user.isEmpty() || pass.isEmpty())){
+        m_soil_status = "identifiants manquants";
         WARN("Land Manager: renseignez 'landmanager_user'/'landmanager_password' (ou 'landmanager_token') dans le .ini");
         return false;
     }
 
     QFile * file = new QFile(QString::fromStdString(file_path));
     if(!file->open(QIODevice::ReadOnly)){
+        m_soil_status = "soil.txt introuvable";
         WARN("soil.txt introuvable : " << file_path);
         delete file;
         return false;
@@ -166,6 +170,12 @@ bool MyQTNetwork::uploadSoil(Config & config, const std::string & file_path){
         QByteArray creds = (user + ":" + pass).toUtf8().toBase64();
         request.setRawHeader("Authorization", "Basic " + creds);
     }
+#if QT_VERSION >= QT_VERSION_CHECK(5,15,0)
+    request.setTransferTimeout(20000); // evite un "envoi..." bloque a l'infini
+#endif
+
+    m_soil_uploading = true;
+    m_soil_status = "envoi...";
 
     QNetworkReply * reply = soil_manager->post(request, multiPart);
     multiPart->setParent(reply); // libere le multipart avec la reponse
@@ -174,11 +184,21 @@ bool MyQTNetwork::uploadSoil(Config & config, const std::string & file_path){
 }
 
 void MyQTNetwork::handleSoilUpload(QNetworkReply *reply){
+    m_soil_uploading = false;
     if(reply->error()){
+        int code = reply->attribute(QNetworkRequest::HttpStatusCodeAttribute).toInt();
         std::string error = reply->errorString().toUtf8().constData();
         std::string body = reply->readAll().toStdString();
+        if(code == 401){
+            m_soil_status = "echec : login refuse";
+        } else if(code > 0){
+            m_soil_status = "echec serveur (" + std::to_string(code) + ")";
+        } else {
+            m_soil_status = "echec : pas de reseau";
+        }
         WARN("upload soil erreur: " << error << " " << body);
     } else {
+        m_soil_status = "carte envoyee";
         std::string s = reply->readAll().toStdString();
         INFO("upload soil ok: " << s);
     }

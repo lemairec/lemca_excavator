@@ -110,7 +110,7 @@ public:
     double m_soil_temp_ambiante = 20.0;
 
     // --- stabilisation du signal pH (electrode antimoine, lente/bruitee) ---
-    int    m_soil_filter_window  = 12;   // taille fenetre glissante (echantillons) - divise le bruit blanc ~+/-15 counts par ~3.5
+    int    m_soil_filter_window  = 24;   // taille fenetre glissante (echantillons) - divise le bruit blanc ~+/-15 counts par ~4.9
     double m_soil_slope_max_mv_s = 2.0;  // seuil de pente pour "stabilise" (mV/s)
     // pente 2 points empirique (mesuree sur tampons) au lieu de la pente constructeur K(T).
     // 1 = DEFAUT : pente empirique SIGNEE (electrode de verre reelle, pente negative).
