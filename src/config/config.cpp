@@ -90,6 +90,7 @@ void Config::work(QSettings & settings, bool save){
     saveLoadDouble(settings, "m_soil_ph_haut", m_soil_ph_haut, save);
     saveLoadDouble(settings, "m_soil_ph_haut_m", m_soil_ph_haut_m, save);
     saveLoadDouble(settings, "m_soil_temp_ambiante", m_soil_temp_ambiante, save);
+    saveLoadDouble(settings, "m_soil_ph_offset", m_soil_ph_offset, save);
     saveLoadInt(settings, "m_soil_filter_window", m_soil_filter_window, save);
     saveLoadDouble(settings, "m_soil_slope_max_mv_s", m_soil_slope_max_mv_s, save);
     saveLoadInt(settings, "m_soil_pente_empirique", m_soil_pente_empirique, save);

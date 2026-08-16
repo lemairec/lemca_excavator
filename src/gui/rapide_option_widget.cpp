@@ -341,6 +341,7 @@ void RapideOptionWidget::onMousePage5(int x, int y){
 // Page 6
 void RapideOptionWidget::setSizePage6(int width, int height){
     //m_button_reset.setResizeStd(m_x_middle, 0.6*m_height2, Langage::getKey("RAPIDE_RESET"), true);
+    m_value_ph_offset.setResize(m_x_middle, 0.25*m_height2, m_petit_button);
     m_button_map.setResizeStd(m_x_middle, 0.45*m_height2, "Carte sat", true, 200, 50);
     m_button_diag.setResizeStd(m_x_middle, 0.7*m_height2, Langage::getKey("DIAGNOSTIC"), true, 200, 50);
 }
@@ -397,6 +398,12 @@ void RapideOptionWidget::drawPage6(){
     
     //drawButtonLabel2(m_button_reset);
     Config & config = Framework::instance().m_config;
+
+    // offset pH : decale UNIQUEMENT l'affichage de la carte, pas soil.txt
+    drawText("Offset pH", m_x+m_width2/2, 0.18*m_height2, sizeText_medium, true);
+    m_value_ph_offset.m_value = config.m_soil_ph_offset;
+    drawValueGuiKeyPad2(m_value_ph_offset);
+
     m_button_map.m_label = config.m_map_enable ? "Carte sat : ON" : "Carte sat : OFF";
     drawButtonLabel2(m_button_map, config.m_map_enable ? COLOR_VALIDATE : COLOR_FAIL);
     drawButtonLabel2(m_button_diag);
@@ -404,6 +411,13 @@ void RapideOptionWidget::drawPage6(){
 
 void RapideOptionWidget::onMousePage6(int x, int y){
     Framework & f = Framework::instance();
+    if(onMouseKeyPad2(m_value_ph_offset, x, y, 0.1)){
+        // borne : au-dela le pH affiche sortirait de l'echelle 0-14 (pastilles noires)
+        if(m_value_ph_offset.m_value >  2){ m_value_ph_offset.m_value =  2; }
+        if(m_value_ph_offset.m_value < -2){ m_value_ph_offset.m_value = -2; }
+        f.m_config.m_soil_ph_offset = m_value_ph_offset.m_value;
+        loadConfig();
+    }
     if(m_button_map.isActive(x, y) != 0){
         f.m_config.m_map_enable = !f.m_config.m_map_enable;
         loadConfig();
@@ -589,13 +603,8 @@ void RapideOptionWidget::drawFalse(ValueGui & keypad, std::string s){
 }
 
 void RapideOptionWidget::onMouse(ValueGui & keypad, double x, double y, double pas){
-    if(keypad.m_button_plus.isActive(x, y)){
-        keypad.m_value += pas;
-    }
-    if(keypad.m_button_moins.isActive(x, y)){
-        keypad.m_value -= pas;
-    }
-       
+    onMouseKeyPad2(keypad, x, y, pas);   // +/- (recale sur le pas)
+
     if(isActiveValueGuiKeyPad(keypad,x, y)){
         m_keypad_widget.m_close = false;
         m_keypad_widget.setValueGuiKeyPad(&keypad);

@@ -90,6 +90,7 @@ public:
     ButtonGui m_button_diag;
     ButtonGui m_button_map;
     ValueGui m_largeur;
+    ValueGui m_value_ph_offset;
     void setSizePage6(int width, int height);
     void drawPage6();
     void onMousePage6(int x, int y);

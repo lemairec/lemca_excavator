@@ -108,6 +108,8 @@ public:
     double m_soil_ph_haut = 7.0;       // consigne tampon standard (independante de la sonde)
     double m_soil_ph_haut_m = 0.0;     // 0.0 = non calibre ; l'operateur calibre sur tampons pour chaque sonde
     double m_soil_temp_ambiante = 20.0;
+    // decalage AFFICHAGE carte uniquement (soil.txt garde le pH brut)
+    double m_soil_ph_offset = 0.0;
 
     // --- stabilisation du signal pH (electrode antimoine, lente/bruitee) ---
     int    m_soil_filter_window  = 24;   // taille fenetre glissante (echantillons) - divise le bruit blanc ~+/-15 counts par ~4.9

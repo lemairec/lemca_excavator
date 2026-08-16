@@ -768,7 +768,7 @@ void GpsWidget::drawInfosBasLeft(){
         kv(g2lab, g2val, yy, "long",    strprintf("%.7f", lon));   yy += inter;
         kv(g1lab, g1val, yy, "Temp",    strprintf("%.1f °C", f.m_last_soil_temp));
         kv(g2lab, g2val, yy, "alt",     strprintf("%.1f m", f.m_hauteur_current)); yy += inter;
-        kv(g1lab, g1val, yy, "Cond",    strprintf("%.0f µS", f.m_last_soil_cond)); yy += inter;
+        kv(g1lab, g1val, yy, "Offset pH", strprintf("%+.1f", f.m_config.m_soil_ph_offset)); yy += inter;
         kv(g1lab, g1val, yy, "Hum",     strprintf("%.0f %%", f.m_last_soil_hum));
 
         yy += inter*1.6;
@@ -1825,24 +1825,30 @@ void GpsWidget::drawMesures(){
     m_painter->setBrush(m_brush_red);
     
     
+    // m_mesures garde le pH brut (celui ecrit dans soil.txt) ; l'offset n'est applique
+    // qu'ici, au dessin, donc il recolore aussi les points deja releves.
+    double offset = f.m_config.m_soil_ph_offset;
+
     for(auto p: f.m_mesures){
         double x1, y1;
         myProjete2(p.m_point.m_x, p.m_point.m_y, x1, y1);
         double l = 10*m_zoom/2;
-        
-        if(p.m_ph <= 7){
-            int value = p.m_ph/7.0*255;
+        double ph = p.m_ph + offset;
+        if(ph < 0){ ph = 0; }   // sinon QColor recoit une composante negative
+
+        if(ph <= 7){
+            int value = ph/7.0*255;
             QBrush brush = QBrush (QColor(255,value, value));
             m_painter->setBrush(brush);
-        } else if(p.m_ph <= 14){
-            int value = 255-(p.m_ph-7.0)/7.0*255;
+        } else if(ph <= 14){
+            int value = 255-(ph-7.0)/7.0*255;
             QBrush brush = QBrush (QColor(value, 255, value));
             m_painter->setBrush(brush);
         } else {
             m_painter->setBrush(m_brush_black);
         }
         m_painter->drawEllipse(x1-l, y1-l, 2*l, 2*l);
-        std::string s = strprintf("%.1f", p.m_ph);
+        std::string s = strprintf("%.1f", ph);
         drawText(s, x1, y1, SizeText::sizeText_little, true);
     }
 }

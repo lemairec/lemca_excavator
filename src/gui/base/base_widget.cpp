@@ -4,6 +4,7 @@
 #include "../../framework.hpp"
 #include <iostream>
 #include <sstream>
+#include <cmath>
 
 //#define DEBUG_GUI
 
@@ -446,11 +447,13 @@ double getNextValue(double value, bool positif){
 }
 
 bool BaseWidget::onMouseKeyPad2(ValueGui & keypad, double x, double y, double inter){
+    // recale sur un multiple du pas : sinon l'accumulation binaire de 0.1 finit par
+    // donner 2.77556e-17 au lieu de 0, affiche en notation exponentielle.
     if(keypad.m_button_plus.isActive(x, y)){
         if(inter == 0){
             keypad.m_value = getNextValue(keypad.m_value, true);
         } else {
-            keypad.m_value += inter;
+            keypad.m_value = std::round((keypad.m_value + inter)/inter)*inter;
         }
         return true;
     }
@@ -458,7 +461,7 @@ bool BaseWidget::onMouseKeyPad2(ValueGui & keypad, double x, double y, double in
         if(inter == 0){
             keypad.m_value = getNextValue(keypad.m_value, false);
         } else {
-            keypad.m_value -= inter;
+            keypad.m_value = std::round((keypad.m_value - inter)/inter)*inter;
         }
         return true;
     }
