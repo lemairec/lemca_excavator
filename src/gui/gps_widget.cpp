@@ -773,6 +773,23 @@ void GpsWidget::drawInfosBasLeft(){
 
         yy += inter*1.6;
         drawText(f.m_pilot_translator_module.m_cycle_m, cardx+cardw/2, yy, sizeText_little, true, true);
+
+        //mode auto : maille, distance depuis le dernier point, et warning vitesse
+        PilotTranslatorModule & pil = f.m_pilot_translator_module;
+        yy += inter;
+        if(f.m_config.m_soil_auto_dist){
+            std::string d = pil.m_dist_last_mesure_m < 0
+                ? std::string("--")
+                : strprintf("%.1f m", pil.m_dist_last_mesure_m);
+            std::string s2 = strprintf("maille %.0f m   dist %s", f.m_config.m_soil_maille_m, d.data());
+            drawText(s2, cardx+cardw/2, yy, sizeText_little, true, true);
+        }
+        if(f.m_config.m_soil_loop && f.m_config.m_soil_auto_dist && f.m_vitesse > pil.m_vitesse_max_kmh){
+            yy += inter;
+            m_painter->setPen(QPen(QColor(0xFF,0x37,0x4B)));
+            std::string s2 = strprintf("TROP VITE : max %.1f km/h", pil.m_vitesse_max_kmh);
+            drawText(s2, cardx+cardw/2, yy, sizeText_little, true);
+        }
     } else {
         int x1 = 50;
         y+=inter;
@@ -1832,8 +1849,8 @@ void GpsWidget::drawMesures(){
     for(auto p: f.m_mesures){
         double x1, y1;
         myProjete2(p.m_point.m_x, p.m_point.m_y, x1, y1);
-        //diametre du point = maille visee : passages tous les 20 m -> resolution 20x20 m
-        double l = 20*m_zoom/2;
+        //diametre du point = maille visee (config) : passages tous les X m -> resolution XxX m
+        double l = f.m_config.m_soil_maille_m*m_zoom/2;
         double ph = p.m_ph + offset;
         if(ph < 0){ ph = 0; }   // sinon QColor recoit une composante negative
 

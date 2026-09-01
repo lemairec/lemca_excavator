@@ -479,6 +479,10 @@ void OptionWidget::setSizePage2(){
     m_soil_slope_max.setResize(m_part_1_x3, y, m_petit_button);
     y+= m_y_inter;
     m_soil_stale.setResize(m_part_1_x3, y, m_petit_button);
+    //maille = distance entre 2 points en auto ET diametre du cercle sur la carte
+    m_soil_auto_dist.setResize(m_part_1_x2, soil ? y+2.8*m_y_inter : y_hide, m_petit_button);
+    m_soil_auto_dist.m_label = "Mode distance";
+    m_soil_maille.setResize(m_part_1_x3, soil ? y+3.8*m_y_inter : y_hide, m_petit_button);
 
     m_select_soil.clear();
     m_select_soil.addValue("analogique");
@@ -553,6 +557,19 @@ void OptionWidget::drawPage2(){
         m_soil_stale.m_value = config.m_soil_stale_ms;
         drawText("Timeout (ms)", m_part_1_x2, m_soil_stale.m_y, sizeText_medium);
         drawValueGuiKeyPad2(m_soil_stale);
+    }
+    if(soil){
+        drawPart1Title(m_soil_auto_dist.m_y-1.6*m_y_inter, m_y_inter*4.0, "Auto");
+        drawButtonCheck(m_soil_auto_dist, config.m_soil_auto_dist);
+        m_soil_maille.m_value = config.m_soil_maille_m;
+        drawText("Maille (m)", m_part_1_x2, m_soil_maille.m_y, sizeText_medium);
+        drawValueGuiKeyPad2(m_soil_maille);
+        //vitesse max pour tenir la maille (duree du cycle x vitesse <= maille)
+        double t = f.m_pilot_translator_module.getCycleDuration_s();
+        std::string s2 = config.m_soil_auto_dist
+            ? strprintf("cycle %.1f s  ->  max %.1f km/h", t, t > 0 ? config.m_soil_maille_m/t*3.6 : 0)
+            : std::string("mode temps : cycles enchaines");
+        drawText(s2, m_part_1_x2, m_soil_maille.m_y+m_y_inter*0.8, sizeText_little);
     }
 
     drawButtonLabel2(m_select_soil.m_buttonOpen);
@@ -683,6 +700,15 @@ void OptionWidget::onMousePage2(int x, int y){
     if(onMouseKeyPad2(m_soil_stale, x, y, 250)){
         if(m_soil_stale.m_value < 0){ m_soil_stale.m_value = 0; }
         config.m_soil_stale_ms = (int)m_soil_stale.m_value;
+        loadConfig();
+    };
+    if(m_soil_auto_dist.isActive(x, y)){
+        config.m_soil_auto_dist = !config.m_soil_auto_dist;
+        loadConfig();
+    }
+    if(onMouseKeyPad2(m_soil_maille, x, y, 1)){
+        if(m_soil_maille.m_value < 1){ m_soil_maille.m_value = 1; }
+        config.m_soil_maille_m = m_soil_maille.m_value;
         loadConfig();
     };
     if(onMouseKeyPad2(m_soil_tp_start_delay, x, y, 0.1)){

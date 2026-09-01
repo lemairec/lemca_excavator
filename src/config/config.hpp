@@ -98,6 +98,11 @@ public:
     int m_etat = 0; //0 excavator, 1 arpentage, 2 soil
     
     int m_soil_capteur = 0; //0 analogique, 1 numerique
+    //mode auto : true = un point tous les m_soil_maille_m metres,
+    //false = enchainement immediat des cycles (ancien comportement "temps")
+    bool m_soil_auto_dist = true;
+    //maille visee : distance entre 2 points ET diametre du cercle dessine
+    double m_soil_maille_m = 20;
     double m_soil_tp_start_delay_s = 0;
     double m_soil_tp_down_s = 1;
     double m_soil_tp_down_wait_s = 2;

@@ -158,6 +158,7 @@ public:
     int m_arduino_send_v = 0;
     void writePilotSerialString(const std::string & l);
     
+    double m_soil_maille_m = 20;
     double m_soil_tp_start_delay_s = 0;
     double m_soil_tp_down_s = 1;
     double m_soil_tp_down_wait_s = 2;
@@ -172,6 +173,19 @@ public:
     int m_last_cycle_millis = 0; //tick precedent, pour geler l'horloge du cycle
     std::string m_cycle_m = "";
     void startCycle();
+    
+    //declenchement automatique du cycle tous les m_soil_maille_m metres
+    void updateAuto();
+    double getCycleDuration_s();
+    double m_dist_last_mesure_m = -1;   //-1 = aucun point de reference
+    double m_vitesse_max_kmh = 0;       //vitesse max pour tenir la maille
+    
+    //Le delai de depart ne sert qu'apres une descente du 3P (entree de ligne),
+    //pas a chaque cycle : il est arme sur le front descendant du capteur.
+    double m_cycle_delay_s = 0;         //delai applique au cycle en cours
+    bool m_start_delay_armed = false;
+    bool m_prev_point_3 = false;
+    bool m_new_pass = true;             //descente du 3P -> point des le depart de la ligne
     void resetCycle();
     
     void handle25ms();

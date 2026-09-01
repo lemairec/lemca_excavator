@@ -48,6 +48,7 @@ void PilotTranslatorModule::initOrLoad(const Config& config)
     m_command_capteur_vitesse_max_mm_s = config.m_command_capteur_vitesse_max_mm_s;
     m_command_bineuse_debatement_mm = config.m_command_bineuse_debatement_mm;
 
+    m_soil_maille_m = config.m_soil_maille_m;
     m_soil_tp_start_delay_s = config.m_soil_tp_start_delay_s;
     m_soil_tp_down_s = config.m_soil_tp_down_s;
     m_soil_tp_down_wait_s = config.m_soil_tp_down_wait_s;
@@ -429,6 +430,9 @@ void PilotTranslatorModule::resetCycle(){
 void PilotTranslatorModule::startCycle(){
     if(m_etat != SerialEtat_Cycle){
         m_etat = SerialEtat_Cycle;
+        //delai de depart : seulement pour le 1er cycle apres une descente du 3P
+        m_cycle_delay_s = m_start_delay_armed ? m_soil_tp_start_delay_s : 0;
+        m_start_delay_armed = false;
         m_begin_cycle = getMillis();
         m_last_cycle_millis = m_begin_cycle;
 
@@ -436,6 +440,56 @@ void PilotTranslatorModule::startCycle(){
     }
 }
 
+
+double PilotTranslatorModule::getCycleDuration_s(){
+    //descente + attente bas + descente + remontee + attente mesure + 1s d'enregistrement.
+    //Le delai de depart n'y est pas : il ne s'applique qu'apres une descente du 3P,
+    //donc une seule fois par ligne, pas a chaque maille.
+    return 2*m_soil_tp_down_s + m_soil_tp_down_wait_s
+         + m_soil_tp_up_s + m_soil_tp_wait_s + 1;
+}
+
+//Mode auto : un cycle tous les m_soil_maille_m metres parcourus depuis le
+//dernier point enregistre. Le cycle dure getCycleDuration_s() -> au dela de
+//m_vitesse_max_kmh la maille ne peut pas etre tenue (warning affiche a l'ecran).
+void PilotTranslatorModule::updateAuto(){
+    Framework & f = Framework::instance();
+    
+    //front descendant du 3P = entree de ligne : delai de depart arme, et un point
+    //est pris des le depart sans regarder la distance au point precedent
+    //(le dernier point peut etre a l'autre bout du champ apres un demi-tour).
+    if(m_prev_point_3 && !m_point_3){
+        m_start_delay_armed = true;
+        m_new_pass = true;
+    }
+    m_prev_point_3 = m_point_3;
+    
+    double t = getCycleDuration_s();
+    m_vitesse_max_kmh = (t > 0) ? f.m_config.m_soil_maille_m/t*3.6 : 0;
+    
+    m_dist_last_mesure_m = -1;
+    if(!f.m_mesures.empty() && f.m_point_current){
+        m_dist_last_mesure_m = f.m_mesures.back().m_point.distance(*f.m_point_current);
+    }
+    
+    if(!f.m_config.m_soil_loop || !f.m_config.m_soil_auto_dist || f.getEtat() != Etat_Soil){
+        return;
+    }
+    if(m_etat == SerialEtat_Cycle){
+        return;
+    }
+    if(m_point_3 || f.m_vitesse <= 0.5){   //outil releve ou machine a l'arret
+        return;
+    }
+    if(!f.m_point_current){   //sans position GPS on ne saurait pas espacer les points
+        return;
+    }
+    if(!m_new_pass && m_dist_last_mesure_m >= 0 && m_dist_last_mesure_m < f.m_config.m_soil_maille_m){
+        return;
+    }
+    m_new_pass = false;
+    startCycle();
+}
 
 void PilotTranslatorModule::updateCycle(){
     m_cycle_up = 0;
@@ -459,8 +513,8 @@ void PilotTranslatorModule::updateCycle(){
     //gelee -> la phase reprend sa course complete quand tout revient ok.
     //Passe la remontee (data wait / record data), plus rien n'interrompt :
     //la mesure doit etre enregistree.
-    //t0 : delai reglable apres la descente du 3P avant le depart du cycle
-    double t0 = m_soil_tp_start_delay_s;
+    //t0 : delai apres la descente du 3P (0 pour les cycles suivants de la ligne)
+    double t0 = m_cycle_delay_s;
     double t1 = t0 + m_soil_tp_down_s;
     double t2 = t1 + m_soil_tp_down_wait_s;
     double t3 = t2 + m_soil_tp_down_s + m_soil_tp_up_s;
@@ -480,13 +534,14 @@ void PilotTranslatorModule::updateCycle(){
         m_cycle_lamp = 1;
         m_cycle_m = strprintf("%.1f down", s);
     } else if(s < t2){
-        m_cycle_lamp = 1;
-        m_cycle_m = strprintf("%.1f down wait", s);
-    } else if(s < t3){
+        //sonde dans le sol : c'est ici qu'on fige la position du point
         if(f.m_position_module.m_last_gga){
             f.m_record_lat = f.m_position_module.m_last_gga->m_latitude;
             f.m_record_lon = f.m_position_module.m_last_gga->m_longitude;
         }
+        m_cycle_lamp = 1;
+        m_cycle_m = strprintf("%.1f down wait", s);
+    } else if(s < t3){
         m_cycle_up = 1;
         m_cycle_lamp = 1;
         m_cycle_m = strprintf("%.1f up", s);
@@ -499,8 +554,10 @@ void PilotTranslatorModule::updateCycle(){
             f.m_job_manager.addData(s);
             f.addMesure(f.m_record_lat, f.m_record_lon, f.m_last_soil_ph_corr);
             resetCycle();
-            if(f.m_config.m_soil_loop){
-                m_etat = SerialEtat_Temp;
+            m_etat = SerialEtat_Temp;
+            //mode distance : c'est updateAuto() qui relancera a la maille suivante.
+            //mode temps (case decochee) : enchainement immediat, comme avant.
+            if(f.m_config.m_soil_loop && !f.m_config.m_soil_auto_dist){
                 startCycle();
             }
         }

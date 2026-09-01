@@ -106,7 +106,9 @@ public:
     // reglages du filtre de stabilisation pH (exposes au champ)
     ValueGui m_soil_filter_window;   // taille fenetre (echantillons)
     ValueGui m_soil_slope_max;       // seuil de pente (mV/s)
-    ValueGui m_soil_stale;           // timeout de staleness (ms)
+    ValueGui m_soil_stale;
+    ValueGui m_soil_maille;
+    ButtonGui m_soil_auto_dist;           // timeout de staleness (ms)
     
     SelectButtonGui m_select_soil;
     
