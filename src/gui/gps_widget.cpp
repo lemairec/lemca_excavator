@@ -1832,7 +1832,8 @@ void GpsWidget::drawMesures(){
     for(auto p: f.m_mesures){
         double x1, y1;
         myProjete2(p.m_point.m_x, p.m_point.m_y, x1, y1);
-        double l = 10*m_zoom/2;
+        //diametre du point = maille visee : passages tous les 20 m -> resolution 20x20 m
+        double l = 20*m_zoom/2;
         double ph = p.m_ph + offset;
         if(ph < 0){ ph = 0; }   // sinon QColor recoit une composante negative
 
