@@ -4,6 +4,7 @@
 #include "environnement.hpp"
 #include "util/util.hpp"
 #include "util/directory_manager.hpp"
+#include "util/csv.hpp"
 
 
 #include <math.h>
@@ -842,6 +843,24 @@ void Framework::getAntennaH(){
     m_serialModule.writePort1GpsStr("$CFG NET\r\n");
     m_serialModule.writePort1GpsStr("$CFG TERRAIN\r\n");
     m_serialModule.writePort1GpsStr("$CFG TERRAIN HEIGHT\r\n");
+}
+
+//soil.txt : lat;lon;hum;temp;cond;ph_corr;n;p;k;ph_brut  (decimales avec virgule)
+void Framework::loadMesures(const std::string & path){
+    m_mesures.clear();
+    CSVFile file;
+    file.importFile(path);
+    for(auto & line : file.m_lines){
+        if(line.m_words.size() < 6){
+            continue;
+        }
+        try {
+            addMesure(line.getDouble(0), line.getDouble(1), line.getDouble(5));
+        } catch(const std::exception & e){
+            WARN("loadMesures : ligne illisible " << line.m_words[0]);
+        }
+    }
+    INFO("loadMesures " << path << " -> " << m_mesures.size() << " points");
 }
 
 void Framework::addMesure(double latitude, double longitude, double ph){

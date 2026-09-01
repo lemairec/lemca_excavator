@@ -277,6 +277,7 @@ public:
     
     std::vector<Mesure> m_mesures;
     void addMesure(double latitude, double lonbgitude, double ph);
+    void loadMesures(const std::string & path);   //relit un soil.txt (reprise de job)
     
     double m_angle_roue_by_yawl_deg = 0;
      

@@ -9,6 +9,54 @@ JobManager::JobManager(){
     
 }
 
+std::string JobManager::jobDir(){
+    return DirectoryManager::instance().getHome()+"/lemca_data/job";
+}
+
+std::vector<std::string> JobManager::listJobs(){
+    std::vector<std::string> res;
+    QDir dir(QString::fromStdString(jobDir()));
+    //noms YYYY_MM_DD_HH_MM_SS -> tri alphabetique inverse = plus recent d'abord
+    for(const QString & s : dir.entryList(QDir::Dirs|QDir::NoDotAndDotDot, QDir::Name|QDir::Reversed)){
+        res.push_back(s.toStdString());
+    }
+    return res;
+}
+
+int JobManager::countPoints(const std::string & name){
+    std::ifstream file(jobDir()+"/"+name+"/soil.txt");
+    int n = 0;
+    std::string line;
+    while(std::getline(file, line)){
+        if(line.size() > 5){   //ignore les lignes vides / fins de fichier
+            n++;
+        }
+    }
+    return n;
+}
+
+bool JobManager::openJob(const std::string & name){
+    std::string dir = jobDir()+"/"+name;
+    if(name.empty() || !QDir(QString::fromStdString(dir)).exists()){
+        WARN("openJob : job introuvable " << dir);
+        return false;
+    }
+    if(m_log_file.is_open()){ m_log_file.close(); }
+    if(m_data_file.is_open()){ m_data_file.close(); }
+    
+    m_begin = name;   //non vide -> init() ne creera plus de nouveau job
+    m_file = dir+"/job.txt";
+    m_log_path = dir+"/log.txt";
+    m_log_file.open(m_log_path, std::ios::app);
+    m_data_path = dir+"/soil.txt";
+    m_data_file.open(m_data_path, std::ios::app);
+    handle60s();
+    
+    Framework::instance().loadMesures(m_data_path);
+    INFO("openJob " << m_data_path);
+    return true;
+}
+
 void JobManager::init(){
     if(m_begin.empty()){
         std::string dir = DirectoryManager::instance().getHome()+"/lemca_data/job";
