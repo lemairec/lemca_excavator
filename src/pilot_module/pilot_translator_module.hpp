@@ -154,6 +154,12 @@ public:
     void setLamp(bool open);
     void inverseLamp();
     
+    //joystick MCU : 'L'/'R' = haut/bas (geres cote MCU), 'A' = clean on/off.
+    //La trame repete l'etat du joystick -> on ne bascule que sur le front.
+    void setJoystick(char c);
+    char m_joystick_last = 0;
+    bool isLampOpen(){return m_lamp_open;};   //etat reel de la sortie clean
+    
     std::string m_pilot_version = "";
     int m_arduino_send_v = 0;
     void writePilotSerialString(const std::string & l);

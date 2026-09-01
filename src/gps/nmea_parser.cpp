@@ -373,13 +373,7 @@ void NmeaParser::parseLemca(){
     readUntilCommat();
     
     char c = readNextCharAndCommat();
-    if(c == 'L'){
-        //Framework::instance().setJoystickTouch(JoystickKey_Left);
-    } else if(c == 'R'){
-        //Framework::instance().setJoystickTouch(JoystickKey_Right);
-    } else if(c == 'A'){
-        //Framework::instance().setJoystickTouch(JoystickKey_Auto);
-    }
+    Framework::instance().m_pilot_translator_module.setJoystick(c);
     
     int res = readInt();
     char c_3eme_point = readNextCharAndCommat();
@@ -400,13 +394,7 @@ void NmeaParser::parseLemcaTranslatorV2(){
     readUntilCommat();
     
     char c = readNextCharAndCommat();
-    if(c == 'L'){
-        //FrameworkVision::instance().setJoystickTouch(JoystickKey_Left);
-    } else if(c == 'R'){
-        //FrameworkVision::instance().setJoystickTouch(JoystickKey_Right);
-    } else if(c == 'A'){
-        //FrameworkVision::instance().setJoystickTouch(JoystickKey_Auto);
-    }
+    Framework::instance().m_pilot_translator_module.setJoystick(c);
     
     int res = readInt();
     char c_3eme_point = readNextCharAndCommat();

@@ -174,6 +174,14 @@ void PilotTranslatorModule::setLamp(bool open){
     m_must_be_change = true;
 }
 
+void PilotTranslatorModule::setJoystick(char c){
+    if(c == 'A' && m_joystick_last != 'A'){
+        inverseLamp();   //bouton auto du joystick = clean marche/arret
+        INFO("joystick auto -> clean " << m_lamp_open);
+    }
+    m_joystick_last = c;
+}
+
 void PilotTranslatorModule::inverseLamp(){
     m_lamp_open = !m_lamp_open;
     m_must_be_change = true;

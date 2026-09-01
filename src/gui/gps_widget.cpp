@@ -710,7 +710,7 @@ void GpsWidget::drawRightLeftSoil(){
     Framework & f = Framework::instance();
     drawButtonCycle(m_button_cycle, (f.m_pilot_translator_module.m_etat == SerialEtat_Cycle));
     drawButtonArrow(m_button_left, f.m_pilot_translator_module.m_cycle_up, true, "Up");
-    drawButtonClean(m_button_middle, f.m_pilot_translator_module.m_cycle_lamp);
+    drawButtonClean(m_button_middle, f.m_pilot_translator_module.isLampOpen());
     drawButtonArrow(m_button_right, f.m_pilot_translator_module.m_cycle_down, false, "Down");
 }
 
