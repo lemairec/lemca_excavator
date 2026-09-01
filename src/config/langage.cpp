@@ -98,6 +98,9 @@ Langage::Langage(){
     add("FR", "YES", "Oui");
     add("FR", "NO", "Non");
 
+    add("FR", "OPT_SOIL", "Sol");
+    add("FR", "SOIL_CYCLE", "Cycle");
+    add("FR", "SOIL_TP_START_DELAY", "Delai depart");
     add("FR", "SOIL_TP_DOWN", "Bas");
     add("FR", "SOIL_TP_DOWN_WAIT", "Bas attend");
     add("FR", "SOIL_TP_UP", "Haut");

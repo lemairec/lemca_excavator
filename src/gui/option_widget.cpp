@@ -370,6 +370,7 @@ void OptionWidget::onMousePage1(int x, int y){
      if(!m_select_widget.m_close){
          if(m_select_widget.onMouseSelect(x, y)){
              f.m_config.m_etat = m_select_etat.m_selectedValue;
+             setSizePage2(); //la page 2 change de mise en page selon le mode
          }
          f.initOrLoadConfig();
          return;
@@ -449,18 +450,30 @@ void OptionWidget::onMousePage1(int x, int y){
 /**
  PAGE 2
  */
+static bool isSoilMode(){
+    return Framework::instance().m_config.m_etat == 2;
+}
+
 void OptionWidget::setSizePage2(){
+    // En mode Soil (m_etat == 2) les reglages outil ne servent pas : on les
+    // envoie hors ecran (invisibles ET non cliquables) et la colonne gauche
+    // demarre directement sur la stabilisation pH.
+    bool soil = isSoilMode();
+    const int y_hide = -10000;
+
     int y = m_y_begin;
-    m_outil_l.setResize(m_part_1_x3, y, m_petit_button);
-    y+= m_y_inter;
-    //y+= m_y_inter;
-    //m_outil_lg.setResize(m_part_1_x3, y, m_petit_button);
-    y+= m_y_inter;
-    m_outil_record_h.setResize(m_part_1_x3, y, m_petit_button);
-    y+= m_y_inter;
-    m_outil_replay_h.setResize(m_part_1_x3, y, m_petit_button);
-    y+= m_y_inter;
-    y+= m_y_inter;
+    if(soil){
+        m_outil_l.setResize(m_part_1_x3, y_hide, m_petit_button);
+        m_outil_record_h.setResize(m_part_1_x3, y_hide, m_petit_button);
+        m_outil_replay_h.setResize(m_part_1_x3, y_hide, m_petit_button);
+    } else {
+        m_outil_l.setResize(m_part_1_x3, y, m_petit_button);
+        y+= m_y_inter;
+        m_outil_record_h.setResize(m_part_1_x3, y, m_petit_button);
+        y+= m_y_inter;
+        m_outil_replay_h.setResize(m_part_1_x3, y, m_petit_button);
+        y+= 2*m_y_inter;
+    }
     m_soil_filter_window.setResize(m_part_1_x3, y, m_petit_button);
     y+= m_y_inter;
     m_soil_slope_max.setResize(m_part_1_x3, y, m_petit_button);
@@ -471,8 +484,12 @@ void OptionWidget::setSizePage2(){
     m_select_soil.addValue("analogique");
     m_select_soil.addValue("numerique");
     m_select_soil.addValue("toto2");
+    m_select_soil.setResize(m_part_2_x+m_part_2_w/2, m_y_begin-2.6*m_y_inter, "", true, m_part_2_w/2);
+
+    // 5 valeurs de cycle : remontees d'un cran pour liberer les 3 lignes
+    // d'info pH (Ph_cor / U / stabilisation) au dessus des boutons de calib.
     y = m_y_begin-m_y_inter;
-    m_select_soil.setResize(m_part_2_x+m_part_2_w/2, y, "", true, m_part_2_w/2);
+    m_soil_tp_start_delay.setResize(m_part_2_x3, y, m_petit_button);
     y+= m_y_inter;
     m_soil_tp_down.setResize(m_part_2_x3, y, m_petit_button);
     y+= m_y_inter;
@@ -481,24 +498,23 @@ void OptionWidget::setSizePage2(){
     m_soil_tp_up.setResize(m_part_2_x3, y, m_petit_button);
     y+= m_y_inter;
     m_soil_tp_wait.setResize(m_part_2_x3, y, m_petit_button);
-    y+= m_y_inter;
-    y+= m_y_inter;
-    y+= m_y_inter;
+
+    y = m_y_begin+6*m_y_inter;
     m_button_ph_bas.setResize(m_part_2_x+0.25*m_part_2_w, y,  QString::fromStdString(Langage::getKey("PHBAS")), true, 0.45*m_part_2_w);
     m_button_ph_haut.setResize(m_part_2_x+0.75*m_part_2_w, y,  QString::fromStdString(Langage::getKey("PHHAUT")), true, 0.45*m_part_2_w);
     y+= m_y_inter;
     m_value_ph_bas.setResize(m_part_2_x+0.25*m_part_2_w, y, m_petit_button);
     m_value_ph_haut.setResize(m_part_2_x+0.75*m_part_2_w, y, m_petit_button);
-    
-    
 }
 void OptionWidget::drawPage2(){
     Framework & f = Framework::instance();
     Config & config = f.m_config;
     
-    drawText(Langage::getKey("OPT_OUTIL"), 0.45*m_width, m_y_title, sizeText_bigbig, true);
+    bool soil = isSoilMode();
+    drawText(Langage::getKey(soil ? "OPT_SOIL" : "OPT_OUTIL"), 0.45*m_width, m_y_title, sizeText_bigbig, true);
     
-    drawPart1Title(m_outil_l.m_y-2*m_y_inter, m_y_inter*4, Langage::getKey("OPT_OUTIL"));
+    if(!soil){
+    drawPart1Title(m_outil_l.m_y-1.6*m_y_inter, m_y_inter*4.6, Langage::getKey("OPT_OUTIL"));
     {
         m_outil_l.m_value = config.m_outil_largeur;
         drawText(Langage::getKey("OPT_OUTIL_L"), m_part_1_x2,m_outil_l.m_y, sizeText_medium);
@@ -519,9 +535,10 @@ void OptionWidget::drawPage2(){
         drawText(Langage::getKey("OPT_OUTIL_REPLAY_H"), m_part_1_x2,m_outil_replay_h.m_y, sizeText_medium);
         drawValueGuiKeyPad2(m_outil_replay_h);
     }
+    }
 
     // ---- reglages du filtre de stabilisation pH ----
-    drawPart1Title(m_soil_filter_window.m_y-m_y_inter, m_y_inter*4, "Stabilisation pH");
+    drawPart1Title(m_soil_filter_window.m_y-1.6*m_y_inter, m_y_inter*4.6, "Stabilisation pH");
     {
         m_soil_filter_window.m_value = config.m_soil_filter_window;
         drawText("Fenetre (ech.)", m_part_1_x2, m_soil_filter_window.m_y, sizeText_medium);
@@ -544,6 +561,12 @@ void OptionWidget::drawPage2(){
         m_select_soil.setSelectedValue(f.m_config.m_soil_capteur);
     }
     
+    drawPart2Title(m_soil_tp_start_delay.m_y-1.6*m_y_inter, m_y_inter*5.4, Langage::getKey("SOIL_CYCLE"));
+    {
+        m_soil_tp_start_delay.m_value = config.m_soil_tp_start_delay_s;
+        drawText(Langage::getKey("SOIL_TP_START_DELAY"), m_part_2_x2,m_soil_tp_start_delay.m_y, sizeText_medium);
+        drawValueGuiKeyPad2(m_soil_tp_start_delay);
+    }
     {
         m_soil_tp_down.m_value = config.m_soil_tp_down_s;
         drawText(Langage::getKey("SOIL_TP_DOWN"), m_part_2_x2,m_soil_tp_down.m_y, sizeText_medium);
@@ -660,6 +683,11 @@ void OptionWidget::onMousePage2(int x, int y){
     if(onMouseKeyPad2(m_soil_stale, x, y, 250)){
         if(m_soil_stale.m_value < 0){ m_soil_stale.m_value = 0; }
         config.m_soil_stale_ms = (int)m_soil_stale.m_value;
+        loadConfig();
+    };
+    if(onMouseKeyPad2(m_soil_tp_start_delay, x, y, 0.1)){
+        if(m_soil_tp_start_delay.m_value < 0){ m_soil_tp_start_delay.m_value = 0; }
+        config.m_soil_tp_start_delay_s = m_soil_tp_start_delay.m_value;
         loadConfig();
     };
     if(onMouseKeyPad2(m_soil_tp_down, x, y, 0.1)){

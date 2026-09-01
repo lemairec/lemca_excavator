@@ -97,6 +97,7 @@ public:
     ValueGui m_outil_replay_h;
     
     //page2
+    ValueGui m_soil_tp_start_delay;
     ValueGui m_soil_tp_down;
     ValueGui m_soil_tp_down_wait;
     ValueGui m_soil_tp_up;

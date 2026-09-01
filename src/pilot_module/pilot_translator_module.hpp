@@ -158,6 +158,7 @@ public:
     int m_arduino_send_v = 0;
     void writePilotSerialString(const std::string & l);
     
+    double m_soil_tp_start_delay_s = 0;
     double m_soil_tp_down_s = 1;
     double m_soil_tp_down_wait_s = 2;
     double m_soil_tp_up_s = 1;

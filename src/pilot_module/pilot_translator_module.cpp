@@ -48,6 +48,7 @@ void PilotTranslatorModule::initOrLoad(const Config& config)
     m_command_capteur_vitesse_max_mm_s = config.m_command_capteur_vitesse_max_mm_s;
     m_command_bineuse_debatement_mm = config.m_command_bineuse_debatement_mm;
 
+    m_soil_tp_start_delay_s = config.m_soil_tp_start_delay_s;
     m_soil_tp_down_s = config.m_soil_tp_down_s;
     m_soil_tp_down_wait_s = config.m_soil_tp_down_wait_s;
     m_soil_tp_up_s = config.m_soil_tp_up_s;
@@ -458,7 +459,13 @@ void PilotTranslatorModule::updateCycle(){
     //gelee -> la phase reprend sa course complete quand tout revient ok.
     //Passe la remontee (data wait / record data), plus rien n'interrompt :
     //la mesure doit etre enregistree.
-    double t_fin_meca = m_soil_tp_down_s + m_soil_tp_down_wait_s + m_soil_tp_down_s + m_soil_tp_up_s;
+    //t0 : delai reglable apres la descente du 3P avant le depart du cycle
+    double t0 = m_soil_tp_start_delay_s;
+    double t1 = t0 + m_soil_tp_down_s;
+    double t2 = t1 + m_soil_tp_down_wait_s;
+    double t3 = t2 + m_soil_tp_down_s + m_soil_tp_up_s;
+    double t4 = t3 + m_soil_tp_wait_s;
+    double t_fin_meca = t3;
     if(s < t_fin_meca && (m_point_3 || f.m_vitesse <= 0.5)){
         m_begin_cycle += dt;
         m_cycle_m = strprintf("%.1f %s", s, m_point_3 ? "---3p" : "---vitesse");
@@ -466,14 +473,16 @@ void PilotTranslatorModule::updateCycle(){
     }
 
 
-    if(s < m_soil_tp_down_s){
+    if(s < t0){
+        m_cycle_m = strprintf("%.1f start delay", s);
+    } else if(s < t1){
         m_cycle_down = 1;
         m_cycle_lamp = 1;
         m_cycle_m = strprintf("%.1f down", s);
-    } else if(s < m_soil_tp_down_s + m_soil_tp_down_wait_s){
+    } else if(s < t2){
         m_cycle_lamp = 1;
         m_cycle_m = strprintf("%.1f down wait", s);
-    } else if(s < m_soil_tp_down_s + m_soil_tp_down_wait_s + m_soil_tp_down_s + m_soil_tp_up_s){
+    } else if(s < t3){
         if(f.m_position_module.m_last_gga){
             f.m_record_lat = f.m_position_module.m_last_gga->m_latitude;
             f.m_record_lon = f.m_position_module.m_last_gga->m_longitude;
@@ -481,9 +490,9 @@ void PilotTranslatorModule::updateCycle(){
         m_cycle_up = 1;
         m_cycle_lamp = 1;
         m_cycle_m = strprintf("%.1f up", s);
-    } else if(s < m_soil_tp_down_s + m_soil_tp_down_wait_s + m_soil_tp_down_s + m_soil_tp_up_s + m_soil_tp_wait_s){
+    } else if(s < t4){
         m_cycle_m = strprintf("%.1f data wait", s);
-    } else if(s < m_soil_tp_down_s + m_soil_tp_down_wait_s + m_soil_tp_down_s + m_soil_tp_up_s + m_soil_tp_wait_s + 1){
+    } else if(s < t4 + 1){
         m_cycle_m = strprintf("%.1f record data", s);
         if(f.m_record_lat > 0){
             std::string s = strprintf("%.7f;%.7f;%.1f;%.1f;%.1f;%.1f;%.1f;%.1f;%.1f;%.1f", f.m_record_lat, f.m_record_lon, f.m_last_soil_hum, f.m_last_soil_temp, f.m_last_soil_cond , f.m_last_soil_ph_corr, f.m_last_soil_n, f.m_last_soil_p, f.m_last_soil_k, f.m_last_soil_ph);
