@@ -855,7 +855,7 @@ void Framework::loadMesures(const std::string & path){
             continue;
         }
         try {
-            addMesure(line.getDouble(0), line.getDouble(1), line.getDouble(5));
+            addMesure(line.getDouble(0), line.getDouble(1), line.getDouble(5), line.m_string);
         } catch(const std::exception & e){
             WARN("loadMesures : ligne illisible " << line.m_words[0]);
         }
@@ -863,11 +863,59 @@ void Framework::loadMesures(const std::string & path){
     INFO("loadMesures " << path << " -> " << m_mesures.size() << " points");
 }
 
-void Framework::addMesure(double latitude, double longitude, double ph){
+void Framework::addMesure(double latitude, double longitude, double ph, const std::string & line){
     Mesure m;
     m.m_point.m_latitude = latitude;
     m.m_point.m_longitude = longitude;
     m.m_ph = ph;
+    m.m_line = line.empty()
+        ? strprintf("%.7f;%.7f;0.0;0.0;0.0;%.1f;0.0;0.0;0.0;0.0", latitude, longitude, ph)
+        : line;
     m_position_module.setXY(m.m_point);
     m_mesures.push_back(m);
+}
+
+//Le pH corrige est la colonne 6 (index 5) de soil.txt ; les autres colonnes
+//(hum, temp, cond, NPK, pH brut) sont conservees telles quelles.
+void Framework::updateMesurePh(size_t i, double ph){
+    if(i >= m_mesures.size()){
+        return;
+    }
+    Mesure & m = m_mesures[i];
+    m.m_ph = ph;
+    
+    std::vector<std::string> words;
+    std::stringstream ss(m.m_line);
+    std::string cell;
+    while(std::getline(ss, cell, ';')){
+        words.push_back(cell);
+    }
+    if(words.size() >= 6){
+        words[5] = strprintf("%.1f", ph);
+        std::string res;
+        for(size_t j = 0; j < words.size(); ++j){
+            res += (j ? ";" : "") + words[j];
+        }
+        m.m_line = res;
+    } else {
+        m.m_line = strprintf("%.7f;%.7f;0.0;0.0;0.0;%.1f;0.0;0.0;0.0;0.0",
+                             m.m_point.m_latitude, m.m_point.m_longitude, ph);
+    }
+    saveMesures();
+}
+
+void Framework::removeMesure(size_t i){
+    if(i >= m_mesures.size()){
+        return;
+    }
+    m_mesures.erase(m_mesures.begin()+i);
+    saveMesures();
+}
+
+void Framework::saveMesures(){
+    std::vector<std::string> lines;
+    for(auto & m : m_mesures){
+        lines.push_back(m.m_line);
+    }
+    m_job_manager.rewriteData(lines);
 }

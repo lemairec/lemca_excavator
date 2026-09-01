@@ -31,6 +31,7 @@ public:
     
     void logJob(const std::string & string);
     void addData(const std::string & string);
+    void rewriteData(const std::vector<std::string> & lines);  //reecrit soil.txt (edition/suppression)
 };
 
 #endif

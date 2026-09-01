@@ -46,6 +46,7 @@ void CSVFile::importFile(const std::string & path){
     
     while (std::getline(file, line, sep)) {
         INFO("la " << line);
+        std::string raw = line;
         std::stringstream ss(line);
         std::string cell;
 
@@ -53,6 +54,7 @@ void CSVFile::importFile(const std::string & path){
         while (std::getline(ss, cell, ';')) {
             line.m_words.push_back(cell);
         }
+        line.m_string = raw;
         INFO("word " << line.m_words.size());
         
         if(!line.empty()){

@@ -169,6 +169,17 @@ public:
     void drawBalises();
     void drawMesures();
     
+    //menu contextuel sur un point de mesure (clic sur un cercle de la carte)
+    int m_mesure_selected = -1;
+    int m_mesure_x2, m_mesure_y2, m_mesure_w2, m_mesure_h2;
+    ValueGui m_mesure_ph;
+    ButtonGui m_button_mesure_modifier;
+    ButtonGui m_button_mesure_supprimer;
+    ButtonGui m_button_mesure_annuler;
+    int findMesure(int x, int y);
+    void drawMesureMenu();
+    int onMouseMesureMenu(int x, int y);
+    
     void drawDebugEkf();
     
     void drawCercles();

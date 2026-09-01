@@ -276,8 +276,11 @@ public:
     void getAntennaH();
     
     std::vector<Mesure> m_mesures;
-    void addMesure(double latitude, double lonbgitude, double ph);
+    void addMesure(double latitude, double lonbgitude, double ph, const std::string & line = "");
     void loadMesures(const std::string & path);   //relit un soil.txt (reprise de job)
+    void updateMesurePh(size_t i, double ph);     //corrige le pH d'un point + reecrit soil.txt
+    void removeMesure(size_t i);                  //supprime un point + reecrit soil.txt
+    void saveMesures();                           //reecrit soil.txt depuis m_mesures
     
     double m_angle_roue_by_yawl_deg = 0;
      

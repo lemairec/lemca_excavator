@@ -147,6 +147,23 @@ void JobManager::logJob(const std::string & s){
     m_log_file.flush();
 }
 
+//Reecrit tout le soil.txt : seul moyen de modifier ou supprimer une mesure
+//deja ecrite. Le fichier reste ouvert en append pour la suite du job.
+void JobManager::rewriteData(const std::vector<std::string> & lines){
+    if(m_data_path.empty()){
+        WARN("rewriteData : aucun job actif");
+        return;
+    }
+    m_data_file.close();
+    std::ofstream file(m_data_path, std::ios::trunc);
+    for(const std::string & l : lines){
+        file << l << std::endl;
+    }
+    file.close();
+    m_data_file.open(m_data_path, std::ios::app);
+    INFO("rewriteData " << lines.size() << " lignes");
+}
+
 void JobManager::addData(const std::string & s){
     INFO(s);
     m_data_file << s << "\n";

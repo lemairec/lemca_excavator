@@ -552,7 +552,7 @@ void PilotTranslatorModule::updateCycle(){
         if(f.m_record_lat > 0){
             std::string s = strprintf("%.7f;%.7f;%.1f;%.1f;%.1f;%.1f;%.1f;%.1f;%.1f;%.1f", f.m_record_lat, f.m_record_lon, f.m_last_soil_hum, f.m_last_soil_temp, f.m_last_soil_cond , f.m_last_soil_ph_corr, f.m_last_soil_n, f.m_last_soil_p, f.m_last_soil_k, f.m_last_soil_ph);
             f.m_job_manager.addData(s);
-            f.addMesure(f.m_record_lat, f.m_record_lon, f.m_last_soil_ph_corr);
+            f.addMesure(f.m_record_lat, f.m_record_lon, f.m_last_soil_ph_corr, s);
             resetCycle();
             m_etat = SerialEtat_Temp;
             //mode distance : c'est updateAuto() qui relancera a la maille suivante.

@@ -112,6 +112,16 @@ void GpsWidget::setSize(int width, int height){
     }
     m_first_widget.setSize(m_width, m_height);
     m_key_board_widget.setSize(m_width, m_height);
+    
+    //menu contextuel d'un point de mesure, centre a l'ecran
+    m_mesure_w2 = m_width*0.34;
+    m_mesure_h2 = m_height*0.42;
+    m_mesure_x2 = (m_width - m_mesure_w2)/2;
+    m_mesure_y2 = (m_height - m_mesure_h2)/2;
+    m_mesure_ph.setResize(m_mesure_x2 + 0.5*m_mesure_w2, m_mesure_y2 + 0.38*m_mesure_h2, m_petit_button);
+    m_button_mesure_modifier.setResizeStd (m_mesure_x2 + 0.5*m_mesure_w2, m_mesure_y2 + 0.58*m_mesure_h2, "Modifier la mesure", true, 0.7*m_mesure_w2);
+    m_button_mesure_supprimer.setResizeStd(m_mesure_x2 + 0.5*m_mesure_w2, m_mesure_y2 + 0.74*m_mesure_h2, "Supprimer la mesure", true, 0.7*m_mesure_w2);
+    m_button_mesure_annuler.setResizeStd  (m_mesure_x2 + 0.5*m_mesure_w2, m_mesure_y2 + 0.90*m_mesure_h2, "Annuler", true, 0.5*m_mesure_w2);
     m_rapide_option_widget.setSize(m_width, m_height);
     m_diagnostic_widget.setSize(m_width, m_height);
     m_debug_widget.setSize(m_width, m_height);
@@ -1023,6 +1033,9 @@ void GpsWidget::draw(){
     drawAlertes();
     
     
+    if(m_mesure_selected >= 0){
+        drawMesureMenu();
+    }
     for(auto p : m_widgets){
         if(!p->m_close){
             p->draw();
@@ -1116,6 +1129,9 @@ int GpsWidget::onMouse(int x, int y){
         m_job_widget.onMouse(x, y);
         return 0;
     }
+    if(m_mesure_selected >= 0){
+        return onMouseMesureMenu(x, y);
+    }
 
     double x2 = x;
     double y2 = y;
@@ -1173,8 +1189,82 @@ int GpsWidget::onMouse(int x, int y){
         }
     } else if(f.getEtat() != Etat_Soil && m_button_balise2.isActive(x, y)){
         m_balises_widget.open();
+    } else if(f.getEtat() == Etat_Soil){
+        int i = findMesure(x2, y2);
+        if(i >= 0){
+            m_mesure_selected = i;
+            m_mesure_ph.m_value = f.m_mesures[i].m_ph;
+        }
     }
     
+    return 0;
+}
+
+//Cercle le plus proche du clic, dans son rayon dessine (min 15 px pour rester
+//cliquable quand on est dezoome). -1 si le clic ne tombe sur aucun point.
+int GpsWidget::findMesure(int x, int y){
+    Framework & f = Framework::instance();
+    double r = f.m_config.m_soil_maille_m*m_zoom/2;
+    if(r < 15){
+        r = 15;
+    }
+    int res = -1;
+    double best = r*r;
+    for(size_t i = 0; i < f.m_mesures.size(); ++i){
+        double x1, y1;
+        myProjete2(f.m_mesures[i].m_point.m_x, f.m_mesures[i].m_point.m_y, x1, y1);
+        double d = (x-x1)*(x-x1) + (y-y1)*(y-y1);
+        if(d <= best){
+            best = d;
+            res = (int)i;
+        }
+    }
+    return res;
+}
+
+void GpsWidget::drawMesureMenu(){
+    Framework & f = Framework::instance();
+    if(m_mesure_selected >= (int)f.m_mesures.size()){
+        m_mesure_selected = -1;
+        return;
+    }
+    Mesure & m = f.m_mesures[m_mesure_selected];
+    
+    m_painter->setPen(m_pen_black);
+    m_painter->setBrush(m_brush_white);
+    m_painter->drawRoundedRect(m_mesure_x2, m_mesure_y2, m_mesure_w2, m_mesure_h2, RAYON_ROUNDED, RAYON_ROUNDED);
+    
+    drawText("Mesure", m_mesure_x2+0.5*m_mesure_w2, m_mesure_y2+0.11*m_mesure_h2, sizeText_big, true);
+    std::string s = strprintf("%.7f  %.7f", m.m_point.m_latitude, m.m_point.m_longitude);
+    drawText(s, m_mesure_x2+0.5*m_mesure_w2, m_mesure_y2+0.21*m_mesure_h2, sizeText_little, true);
+    
+    drawText("pH", m_mesure_x2+0.12*m_mesure_w2, m_mesure_ph.m_y, sizeText_medium);
+    drawValueGuiKeyPad2(m_mesure_ph);
+    
+    drawButtonLabel2(m_button_mesure_modifier, COLOR_VALIDATE);
+    drawButtonLabel2(m_button_mesure_supprimer, COLOR_CANCEL);
+    drawButtonLabel2(m_button_mesure_annuler);
+}
+
+int GpsWidget::onMouseMesureMenu(int x, int y){
+    Framework & f = Framework::instance();
+    size_t i = (size_t)m_mesure_selected;
+    
+    onMouseKeyPad2(m_mesure_ph, x, y, 0.1);
+    if(isActiveValueGuiKeyPad(m_mesure_ph, x, y)){   //saisie au pave numerique
+        m_key_pad_widget.m_close = false;
+        m_key_pad_widget.setValueGuiKeyPad(&m_mesure_ph);
+        return 0;
+    }
+    if(m_button_mesure_modifier.isActive(x, y)){
+        f.updateMesurePh(i, m_mesure_ph.m_value);
+        m_mesure_selected = -1;
+    } else if(m_button_mesure_supprimer.isActive(x, y)){
+        f.removeMesure(i);
+        m_mesure_selected = -1;
+    } else if(m_button_mesure_annuler.isActive(x, y)){
+        m_mesure_selected = -1;
+    }
     return 0;
 }
 
