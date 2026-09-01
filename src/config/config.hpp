@@ -114,6 +114,12 @@ public:
     double m_soil_ph_haut = 7.0;       // consigne tampon standard (independante de la sonde)
     double m_soil_ph_haut_m = 0.0;     // 0.0 = non calibre ; l'operateur calibre sur tampons pour chaque sonde
     double m_soil_temp_ambiante = 20.0;
+    //Controle de sante de la sonde (procedure de calibrage guidee).
+    //slope_ref = 0 -> pente theorique de Nernst a la T des tampons ; sinon
+    //pente d'une sonde neuve mesuree une fois, comme reference 100 %.
+    double m_soil_slope_ref_mv_ph = 0.0;
+    double m_soil_check_score = 0.0;
+    std::string m_soil_check_date;
     // decalage AFFICHAGE carte uniquement (soil.txt garde le pH brut)
     double m_soil_ph_offset = 0.0;
 

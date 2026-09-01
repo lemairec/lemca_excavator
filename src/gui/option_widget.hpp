@@ -4,6 +4,7 @@
 #include "base/base_widget.hpp"
 #include "base/select_widget.hpp"
 #include "base/keyboard_widget.hpp"
+#include "calib_widget.hpp"
 
 class OptionWidget : public BaseWidget {
     QPixmap * m_img_off;
@@ -108,6 +109,8 @@ public:
     ValueGui m_soil_slope_max;       // seuil de pente (mV/s)
     ValueGui m_soil_stale;
     ValueGui m_soil_maille;
+    ButtonGui m_button_calib;
+    CalibWidget m_calib_widget;
     ButtonGui m_soil_auto_dist;           // timeout de staleness (ms)
     
     SelectButtonGui m_select_soil;

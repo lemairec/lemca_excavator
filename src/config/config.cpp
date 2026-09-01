@@ -82,6 +82,9 @@ void Config::work(QSettings & settings, bool save){
     saveLoadInt(settings, "soil_capteur", m_soil_capteur, save);
     saveLoadBool(settings, "soil_auto_dist", m_soil_auto_dist, save);
     saveLoadDouble(settings, "soil_maille_m", m_soil_maille_m, save);
+    saveLoadDouble(settings, "soil_slope_ref_mv_ph", m_soil_slope_ref_mv_ph, save);
+    saveLoadDouble(settings, "soil_check_score", m_soil_check_score, save);
+    saveLoadString(settings, "soil_check_date", m_soil_check_date, save);
     saveLoadDouble(settings, "soil_tp_start_delay_s", m_soil_tp_start_delay_s, save);
     saveLoadDouble(settings, "soil_tp_down_s", m_soil_tp_down_s, save);
     saveLoadDouble(settings, "soil_tp_down_wait_s", m_soil_tp_down_wait_s, save);

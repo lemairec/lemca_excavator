@@ -78,6 +78,8 @@ void OptionWidget::setSize(int width, int height){
     m_part_2_x2 = m_part_2_x+0.1*m_width3*0.44;
     m_part_2_x3 = m_part_2_x+0.8*m_width3*0.44;
     
+    m_calib_widget.setSize(width, height);
+    
     
     int x_right = width-m_gros_button-20;
     int inter = m_gros_button*2.1;
@@ -173,6 +175,9 @@ void OptionWidget::draw(){
             drawPage7();
         }
     }
+    if(!m_calib_widget.m_close){
+        m_calib_widget.draw();
+    }
     if(!m_select_widget.m_close){
         m_select_widget.draw();
     }
@@ -181,6 +186,10 @@ void OptionWidget::draw(){
 int OptionWidget::onMouse(int x, int y){
     Framework & f = Framework::instance();
     Config & config = f.m_config;
+    
+    if(!m_calib_widget.m_close){   //procedure de calibrage modale
+        return m_calib_widget.onMouse(x, y);
+    }
     
     if(m_button_return.isActive(x,y)){
         m_close = true;
@@ -488,7 +497,10 @@ void OptionWidget::setSizePage2(){
     m_select_soil.addValue("analogique");
     m_select_soil.addValue("numerique");
     m_select_soil.addValue("toto2");
-    m_select_soil.setResize(m_part_2_x+m_part_2_w/2, m_y_begin-2.6*m_y_inter, "", true, m_part_2_w/2);
+    m_select_soil.setResize(m_part_2_x+m_part_2_w*0.27, m_y_begin-3.2*m_y_inter, "", true, m_part_2_w*0.45);
+    //procedure guidee ; les boutons pH bas / pH haut restent le fallback
+    m_button_calib.setResizeStd(m_part_2_x+m_part_2_w*0.73, m_y_begin-3.2*m_y_inter,
+                               "Calibrage guide", true, m_part_2_w*0.45);
 
     // 5 valeurs de cycle : remontees d'un cran pour liberer les 3 lignes
     // d'info pH (Ph_cor / U / stabilisation) au dessus des boutons de calib.
@@ -572,13 +584,14 @@ void OptionWidget::drawPage2(){
         drawText(s2, m_part_1_x2, m_soil_maille.m_y+m_y_inter*0.8, sizeText_little);
     }
 
+    drawPart2Title(m_soil_tp_start_delay.m_y-1.4*m_y_inter, m_y_inter*6.1, Langage::getKey("SOIL_CYCLE"));
     drawButtonLabel2(m_select_soil.m_buttonOpen);
+    drawButtonLabel2(m_button_calib, COLOR_VALIDATE);
     
     if(m_select_widget.m_close){
         m_select_soil.setSelectedValue(f.m_config.m_soil_capteur);
     }
     
-    drawPart2Title(m_soil_tp_start_delay.m_y-1.6*m_y_inter, m_y_inter*5.4, Langage::getKey("SOIL_CYCLE"));
     {
         m_soil_tp_start_delay.m_value = config.m_soil_tp_start_delay_s;
         drawText(Langage::getKey("SOIL_TP_START_DELAY"), m_part_2_x2,m_soil_tp_start_delay.m_y, sizeText_medium);
@@ -637,14 +650,14 @@ void OptionWidget::drawPage2(){
         std::string s = f.m_soil_calibrated
             ? strprintf("Ph_cor : %.1f", f.m_last_soil_ph_corr)
             : std::string("Ph_cor : NON CALIBRE");
-        drawText(s, m_part_2_x+0.4*m_part_2_w,y-m_y_inter, sizeText_medium);
+        drawText(s, m_part_2_x+0.05*m_part_2_w,y-m_y_inter, sizeText_medium);
     }
     {
         // [P4] DEBUG terrain : count ADC brut recu + mV reconstruits (res*3300/4095).
         // Trempe pH4 -> le count doit valoir ~2126 (=1713mV). Permet de verifier la
         // coherence counts<->mV au champ ; si l'ecart est grand, calibrer en counts.
         std::string s = strprintf("cnt %i (%.0f mV)", f.m_nmea_parser_mcu.m_last_res, f.m_last_soil_volt_raw);
-        drawText(s, m_part_2_x+0.75*m_part_2_w,y-m_y_inter, sizeText_medium);
+        drawText(s, m_part_2_x+0.62*m_part_2_w,y-m_y_inter, sizeText_medium);
     }
     
     drawButtonLabel2(m_button_ph_bas);
@@ -742,6 +755,10 @@ void OptionWidget::onMousePage2(int x, int y){
         loadConfig();
     };
     
+    if(m_button_calib.isActive(x, y) != 0){
+        m_calib_widget.open();
+        return;
+    }
     if(m_button_ph_bas.isActive(x, y) != 0){
         // capture interdite tant que la lecture n'est pas stabilisee
         if(f.isSoilSettled()){
@@ -1247,6 +1264,7 @@ void OptionWidget::isActiveButtonSelect(SelectButtonGui * select, int x, int y){
 }
 void OptionWidget::setPainter(QPainter *p){
     m_painter = p;
+    m_calib_widget.setPainter(p);
     m_keypad_widget.setPainter(p);
     m_select_widget.setPainter(p);
     m_keyboard_widget.setPainter(p);
