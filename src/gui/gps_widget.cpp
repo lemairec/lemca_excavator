@@ -187,7 +187,7 @@ void GpsWidget::drawButtons(){
             m_painter->setBrush(m_brush_background_2);
             m_painter->setPen(m_pen_no);
             
-            m_painter->drawRoundedRect(m_width-w-10, 10, w, h, 10, 10);
+            m_painter->drawRoundedRect(m_width-w-10, 10, w, h, RADIUS_CARD, RADIUS_CARD);
             
         }
         
@@ -241,7 +241,7 @@ void GpsWidget::drawButtonPh(ButtonGui & button, bool open){
     // fond du bouton (meme langage que les autres boutons carre)
     m_painter->setPen(m_pen_no);
     m_painter->setBrush(open ? m_brush_button_validate : m_brush_background_3);
-    m_painter->drawRoundedRect(bx, by, button.m_width, button.m_height, 5, 5);
+    m_painter->drawRoundedRect(bx, by, button.m_width, button.m_height, RADIUS_CONTROL, RADIUS_CONTROL);
 
     // line-art : pH-metre (boitier + ecran + sonde)
     QColor line = (m_black_mode || open) ? QColor(255,255,255) : QColor(20,20,20);
@@ -265,7 +265,7 @@ void GpsWidget::drawButtonPh(ButtonGui & button, bool open){
     m_painter->drawLine(QPointF(left+bw*0.5, top+bh*0.66), QPointF(left+bw*0.5, top+bh*0.92));
 
     // "pH" dans l'ecran
-    QFont font("Latin", 1, 1, false); font.setBold(true);
+    QFont font = buildFont(sizeText_logo);
     font.setPixelSize((int)(bh*0.30));
     m_painter->setFont(font);
     {
@@ -282,7 +282,7 @@ void GpsWidget::drawButtonTemp(ButtonGui & button, bool open){
 
     m_painter->setPen(m_pen_no);
     m_painter->setBrush(open ? m_brush_button_validate : m_brush_background_3);
-    m_painter->drawRoundedRect(bx, by, button.m_width, button.m_height, 5, 5);
+    m_painter->drawRoundedRect(bx, by, button.m_width, button.m_height, RADIUS_CONTROL, RADIUS_CONTROL);
 
     // line-art : thermometre
     QColor line = (m_black_mode || open) ? QColor(255,255,255) : QColor(20,20,20);
@@ -326,7 +326,7 @@ void GpsWidget::drawButtonCycle(ButtonGui & button, bool active){
     // fond du bouton (meme langage que les autres boutons carre)
     m_painter->setPen(m_pen_no);
     m_painter->setBrush(active ? m_brush_button_validate : m_brush_background_3);
-    m_painter->drawRoundedRect(bx, by, button.m_width, button.m_height, 5, 5);
+    m_painter->drawRoundedRect(bx, by, button.m_width, button.m_height, RADIUS_CONTROL, RADIUS_CONTROL);
 
     QColor line = (m_black_mode || active) ? QColor(255,255,255) : QColor(20,20,20);
     QPen pen(line); pen.setWidth(2); pen.setJoinStyle(Qt::RoundJoin); pen.setCapStyle(Qt::RoundCap);
@@ -377,7 +377,7 @@ void GpsWidget::drawButtonAuto(ButtonGui & button, bool active){
     // fond : vert quand l'automatique est actif
     m_painter->setPen(m_pen_no);
     m_painter->setBrush(active ? m_brush_button_validate : m_brush_background_3);
-    m_painter->drawRoundedRect(bx, by, button.m_width, button.m_height, 5, 5);
+    m_painter->drawRoundedRect(bx, by, button.m_width, button.m_height, RADIUS_CONTROL, RADIUS_CONTROL);
 
     QColor line = (m_black_mode || active) ? QColor(255,255,255) : QColor(20,20,20);
     QPen pen(line); pen.setWidth(2); pen.setJoinStyle(Qt::RoundJoin); pen.setCapStyle(Qt::RoundCap);
@@ -415,7 +415,7 @@ void GpsWidget::drawButtonJob(ButtonGui & button, bool active){
 
     m_painter->setPen(m_pen_no);
     m_painter->setBrush(active ? m_brush_button_validate : m_brush_background_3);
-    m_painter->drawRoundedRect(bx, by, button.m_width, button.m_height, 5, 5);
+    m_painter->drawRoundedRect(bx, by, button.m_width, button.m_height, RADIUS_CONTROL, RADIUS_CONTROL);
 
     QColor line = (m_black_mode || active) ? QColor(255,255,255) : QColor(20,20,20);
     QPen pen(line); pen.setWidth(2); pen.setJoinStyle(Qt::RoundJoin); pen.setCapStyle(Qt::RoundCap);
@@ -454,7 +454,7 @@ void GpsWidget::drawButtonArrow(ButtonGui & button, bool active, bool up, const 
 
     m_painter->setPen(m_pen_no);
     m_painter->setBrush(active ? m_brush_button_validate : m_brush_background_3);
-    m_painter->drawRoundedRect(bx, by, button.m_width, button.m_height, 5, 5);
+    m_painter->drawRoundedRect(bx, by, button.m_width, button.m_height, RADIUS_CONTROL, RADIUS_CONTROL);
 
     QColor line = (m_black_mode || active) ? QColor(255,255,255) : QColor(20,20,20);
     QPen pen(line); pen.setWidth(3); pen.setJoinStyle(Qt::RoundJoin); pen.setCapStyle(Qt::RoundCap);
@@ -495,7 +495,7 @@ void GpsWidget::drawButtonClean(ButtonGui & button, bool active){
 
     m_painter->setPen(m_pen_no);
     m_painter->setBrush(active ? m_brush_button_validate : m_brush_background_3);
-    m_painter->drawRoundedRect(bx, by, button.m_width, button.m_height, 5, 5);
+    m_painter->drawRoundedRect(bx, by, button.m_width, button.m_height, RADIUS_CONTROL, RADIUS_CONTROL);
 
     QColor line = (m_black_mode || active) ? QColor(255,255,255) : QColor(20,20,20);
 
@@ -547,7 +547,7 @@ void GpsWidget::drawInfos(){
     m_painter->setBrush(m_brush_background_2);
     m_painter->setPen(m_pen_no);
     
-    m_painter->drawRoundedRect(0.35*m_width, y, 0.3*m_width+10, h, 10, 10);
+    m_painter->drawRoundedRect(0.35*m_width, y, 0.3*m_width+10, h, RADIUS_CARD, RADIUS_CARD);
     
     auto last_frame = f.m_position_module.m_last_gga;
     QPixmap * img = NULL;
@@ -650,7 +650,7 @@ void GpsWidget::drawInfos(){
     
     m_painter->setBrush(m_brush_background_2);
     m_painter->setPen(m_pen_no);
-    m_painter->drawRoundedRect(0.35*m_width, y, 0.3*m_width+10, h, 10, 10);
+    m_painter->drawRoundedRect(0.35*m_width, y, 0.3*m_width+10, h, RADIUS_CARD, RADIUS_CARD);
     
     auto last_order = f.m_last_rorder;
     auto last_image = f.m_lastImage;
@@ -705,7 +705,7 @@ void GpsWidget::drawRightLeftSoil(){
     m_painter->setBrush(m_brush_background_2);
     m_painter->setPen(m_pen_no);
     
-    m_painter->drawRoundedRect(x, y, w, h, 10, 10);
+    m_painter->drawRoundedRect(x, y, w, h, RADIUS_CARD, RADIUS_CARD);
     
     Framework & f = Framework::instance();
     drawButtonCycle(m_button_cycle, (f.m_pilot_translator_module.m_etat == SerialEtat_Cycle));
@@ -724,7 +724,7 @@ void GpsWidget::drawInfosBasLeft(){
     int h = 0.34*m_height-25;
     int inter = 0.03*m_height;
 
-    m_painter->drawRoundedRect(10, y, 0.3*m_width+10, h, 10, 10);
+    m_painter->drawRoundedRect(10, y, 0.3*m_width+10, h, RADIUS_CARD, RADIUS_CARD);
     
     if(f.getEtat() == Etat_Arpentage){
         int x1 = 50;
@@ -755,10 +755,11 @@ void GpsWidget::drawInfosBasLeft(){
         drawText("Analyse sol", cardx+cardw/2, top+inter*0.95, sizeText_medium, true, true);
 
         // deux colonnes label/valeur alignees
+        // colonne 1 elargie : "NON CALIBRE" mordait sur le label "lat"
         int g1lab = cardx + cardw*0.07;
-        int g1val = cardx + cardw*0.30;
-        int g2lab = cardx + cardw*0.54;
-        int g2val = cardx + cardw*0.78;
+        int g1val = cardx + cardw*0.27;
+        int g2lab = cardx + cardw*0.58;
+        int g2val = cardx + cardw*0.77;
 
         auto kv = [&](int lx, int vx, int yy, const std::string & k, const std::string & v){
             drawText(k, lx, yy, sizeText_little, false, true);
@@ -843,7 +844,7 @@ void GpsWidget::drawInfosExcavator(){
     
     
     
-    m_painter->drawRoundedRect(x, y, w, h, 10, 10);
+    m_painter->drawRoundedRect(x, y, w, h, RADIUS_CARD, RADIUS_CARD);
     
     int y2 = y+h/2;
     int x2 = x+10;
@@ -865,35 +866,35 @@ void GpsWidget::drawInfosExcavator(){
         if(diff < -10){
             m_painter->setBrush(m_brush_red);
         }
-        m_painter->drawRoundedRect(x2, y2, w2, h2, 10, 10);
+        m_painter->drawRoundedRect(x2, y2, w2, h2, RADIUS_CARD, RADIUS_CARD);
         
         std::string s = strprintf("%+.0f cm", f.m_hauteur_diff*100);
         drawText(s, x2+w2/2, y2+25, sizeText_little, true, true);
         
         y2 -=inter;
-        if(diff > 10) m_painter->drawRoundedRect(x2, y2, w2, h3, 10, 10);
+        if(diff > 10) m_painter->drawRoundedRect(x2, y2, w2, h3, RADIUS_CARD, RADIUS_CARD);
         y2 -=inter;
-        if(diff > 20) m_painter->drawRoundedRect(x2, y2, w2, h3, 10, 10);
+        if(diff > 20) m_painter->drawRoundedRect(x2, y2, w2, h3, RADIUS_CARD, RADIUS_CARD);
         y2 -=inter;
-        if(diff > 30) m_painter->drawRoundedRect(x2, y2, w2, h3, 10, 10);
+        if(diff > 30) m_painter->drawRoundedRect(x2, y2, w2, h3, RADIUS_CARD, RADIUS_CARD);
         y2 -=inter;
-        if(diff > 40) m_painter->drawRoundedRect(x2, y2, w2, h3, 10, 10);
+        if(diff > 40) m_painter->drawRoundedRect(x2, y2, w2, h3, RADIUS_CARD, RADIUS_CARD);
         
         y2 = y+h/2+20;
         
         y2 +=inter;
-        if(diff < -10) m_painter->drawRoundedRect(x2, y2, w2, h3, 10, 10);
+        if(diff < -10) m_painter->drawRoundedRect(x2, y2, w2, h3, RADIUS_CARD, RADIUS_CARD);
         y2 +=inter;
-        if(diff < -20) m_painter->drawRoundedRect(x2, y2, w2, h3, 10, 10);
+        if(diff < -20) m_painter->drawRoundedRect(x2, y2, w2, h3, RADIUS_CARD, RADIUS_CARD);
         y2 +=inter;
-        if(diff < -30) m_painter->drawRoundedRect(x2, y2, w2, h3, 10, 10);
+        if(diff < -30) m_painter->drawRoundedRect(x2, y2, w2, h3, RADIUS_CARD, RADIUS_CARD);
         y2 +=inter;
-        if(diff < -40) m_painter->drawRoundedRect(x2, y2, w2, h3, 10, 10);
+        if(diff < -40) m_painter->drawRoundedRect(x2, y2, w2, h3, RADIUS_CARD, RADIUS_CARD);
     } else {
         std::string s = strprintf("---", f.m_hauteur_diff*100);
         drawText(s, x2+w2/2, y2+25, sizeText_little, true, true);
         
-        m_painter->drawRoundedRect(x2, y2, w2, h2, 10, 10);
+        m_painter->drawRoundedRect(x2, y2, w2, h2, RADIUS_CARD, RADIUS_CARD);
     }
 }
 
@@ -958,7 +959,7 @@ void GpsWidget::drawAlertes(){
         }
         
         m_painter->setPen(m_pen_no);
-        m_painter->drawRoundedRect(x, y, m_gros_button*4, m_gros_button*1.5, 10, 10);
+        m_painter->drawRoundedRect(x, y, m_gros_button*4, m_gros_button*1.5, RADIUS_CARD, RADIUS_CARD);
         m_painter->setPen(m_pen_white);
         int y2 = y + m_gros_button*0.75;
         if(p){

@@ -5,6 +5,10 @@
 
 #define RAYON_ROUNDED 10
 
+// echelle de rayons : boutons et champs / cartes et panneaux
+#define RADIUS_CONTROL 12
+#define RADIUS_CARD 16
+
 class BaseWidget{
 public:
     QPainter * m_painter;
@@ -75,6 +79,9 @@ public:
     virtual void setSize(int width, int height);
     
     virtual void draw() = 0;
+
+    static int pixelSize(SizeText size);
+    QFont buildFont(SizeText size);
         
     virtual int onMouse(int x, int y){return 0;};
     

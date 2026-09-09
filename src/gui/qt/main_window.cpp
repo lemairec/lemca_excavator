@@ -22,6 +22,9 @@ void MyWidget::mousePressEvent ( QMouseEvent * event ){
         int y = event->y();
         
         m_main_widget->onMouse(x, y);
+        // Sans ce repaint immediat le doigt attend le prochain tick du timer :
+        // jusqu'a 200 ms avant de voir quoi que ce soit bouger.
+        update();
     }
 }
 
@@ -30,7 +33,9 @@ void MyWidget::paintEvent(QPaintEvent* e)
     QWidget::paintEvent(e); // effectue le comportement standard
 
     QPainter painter(this); // construire
-    //painter.setRenderHint(QPainter::Antialiasing | QPainter::SmoothPixmapTransform);
+    painter.setRenderHint(QPainter::Antialiasing, true);
+    painter.setRenderHint(QPainter::TextAntialiasing, true);
+    painter.setRenderHint(QPainter::SmoothPixmapTransform, true);
     if(m_main_widget){
         m_main_widget->setPainter(&painter);
         m_main_widget->draw();

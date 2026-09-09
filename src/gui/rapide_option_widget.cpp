@@ -53,7 +53,7 @@ void RapideOptionWidget::loadConfig(){
 void RapideOptionWidget::draw(){
     m_painter->setPen(m_pen_no);
     m_painter->setBrush(m_brush_background_2);
-    m_painter->drawRoundedRect(m_x, m_y, m_width2, m_height2, 10, 10);
+    m_painter->drawRoundedRect(m_x, m_y, m_width2, m_height2, RADIUS_CARD, RADIUS_CARD);
     m_painter->setPen(m_pen_black_inv);
     
     if(m_page == 1){
@@ -453,7 +453,7 @@ void RapideOptionWidget::drawPage7(){
     int rh = 0.16*m_height2;
     m_painter->setPen(m_pen_no);
     m_painter->setBrush(m_brush_background_3);
-    m_painter->drawRoundedRect(cardx, ry, cardw, rh, 10, 10);
+    m_painter->drawRoundedRect(cardx, ry, cardw, rh, RADIUS_CARD, RADIUS_CARD);
 
     double ph = f.m_last_soil_ph_corr;
     QColor phcol;
@@ -491,7 +491,7 @@ void RapideOptionWidget::drawPage7(){
     int b1h = 0.22*m_height2;
     m_painter->setPen(m_pen_no);
     m_painter->setBrush(m_brush_background_3);
-    m_painter->drawRoundedRect(cardx, b1y, cardw, b1h, 10, 10);
+    m_painter->drawRoundedRect(cardx, b1y, cardw, b1h, RADIUS_CARD, RADIUS_CARD);
     m_painter->setPen(m_pen_black_inv);
     drawText(strprintf("Point bas  (%.0f mV)", config.m_soil_ph_bas_m), cardx + cardw*0.07, b1y + b1h*0.18, sizeText_little);
     m_value_ph_bas.m_value = config.m_soil_ph_bas;
@@ -504,7 +504,7 @@ void RapideOptionWidget::drawPage7(){
     int b2h = 0.22*m_height2;
     m_painter->setPen(m_pen_no);
     m_painter->setBrush(m_brush_background_3);
-    m_painter->drawRoundedRect(cardx, b2y, cardw, b2h, 10, 10);
+    m_painter->drawRoundedRect(cardx, b2y, cardw, b2h, RADIUS_CARD, RADIUS_CARD);
     m_painter->setPen(m_pen_black_inv);
     drawText(strprintf("Point haut  (%.0f mV)", config.m_soil_ph_haut_m), cardx + cardw*0.07, b2y + b2h*0.18, sizeText_little);
     m_value_ph_haut.m_value = config.m_soil_ph_haut;
@@ -558,7 +558,7 @@ void RapideOptionWidget::drawPage8(){
     int ch = 0.30*m_height2;
     m_painter->setPen(m_pen_no);
     m_painter->setBrush(m_brush_background_3);
-    m_painter->drawRoundedRect(cardx, cy, cardw, ch, 10, 10);
+    m_painter->drawRoundedRect(cardx, cy, cardw, ch, RADIUS_CARD, RADIUS_CARD);
 
     m_painter->setPen(m_pen_black_inv);
     drawText("Temperature ambiante", m_x+m_width2/2, cy + ch*0.22, sizeText_little, true);

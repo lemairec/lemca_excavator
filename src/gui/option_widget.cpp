@@ -128,7 +128,7 @@ void OptionWidget::drawButtons(){
         m_painter->setBrush(m_brush_background_2);
         m_painter->setPen(m_pen_no);
         
-        m_painter->drawRoundedRect(m_width-w-10, 10, w, h, 10, 10);
+        m_painter->drawRoundedRect(m_width-w-10, 10, w, h, RADIUS_CARD, RADIUS_CARD);
         
     }
     
@@ -1275,7 +1275,7 @@ void OptionWidget::drawPart1Title(double y, double h, const std::string & title,
         m_painter->setBrush(m_brush_background_2);
         m_painter->setPen(m_pen_no);
         
-        m_painter->drawRoundedRect(m_part_1_x, y+5, m_width3*0.44, h-15, 10, 10);
+        m_painter->drawRoundedRect(m_part_1_x, y+5, m_width3*0.44, h-15, RADIUS_CARD, RADIUS_CARD);
         
     }
     
@@ -1289,7 +1289,7 @@ void OptionWidget::drawPart2Title(double y, double h, const std::string & title,
         m_painter->setBrush(m_brush_background_2);
         m_painter->setPen(m_pen_no);
         
-        m_painter->drawRoundedRect(m_part_2_x, y+5, m_width3*0.44, h-15, 10, 10);
+        m_painter->drawRoundedRect(m_part_2_x, y+5, m_width3*0.44, h-15, RADIUS_CARD, RADIUS_CARD);
         
     }
     

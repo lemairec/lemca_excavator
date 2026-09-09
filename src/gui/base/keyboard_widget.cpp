@@ -47,7 +47,7 @@ void KeyPadWidget::draw(){
     } else {
         m_painter->setBrush(m_brush_background_2);
     }
-    m_painter->drawRoundedRect(m_x+m_width*0.05, m_height*0.2, m_width*0.2, m_height*0.1, 10, 10);
+    m_painter->drawRoundedRect(m_x+m_width*0.05, m_height*0.2, m_width*0.2, m_height*0.1, RADIUS_CARD, RADIUS_CARD);
     QString s = m_res;
     m_painter->setPen(m_pen_black_inv);
     drawQText(s, m_x+m_lg/2, 0.25*m_height, sizeText_big, true);
@@ -208,7 +208,7 @@ void KeyBoardWidget::draw(){
     } else {
         m_painter->setBrush(m_brush_background_2);
     }
-    m_painter->drawRoundedRect(m_x+m_lg/2-m_width*0.1, m_height*0.2, m_width*0.2, m_height*0.1, 10, 10);
+    m_painter->drawRoundedRect(m_x+m_lg/2-m_width*0.1, m_height*0.2, m_width*0.2, m_height*0.1, RADIUS_CARD, RADIUS_CARD);
     
     m_painter->setPen(m_pen_black_inv);
     drawQText(m_res, m_x+m_lg/2, 0.25*m_height, sizeText_big, true);

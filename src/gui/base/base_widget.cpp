@@ -19,59 +19,60 @@ void BaseWidget::loadImages(){
 }
 
 void BaseWidget::setColors(){
-    QColor red = QColor(0xFF374B);
-    QColor orange = QColor(0xFF7818);
-    QColor green = QColor(0x015A06);
-    QColor blue = QColor(0, 0, 250);
-    
-    if(m_black_mode){
-        green = QColor(0x35B856);
-    }
-    
+    // Jetons de couleur : une seule source pour toute l'interface. Clair par
+    // defaut (lisible en plein soleil dans la cabine), sombre en option.
+    QColor red    = m_black_mode ? QColor(0xEF4444) : QColor(0xDC2626);
+    QColor orange = m_black_mode ? QColor(0xF97316) : QColor(0xEA580C);
+    QColor green  = m_black_mode ? QColor(0x16A34A) : QColor(0x15803D);
+    QColor blue   = m_black_mode ? QColor(0x60A5FA) : QColor(0x2563EB);
+    QColor slate  = m_black_mode ? QColor(0x334155) : QColor(0x475569);
+    QColor text   = m_black_mode ? QColor(0xF8FAFC) : QColor(0x0F172A);
+
     m_pen_no.setColor(QColor(0, 250, 0, 0));
-    m_pen_black = QPen(Qt::black);
-    m_pen_white = QPen(Qt::white);
+    m_pen_black = QPen(QColor(0x0F172A));
+    m_pen_white = QPen(QColor(0xF8FAFC));
     m_pen_red = QPen(red);
     m_pen_blue = QPen(blue);
-    m_pen_green = QPen(Qt::green);
-    m_pen_gray = QPen (QColor(120,120,120));
-    
-    m_brush_black = QBrush(Qt::black);
+    m_pen_green = QPen(green);
+    m_pen_gray = QPen(QColor(0x94A3B8));
+
+    m_brush_black = QBrush(QColor(0x0F172A));
     m_brush_red = QBrush(red);
     m_brush_blue = QBrush(blue);
     m_brush_orange = QBrush(orange);
-    m_brush_gray = QBrush (QColor(200,200,200));
-    m_brush_white = QBrush(QColor(255,255,255));
-    m_brush_green = QBrush (green);
-    
-    m_alert_warning = QBrush (orange);
-    m_alert_error = m_brush_red;
-    
-    m_brush_button_close = QBrush (orange);
-    m_brush_button_normal = QBrush (QColor(80,80,80));
-    m_brush_button_validate = QBrush (green);
-    if(m_black_mode){
-        m_brush_background_1 = QBrush (QColor(0x141520));
-        m_brush_background_2 = QBrush (QColor(0x1D1E2D));
-        m_brush_background_3 = QBrush (QColor(0x2D2F42));
+    m_brush_gray = QBrush(QColor(0xCBD5E1));
+    m_brush_white = QBrush(QColor(0xFFFFFF));
+    m_brush_green = QBrush(green);
 
-        m_brush_button_fail = QBrush (QColor(80,80,80));
-        m_pen_black_inv = QPen(Qt::white);
+    m_alert_warning = QBrush(orange);
+    m_alert_error = m_brush_red;
+
+    m_brush_button_close = QBrush(orange);
+    m_brush_button_normal = QBrush(slate);
+    m_brush_button_validate = QBrush(green);
+    if(m_black_mode){
+        // fond / carte / champ : trois niveaux distincts, sinon la carte se
+        // confond avec la page et l'ecran parait plat.
+        m_brush_background_1 = QBrush(QColor(0x020617));
+        m_brush_background_2 = QBrush(QColor(0x0F172A));
+        m_brush_background_3 = QBrush(QColor(0x1E293B));
+
+        m_brush_button_fail = QBrush(QColor(0x334155));
     } else {
-        m_brush_background_1 = QBrush (QColor(0xF3F3F3));
-        m_brush_background_2 = QBrush (QColor(0xFFFFFF));
-        m_brush_background_3 = QBrush (QColor(0xF3F3F3));
-        
-        m_brush_button_fail = QBrush (QColor(180,180,180));
-        m_pen_black_inv = QPen(Qt::black);
+        m_brush_background_1 = QBrush(QColor(0xE7ECF2));
+        m_brush_background_2 = QBrush(QColor(0xFFFFFF));
+        m_brush_background_3 = QBrush(QColor(0xDCE3EC));
+
+        m_brush_button_fail = QBrush(QColor(0xCBD5E1));
     }
+    m_pen_black_inv = QPen(text);
 
     QColor white = QColor(255,255,255);
     white.setAlphaF(0.9);
-    m_brushWhiteAlpha =QBrush(white);
-    
-    m_brush_tracteur = QBrush(QColor(0,0,200));
-    m_brush_outil = QBrush(QColor(60,60,200));
+    m_brushWhiteAlpha = QBrush(white);
+
+    m_brush_tracteur = QBrush(QColor(0x2563EB));
+    m_brush_outil = QBrush(QColor(0x60A5FA));
     m_brush_parcelle_1 = QBrush(QColor(183,166,138));
     m_brush_parcelle_2 = QBrush(QColor(183*1.2,166*1.2,138*1.2));
     m_brush_parcelle_green_alpha = QBrush(QColor(0, 150, 0, 100));
@@ -131,7 +132,7 @@ void BaseWidget::drawButtonImageCarre(ButtonGui & button, QPixmap * pixmap, doub
     if(open){
         m_painter->setBrush(m_brush_button_validate);
         
-        m_painter->drawRoundedRect(x, y, button.m_width, button.m_height, 5, 5);
+        m_painter->drawRoundedRect(x, y, button.m_width, button.m_height, RADIUS_CONTROL, RADIUS_CONTROL);
         if(!m_black_mode){
             QImage im = pixmap->toImage();
             im.invertPixels();
@@ -142,7 +143,7 @@ void BaseWidget::drawButtonImageCarre(ButtonGui & button, QPixmap * pixmap, doub
         }
     } else {
         m_painter->setBrush(m_brush_background_3);
-        m_painter->drawRoundedRect(x, y, button.m_width, button.m_height, 5, 5);
+        m_painter->drawRoundedRect(x, y, button.m_width, button.m_height, RADIUS_CONTROL, RADIUS_CONTROL);
         
         m_painter->drawPixmap(button.m_x-w/2, y_image, w, h, *pixmap);
     }
@@ -219,7 +220,7 @@ void BaseWidget::drawButtonLabel2(ButtonGui & button, int color){
     } else {
         m_painter->setBrush(m_brush_button_normal);
     }
-    m_painter->drawRoundedRect(button.m_x-button.m_width/2 , button.m_y-button.m_height/2, button.m_width, button.m_height, 5, 5);
+    m_painter->drawRoundedRect(button.m_x-button.m_width/2 , button.m_y-button.m_height/2, button.m_width, button.m_height, RADIUS_CONTROL, RADIUS_CONTROL);
     m_painter->setPen(m_pen_no);
     if(color == COLOR_WHITE){
         m_painter->setPen(m_pen_black);
@@ -235,6 +236,31 @@ void BaseWidget::drawButtonLabel2(ButtonGui & button, int color){
 }
 
 
+// Echelle typographique unique (pixels) : les deux fonctions de texte
+// divergeaient d'une taille a l'autre, ce qui cassait le rythme vertical.
+int BaseWidget::pixelSize(SizeText size){
+    switch (size) {
+        case sizeText_bigbig: return 26;
+        case sizeText_big:    return 22;
+        case sizeText_medium: return 18;
+        case sizeText_little: return 15;
+        case sizeText_logo:   return 13;
+    }
+    return 15;
+}
+
+// "Latin" n'existe sur aucune des deux cibles : Qt retombait sur une police
+// systeme au hasard. On demande une sans-serif nette et on laisse le style hint
+// choisir l'equivalent present sur la machine.
+QFont BaseWidget::buildFont(SizeText size){
+    QFont font;
+    font.setStyleHint(QFont::SansSerif, QFont::PreferAntialias);
+    font.setFamily("DejaVu Sans");
+    font.setPixelSize(pixelSize(size));
+    font.setWeight(size == sizeText_big || size == sizeText_bigbig ? QFont::Bold : QFont::DemiBold);
+    return font;
+}
+
 void BaseWidget::drawText(const std::string & text, int x, int y, SizeText size, bool center, bool white){
     QString s = QString::fromStdString(text);
     
@@ -242,32 +268,11 @@ void BaseWidget::drawText(const std::string & text, int x, int y, SizeText size,
 }
 
 void BaseWidget::drawQText(const QString & s, int x, int y, SizeText size, bool center, bool white){
-    int s2 = 10;
-    switch (size) {
-        case sizeText_bigbig:
-            s2 = 22;
-            break;
-        case sizeText_big:
-            s2 = 20;
-            break;
-        case sizeText_medium:
-            s2 = 18;
-            break;
-        case sizeText_little:
-            s2 = 14;
-            break;
-        case sizeText_logo:
-            s2 = 12;
-            break;
-    }
-    QFont font = QFont("Latin", s2, 1, false);
-    font.setBold(true);
-    //textItem->setFont(font);
+    QFont font = buildFont(size);
     if(white){
         m_painter->setPen(m_pen_black_inv);
     }
     
-    font.setPixelSize(s2);
     m_painter->setFont(font);
     
     if(center){
@@ -282,34 +287,14 @@ void BaseWidget::drawQText(const QString & s, int x, int y, SizeText size, bool 
 }
 
 void BaseWidget::drawQTexts(const QString & s, int x, int y, SizeText size, bool center, bool white, bool center_h){
-    int s2 = 10;
-    switch (size) {
-        case sizeText_bigbig:
-            s2 = 24;
-            break;
-        case sizeText_big:
-            s2 = 22;
-            break;
-        case sizeText_medium:
-            s2 = 18;
-            break;
-        case sizeText_little:
-            s2 = 14;
-            break;
-        case sizeText_logo:
-            s2 = 12;
-            break;
-    }
-    QFont font = QFont("Latin", s2, 1, false);
-    font.setBold(true);
-    //textItem->setFont(font);
+    int s2 = pixelSize(size);
+    QFont font = buildFont(size);
     if(white){
         m_painter->setPen(Qt::white);
     }
     
     QStringList list1 = s.split(QLatin1Char('\n'));
     
-    font.setPixelSize(s2);
     m_painter->setFont(font);
     
     int y2 = y+5;
@@ -364,7 +349,7 @@ void BaseWidget::drawValueGuiKeyPadFalse(ValueGui & value){
     QString s = QString::number(value.m_value);
     m_painter->setPen(m_pen_gray);
     m_painter->setBrush(m_brushWhiteAlpha);
-    m_painter->drawRoundedRect(value.m_x-40, value.m_y-15, 80, 30, 5, 5);
+    m_painter->drawRoundedRect(value.m_x-40, value.m_y-15, 80, 30, RADIUS_CONTROL, RADIUS_CONTROL);
     drawQText(s, value.m_x, value.m_y, sizeText_medium, true);
 }
 
@@ -376,7 +361,7 @@ void BaseWidget::drawValueGuiKeyPad2(ValueGui & keypad){
     QString s = QString::number(keypad.m_value);
     m_painter->setPen(m_pen_no);
     m_painter->setBrush(m_brush_background_3);
-    m_painter->drawRoundedRect(keypad.m_x-40, keypad.m_y-15, 80, 30, 5, 5);
+    m_painter->drawRoundedRect(keypad.m_x-40, keypad.m_y-15, 80, 30, RADIUS_CONTROL, RADIUS_CONTROL);
     m_painter->setPen(m_pen_black_inv);
     drawQText(s, keypad.m_x, keypad.m_y, sizeText_medium, true);
 }
@@ -385,7 +370,7 @@ void BaseWidget::drawValueGuiKeyPad3(ValueGui & keypad){
     QString s = QString::number(keypad.m_value);
     m_painter->setPen(m_pen_no);
     m_painter->setBrush(m_brush_background_3);
-    m_painter->drawRoundedRect(keypad.m_x-40, keypad.m_y-15, 80, 30, 5, 5);
+    m_painter->drawRoundedRect(keypad.m_x-40, keypad.m_y-15, 80, 30, RADIUS_CONTROL, RADIUS_CONTROL);
     m_painter->setPen(m_pen_black_inv);
     drawQText(s, keypad.m_x, keypad.m_y, sizeText_medium, true);
 }
@@ -479,7 +464,7 @@ void BaseWidget::drawValueGuiKeyBoard(ValueGuiKeyBoard & value){
     
     m_painter->setPen(m_pen_no);
     m_painter->setBrush(m_brush_background_3);
-    m_painter->drawRoundedRect(value.m_x-value.m_width/2, value.m_y-15, value.m_width, 30, 5, 5);
+    m_painter->drawRoundedRect(value.m_x-value.m_width/2, value.m_y-15, value.m_width, 30, RADIUS_CONTROL, RADIUS_CONTROL);
     m_painter->setPen(m_pen_black_inv);
     drawText(value.m_text, value.m_x, value.m_y, sizeText_medium, true);
 }
