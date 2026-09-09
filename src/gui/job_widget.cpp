@@ -159,10 +159,15 @@ int JobWidget::onMouseJob(int x, int y){
         }
     }
     if(m_button_open_list.isActive(x, y)){
-        m_jobs = f.m_job_manager.listJobs();
+        m_jobs.clear();
         m_jobs_points.clear();
-        for(auto & j : m_jobs){
-            m_jobs_points.push_back(f.m_job_manager.countPoints(j));
+        //jobs sans point : le dossier vide cree a chaque demarrage, inutile a lister
+        for(auto & j : f.m_job_manager.listJobs()){
+            int n = f.m_job_manager.countPoints(j);
+            if(n > 0){
+                m_jobs.push_back(j);
+                m_jobs_points.push_back(n);
+            }
         }
         m_page = 0;
         m_mode = 1;

@@ -995,6 +995,11 @@ void GpsWidget::drawLicence(){
     drawText(Langage::getKey("LICENCE_NOT_VALID"), 0.5*m_width, m_height*0.5, sizeText_medium, true);
 }
 
+//vrai GPS branche : ni banc sans position, ni rejeu d un fichier .ubx
+static bool gpsReel(Framework & f){
+    return f.m_tracteur.m_pt_antenne_corrige && f.m_config.m_port1_gps_serial != "file";
+}
+
 void GpsWidget::draw(){
     Framework & f = Framework::instance();
     //myTime begin = myTimeInit();
@@ -1013,6 +1018,14 @@ void GpsWidget::draw(){
     if(f.m_tracteur.m_pt_antenne_corrige){
         m_xref = f.m_tracteur.m_pt_antenne_corrige->m_x;
         m_yref = f.m_tracteur.m_pt_antenne_corrige->m_y;
+    }
+    //Au banc, le tracteur est a l origine (pas de GPS) ou sur le trace du fichier de
+    //rejeu, donc a des dizaines de km des points d un job recharge : ceux-ci
+    //tomberaient hors ecran. Dans ces deux cas seulement on centre sur le job.
+    //En GPS reel la vue continue de suivre le tracteur.
+    if(!f.m_mesures.empty() && !gpsReel(f)){
+        m_xref = f.m_mesures.front().m_point.m_x;
+        m_yref = f.m_mesures.front().m_point.m_y;
     }
 
     drawGpsWidget();
@@ -1569,6 +1582,11 @@ void GpsWidget::drawMapTiles(){
     if(f.isGpsConnected() && gga){
         clat = gga->m_latitude;
         clon = gga->m_longitude;
+    }
+    if(!f.m_mesures.empty() && !gpsReel(f)){
+        //meme regle que le centrage de la vue : au banc on suit le job recharge
+        clat = f.m_mesures.front().m_point.m_latitude;
+        clon = f.m_mesures.front().m_point.m_longitude;
     }
     m_map_tiles.ensureArea(clat, clon);
 

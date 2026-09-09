@@ -589,6 +589,10 @@ void PilotTranslatorModule::handle25ms(){
             Framework::instance().m_serialModule.writePort2McuStr("$V,*\n");
         }
     }
+    //updateAuto avant updateCycle : le cycle peut demarrer sur le meme tick.
+    //Appel inconditionnel, il se garde lui-meme -> m_vitesse_max_kmh et
+    //m_dist_last_mesure_m restent a jour a l'ecran meme pendant un cycle.
+    updateAuto();
     updateCycle();
     Framework::instance().m_serialModule.writePort2McuStr("$P,*\n");
 }

@@ -850,14 +850,16 @@ void Framework::loadMesures(const std::string & path){
     m_mesures.clear();
     CSVFile file;
     file.importFile(path);
+    std::vector<std::string> words;
     for(auto & line : file.m_lines){
-        if(line.m_words.size() < 6){
+        //splitSoilLine gere aussi l'ancien format a la virgule (jobs d'avant 2025-12-15)
+        if(!splitSoilLine(line.m_string, words)){
             continue;
         }
         try {
-            addMesure(line.getDouble(0), line.getDouble(1), line.getDouble(5), line.m_string);
+            addMesure(toDouble(words[0]), toDouble(words[1]), toDouble(words[5]), line.m_string);
         } catch(const std::exception & e){
-            WARN("loadMesures : ligne illisible " << line.m_words[0]);
+            WARN("loadMesures : ligne illisible " << line.m_string);
         }
     }
     INFO("loadMesures " << path << " -> " << m_mesures.size() << " points");

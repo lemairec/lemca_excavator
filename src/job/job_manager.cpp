@@ -1,6 +1,7 @@
 #include "job_manager.hpp"
 #include "../util/directory_manager.hpp"
 #include "../util/log.hpp"
+#include "../util/csv.hpp"
 #include "../framework.hpp"
 
 #include <QDir>
@@ -27,8 +28,10 @@ int JobManager::countPoints(const std::string & name){
     std::ifstream file(jobDir()+"/"+name+"/soil.txt");
     int n = 0;
     std::string line;
+    std::vector<std::string> words;
+    //meme critere que loadMesures : le compte affiche = les points reellement chargeables
     while(std::getline(file, line)){
-        if(line.size() > 5){   //ignore les lignes vides / fins de fichier
+        if(splitSoilLine(line, words)){
             n++;
         }
     }
