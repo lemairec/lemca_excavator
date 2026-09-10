@@ -21,6 +21,9 @@ public:
     int countPoints(const std::string & name);  //nbr de lignes du soil.txt d'un job
     const std::string & getName(){return m_begin;};
     void handleSeconde();
+
+    //appele a l'arret : supprime le dossier du job s'il ne contient aucun point
+    void removeIfEmpty();
     void handle60s();
     
     std::string m_log_path;

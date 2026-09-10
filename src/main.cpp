@@ -62,5 +62,8 @@ int main(int argc, char *argv[])
     //INFO(QThread::currentThreadId());
     //GpsThread * gpsThread = new GpsThread(framework);
     //gpsThread->start();
-    return app.exec();
+    int res = app.exec();
+    //un lancement sans aucune mesure ne doit pas laisser un dossier de job vide
+    framework.m_job_manager.removeIfEmpty();
+    return res;
 }

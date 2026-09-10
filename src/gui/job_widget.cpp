@@ -27,8 +27,12 @@ void JobWidget::setSize(int width, int height){
     m_client.setResize(cx, m_y2 + 0.32*m_height2, cw);
     m_field.setResize (cx, m_y2 + 0.47*m_height2, cw);
 
-    m_button_send.setResizeStd(m_x2 + 0.5*m_width2, m_y2 + 0.72*m_height2, "Envoyer sol", true, 0.4*m_width2);
-    m_button_open_list.setResizeStd(m_x2 + 0.5*m_width2, m_y2 + 0.83*m_height2, "Reprendre un job", true, 0.4*m_width2);
+    //Bas de la carte, de haut en bas : etat de connexion (0.53), bouton envoyer
+    //(0.625), etat de l'envoi (0.72), reprendre (0.81), fermer (0.93). L'etat de
+    //l'envoi etait a 0.82 pour un bouton "Reprendre" a 0.83 : il s'ecrivait
+    //par-dessus. Chaque ligne a maintenant sa bande.
+    m_button_send.setResizeStd(m_x2 + 0.5*m_width2, m_y2 + 0.625*m_height2, "Envoyer sol", true, 0.4*m_width2);
+    m_button_open_list.setResizeStd(m_x2 + 0.5*m_width2, m_y2 + 0.81*m_height2, "Reprendre un job", true, 0.4*m_width2);
     m_button_close.setResizeStd(m_x2 + 0.5*m_width2, m_y2 + 0.93*m_height2, "Fermer", true, 0.3*m_width2);
 
     //liste des jobs : une ligne cliquable par job
@@ -92,7 +96,7 @@ void JobWidget::drawJob(){
     if(net.m_lm_checking){ c = QColor(0x88,0x88,0x88); }
     m_painter->setPen(QPen(c));
     std::string st = "Land Manager : " + (net.m_lm_status.empty() ? std::string("non connecte") : net.m_lm_status);
-    drawText(st, m_x2+0.5*m_width2, m_y2+0.62*m_height2, sizeText_medium, true);
+    drawText(st, m_x2+0.5*m_width2, m_y2+0.53*m_height2, sizeText_medium, true);
     m_painter->setPen(m_pen_black);
 
     drawButtonLabel2(m_button_send, net.m_soil_uploading ? COLOR_OTHER
@@ -108,7 +112,7 @@ void JobWidget::drawJob(){
                                                       : QColor(0xFF,0x37,0x4B);
         }
         m_painter->setPen(QPen(cs));
-        drawText(net.m_soil_status, m_x2+0.5*m_width2, m_y2+0.82*m_height2, sizeText_medium, true);
+        drawText(net.m_soil_status, m_x2+0.5*m_width2, m_y2+0.72*m_height2, sizeText_medium, true);
         m_painter->setPen(m_pen_black);
     }
 

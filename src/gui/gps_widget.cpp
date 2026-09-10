@@ -131,29 +131,39 @@ void GpsWidget::setSize(int width, int height){
 
     m_button_debug.setResize(40, 20, m_gros_button);
     int x_right = width-m_gros_button-20;
-    int inter = m_gros_button*1.8;
-    int y = m_gros_button*1.2+10;
-    m_button_option.setResize(x_right, y, m_gros_button);
+
+    //Colonne de droite : 9 emplacements repartis dans le panneau (y=10 a
+    //m_height-10). Le pas valait m_gros_button*1.8 pour un bouton de
+    //m_gros_button*2 : en 1280x800 les boutons se chevauchaient de 8 px. On
+    //deduit le pas de la hauteur disponible, et le rayon du pas, ce qui garde
+    //un ecart constant quelle que soit la resolution.
+    const int nb_emplacements = 9;
+    const int ecart_min = 10;
+    int inter = (m_height - 20)/nb_emplacements;
+    int rayon = std::min(m_gros_button, (inter - ecart_min)/2);
+    int y = 10 + inter/2;
+
+    m_button_option.setResize(x_right, y, rayon);
     y += inter;
-    m_button_plus.setResize(x_right, y, m_gros_button);
+    m_button_plus.setResize(x_right, y, rayon);
     y += inter;
-    m_button_moins.setResize(x_right, y, m_gros_button);
+    m_button_moins.setResize(x_right, y, rayon);
 
     y += inter;
-    m_button_offset.setResize(x_right, y, m_gros_button);
-    m_button_ph.setResize(x_right, y, m_gros_button);
+    m_button_offset.setResize(x_right, y, rayon);
+    m_button_ph.setResize(x_right, y, rayon);
     y += inter;
-    m_button_balise.setResize(x_right, y, m_gros_button);
-    m_button_temp.setResize(x_right, y, m_gros_button);
+    m_button_balise.setResize(x_right, y, rayon);
+    m_button_temp.setResize(x_right, y, rayon);
     y += inter;
-    m_button_balise2.setResize(x_right, y, m_gros_button);
+    m_button_balise2.setResize(x_right, y, rayon);
     y += inter;
-    m_button_job.setResize(x_right, y, m_gros_button);
+    m_button_job.setResize(x_right, y, rayon);
     y += inter;
-    m_button_diag.setResize(x_right, y, m_gros_button);
+    m_button_diag.setResize(x_right, y, rayon);
 
     y += inter;
-    m_button_auto.setResize(x_right, y, m_gros_button);
+    m_button_auto.setResize(x_right, y, rayon);
 
     y += inter;
     //m_button_volant.setResize(x_right, height-m_gros_button*1.2-10, m_gros_button);
@@ -214,7 +224,7 @@ void GpsWidget::drawButtons(){
         // rangee unique de 4 boutons : Cycle | Up | Clean | Down
         int x = 0.65*m_width+20;
         int w = 0.24*m_width;
-        int rayon = std::min(m_gros_button, (int)(w/4*0.42));
+        int rayon = std::min(m_gros_button, (int)(w/4*0.40));
         m_button_cycle.setResize (x + w*1/8, y_bas2, rayon);
         m_button_left.setResize  (x + w*3/8, y_bas2, rayon);
         m_button_middle.setResize(x + w*5/8, y_bas2, rayon);

@@ -5,6 +5,7 @@
 #include "../framework.hpp"
 
 #include <QDir>
+#include <QRegularExpression>
 
 JobManager::JobManager(){
     
@@ -109,6 +110,35 @@ void JobManager::init(){
         
         m_data_path = DirectoryManager::instance().getHome()+"/lemca_data/job/"+m_begin+"/soil.txt";
         m_data_file.open(m_data_path);
+    }
+}
+
+//Menage a l'arret : un lancement pendant lequel on n'a rien mesure laisse
+//derriere lui un dossier de job vide. On l'efface, fichiers fermes d'abord
+//car sous Windows un fichier ouvert ne s'efface pas.
+void JobManager::removeIfEmpty(){
+    if(m_log_file.is_open()){ m_log_file.close(); }
+    if(m_data_file.is_open()){ m_data_file.close(); }
+
+    //Garde-fou : le nom doit etre l'horodatage ecrit par init(). Sans ce test,
+    //un m_begin vide viserait le dossier job/ entier.
+    QRegularExpression re("^[0-9]{4}(_[0-9]{2}){5}$");
+    if(!re.match(QString::fromStdString(m_begin)).hasMatch()){
+        WARN("removeIfEmpty : nom de job inattendu, on ne touche a rien (" << m_begin << ")");
+        return;
+    }
+
+    int n = countPoints(m_begin);
+    if(n > 0){
+        INFO("job conserve : " << m_begin << " (" << n << " points)");
+        return;
+    }
+
+    std::string dir = jobDir()+"/"+m_begin;
+    if(QDir(QString::fromStdString(dir)).removeRecursively()){
+        INFO("job vide supprime : " << dir);
+    } else {
+        WARN("job vide non supprime : " << dir);
     }
 }
 
