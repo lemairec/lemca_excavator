@@ -93,6 +93,7 @@ void GpsWidget::setPainter(QPainter * p){
     m_debug_widget.setPainter(p);
     m_balises_widget.setPainter(p);
     m_job_widget.setPainter(p);
+    m_ph_scale_widget.setPainter(p);
     m_key_board_widget.setPainter(p);
 
     m_first_widget.setPainter(p);
@@ -127,6 +128,7 @@ void GpsWidget::setSize(int width, int height){
     m_debug_widget.setSize(m_width, m_height);
     m_balises_widget.setSize(m_width, m_height);
     m_job_widget.setSize(m_width, m_height);
+    m_ph_scale_widget.setSize(m_width, m_height);
 
 
     m_button_debug.setResize(40, 20, m_gros_button);
@@ -1083,6 +1085,9 @@ void GpsWidget::draw(){
     if(!m_job_widget.m_close){
         m_job_widget.draw();
     }
+    if(!m_ph_scale_widget.m_close){
+        m_ph_scale_widget.draw();
+    }
     if(false){
         drawLicence();
     }
@@ -1151,6 +1156,10 @@ int GpsWidget::onMouse(int x, int y){
     }
     if(!m_job_widget.m_close){
         m_job_widget.onMouse(x, y);
+        return 0;
+    }
+    if(!m_ph_scale_widget.m_close){   //carte modale : rien d'autre ne recoit le clic
+        m_ph_scale_widget.onMouse(x, y);
         return 0;
     }
     if(m_mesure_selected >= 0){
@@ -1971,19 +1980,8 @@ void GpsWidget::drawMesures(){
         //diametre du point = maille visee (config) : passages tous les X m -> resolution XxX m
         double l = f.m_config.m_soil_maille_m*m_zoom/2;
         double ph = p.m_ph + offset;
-        if(ph < 0){ ph = 0; }   // sinon QColor recoit une composante negative
-
-        if(ph <= 7){
-            int value = ph/7.0*255;
-            QBrush brush = QBrush (QColor(255,value, value));
-            m_painter->setBrush(brush);
-        } else if(ph <= 14){
-            int value = 255-(ph-7.0)/7.0*255;
-            QBrush brush = QBrush (QColor(value, 255, value));
-            m_painter->setBrush(brush);
-        } else {
-            m_painter->setBrush(m_brush_black);
-        }
+        //couleur = bande de l'echelle pH reglee dans menu Infos > Echelle pH
+        m_painter->setBrush(QBrush(phColor(ph, f.m_config)));
         m_painter->drawEllipse(x1-l, y1-l, 2*l, 2*l);
         std::string s = strprintf("%.1f", ph);
         drawText(s, x1, y1, SizeText::sizeText_little, true);

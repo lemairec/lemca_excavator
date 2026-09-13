@@ -52,6 +52,15 @@ double my_map(double x, double in_min, double in_max, double out_min, double out
     return (x - in_min) * (out_max - out_min) / (in_max - in_min) + out_min;
 }
 
+int phBande(double ph, const double * bornes){
+    for(int i = 0; i < PH_BANDE_N; ++i){
+        if(ph < bornes[i]){
+            return i;
+        }
+    }
+    return PH_BANDE_N;
+}
+
 
 double my_angle(double x1, double y1, double x2, double y2){
     if(x1 == 0 && y1 ==0){

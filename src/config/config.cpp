@@ -103,6 +103,9 @@ void Config::work(QSettings & settings, bool save){
     saveLoadDouble(settings, "m_soil_temp_cal", m_soil_temp_cal, save);
     saveLoadInt(settings, "m_soil_stale_ms", m_soil_stale_ms, save);
     saveLoadBool(settings, "m_map_enable", m_map_enable, save);
+    for(int i = 0; i < PH_BANDE_N; ++i){
+        saveLoadDouble(settings, QString("m_soil_ph_bande_%1").arg(i), m_soil_ph_bande[i], save);
+    }
 
 }
 

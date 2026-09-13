@@ -89,6 +89,7 @@ public:
     ButtonGui m_button_reset;
     ButtonGui m_button_diag;
     ButtonGui m_button_map;
+    ButtonGui m_button_ph_scale;
     ValueGui m_largeur;
     ValueGui m_value_ph_offset;
     void setSizePage6(int width, int height);

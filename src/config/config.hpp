@@ -7,6 +7,7 @@
 #include <QSettings>
 
 #include "enum.hpp"
+#include "../util/util.hpp"
 
 class Config  {
 public:
@@ -122,6 +123,9 @@ public:
     std::string m_soil_check_date;
     // decalage AFFICHAGE carte uniquement (soil.txt garde le pH brut)
     double m_soil_ph_offset = 0.0;
+    //echelle de couleur de la carte : 4 bornes internes -> 5 bandes contigues
+    //[0,b0] [b0,b1] [b1,b2] [b2,b3] [b3,14]. Reglables dans menu Infos > Echelle pH.
+    double m_soil_ph_bande[PH_BANDE_N] = {5.5, 6.0, 6.5, 7.0};
 
     // --- stabilisation du signal pH (electrode antimoine, lente/bruitee) ---
     int    m_soil_filter_window  = 24;   // taille fenetre glissante (echantillons) - divise le bruit blanc ~+/-15 counts par ~4.9

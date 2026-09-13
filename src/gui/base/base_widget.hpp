@@ -2,12 +2,20 @@
 #define BASE_WIDGET_H
 
 #include "component.hpp"
+#include "../../util/util.hpp"   //PH_BANDE_N / phBande
 
 #define RAYON_ROUNDED 10
 
 // echelle de rayons : boutons et champs / cartes et panneaux
 #define RADIUS_CONTROL 12
 #define RADIUS_CARD 16
+
+class Config;
+
+//Echelle de couleur du pH : palette fixe de PH_BANDE_N+1 bandes, acide -> basique.
+//Partagee par les pastilles de la carte et la page de reglage (menu Infos > Echelle pH).
+QColor phBandeColor(int bande);
+QColor phColor(double ph, const Config & config);
 
 class BaseWidget{
 public:

@@ -342,8 +342,9 @@ void RapideOptionWidget::onMousePage5(int x, int y){
 void RapideOptionWidget::setSizePage6(int width, int height){
     //m_button_reset.setResizeStd(m_x_middle, 0.6*m_height2, Langage::getKey("RAPIDE_RESET"), true);
     m_value_ph_offset.setResize(m_x_middle, 0.25*m_height2, m_petit_button);
-    m_button_map.setResizeStd(m_x_middle, 0.45*m_height2, "Carte sat", true, 200, 50);
-    m_button_diag.setResizeStd(m_x_middle, 0.7*m_height2, Langage::getKey("DIAGNOSTIC"), true, 200, 50);
+    m_button_map.setResizeStd(m_x_middle, 0.42*m_height2, "Carte sat", true, 200, 50);
+    m_button_ph_scale.setResizeStd(m_x_middle, 0.56*m_height2, "Echelle pH", true, 200, 50);
+    m_button_diag.setResizeStd(m_x_middle, 0.70*m_height2, Langage::getKey("DIAGNOSTIC"), true, 200, 50);
 }
 
 void RapideOptionWidget::drawPage6(){
@@ -406,6 +407,7 @@ void RapideOptionWidget::drawPage6(){
 
     m_button_map.m_label = config.m_map_enable ? "Carte sat : ON" : "Carte sat : OFF";
     drawButtonLabel2(m_button_map, config.m_map_enable ? COLOR_VALIDATE : COLOR_FAIL);
+    drawButtonLabel2(m_button_ph_scale);
     drawButtonLabel2(m_button_diag);
 }
 
@@ -421,6 +423,9 @@ void RapideOptionWidget::onMousePage6(int x, int y){
     if(m_button_map.isActive(x, y) != 0){
         f.m_config.m_map_enable = !f.m_config.m_map_enable;
         loadConfig();
+    }
+    if(m_button_ph_scale.isActive(x, y) != 0){
+        GpsWidget::instance()->m_ph_scale_widget.open();
     }
     if(m_button_diag.isActive(x, y) != 0){
         GpsWidget::instance()->m_diagnostic_widget.open();

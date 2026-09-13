@@ -26,6 +26,12 @@ int myRound(double value);
 void callDebugger();
 double my_map(double x, double in_min, double in_max, double out_min, double out_max);
 
+//Echelle de couleur du pH : PH_BANDE_N bornes internes -> PH_BANDE_N+1 bandes contigues.
+//Renvoie l'index de bande 0..PH_BANDE_N. Bornes non triees : le premier seuil depasse
+//gagne, donc une bande devient vide mais rien ne plante.
+const int PH_BANDE_N = 4;
+int phBande(double ph, const double * bornes);
+
 std::string execute2(std::string cmd);
 
 double my_angle(double x1, double y1, double x2, double y2);

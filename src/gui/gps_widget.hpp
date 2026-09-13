@@ -8,6 +8,7 @@
 #include "debug_widget.hpp"
 #include "balises_widget.hpp"
 #include "job_widget.hpp"
+#include "ph_scale_widget.hpp"
 #include "rapide_option_widget.hpp"
 #include "param_translateur_widget.hpp"
 #include "first_widget.hpp"
@@ -31,6 +32,7 @@ public:
     DebugWidget m_debug_widget;
     BalisesWidget m_balises_widget;
     JobWidget m_job_widget;
+    PhScaleWidget m_ph_scale_widget;
 
     OptionWidget m_option_widget;
     ParamTranslateurWidget m_param_translateur_widget;

@@ -1,4 +1,5 @@
 #include "base_widget.hpp"
+#include "../../config/config.hpp"
 #include "../../util/directory_manager.hpp"
 #include "../../util/log.hpp"
 #include "../../framework.hpp"
@@ -10,6 +11,25 @@
 
 BaseWidget::BaseWidget(){
     
+}
+
+//rouge / orange / jaune / vert clair / vert fonce
+static const QColor c_ph_colors[PH_BANDE_N+1] = {
+    QColor(0xD9,0x3A,0x2B),
+    QColor(0xE8,0x8A,0x2E),
+    QColor(0xF2,0xC9,0x3B),
+    QColor(0x8C,0xC6,0x3F),
+    QColor(0x2F,0x6B,0x2F),
+};
+
+QColor phBandeColor(int bande){
+    if(bande < 0){ bande = 0; }
+    if(bande > PH_BANDE_N){ bande = PH_BANDE_N; }
+    return c_ph_colors[bande];
+}
+
+QColor phColor(double ph, const Config & config){
+    return phBandeColor(phBande(ph, config.m_soil_ph_bande));
 }
 
 
